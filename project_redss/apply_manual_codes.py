@@ -10,7 +10,7 @@ from core_data_modules.traced_data.io import TracedDataCodaIO, TracedDataTheInte
 from core_data_modules.util import IOUtils
 from dateutil.parser import isoparse
 
-from project_reach.lib.dataset_specification import DatasetSpecification
+from project_redss.lib.dataset_specification import DatasetSpecification
 
 
 class ApplyManualCodes(object):

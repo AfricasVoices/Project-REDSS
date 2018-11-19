@@ -8,8 +8,8 @@ from core_data_modules.traced_data.io import TracedDataCodaIO, TracedDataCSVIO
 from core_data_modules.util import IOUtils
 from dateutil.parser import isoparse
 
-from project_reach.lib import ICRTools
-from project_reach.lib import MessageFilters
+from project_redss.lib import ICRTools
+from project_redss.lib import MessageFilters
 
 
 class AutoCodeShowMessages(object):

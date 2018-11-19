@@ -16,5 +16,5 @@ RUN pipenv sync
 RUN mkdir /data
 
 # Copy the rest of the project
-ADD project_reach /app/project_reach
-ADD reach_pipeline.py /app
+ADD project_redss /app/project_redss
+ADD redss_pipeline.py /app

@@ -2,7 +2,7 @@
 
 set -e
 
-IMAGE_NAME=reach-daap
+IMAGE_NAME=redss
 
 # Check that the correct number of arguments were provided.
 if [ $# -ne 11 ]; then
@@ -27,7 +27,7 @@ OUTPUT_INDIVIDUALS_CSV=${11}
 docker build -t "$IMAGE_NAME" .
 
 # Create a container from the image that was just built.
-CMD="pipenv run python -u reach_pipeline.py $USER /data/phone-number-uuid-table-input.json
+CMD="pipenv run python -u redss_pipeline.py $USER /data/phone-number-uuid-table-input.json
     /data/messages-input.json /data/survey-input.json /data/prev-coded
     /data/output.json /data/output-interface /data/output-icr.csv /data/coded
     /data/output-messages.csv /data/output-individuals.csv"

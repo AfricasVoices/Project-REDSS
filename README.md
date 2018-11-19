@@ -1,5 +1,5 @@
-# Project REACH
-Data pipeline for REACH/DAAP.
+# Project REDSS
+Data pipeline for REDSS/CSAP.
 
 This pipeline fetches all project data from a Rapid Pro instance, and processes it to produce CSV files suitable
 for downstream analysis.

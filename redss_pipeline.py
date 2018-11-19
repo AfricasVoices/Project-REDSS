@@ -3,14 +3,14 @@ import argparse
 from core_data_modules.traced_data.io import TracedDataJsonIO
 from core_data_modules.util import IOUtils, PhoneNumberUuidTable
 
-from project_reach import AnalysisFile
-from project_reach import ApplyManualCodes
-from project_reach import AutoCodeShowMessages
-from project_reach import AutoCodeSurveys
-from project_reach import CombineRawDatasets
+from project_redss import AnalysisFile
+from project_redss import ApplyManualCodes
+from project_redss import AutoCodeShowMessages
+from project_redss import AutoCodeSurveys
+from project_redss import CombineRawDatasets
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description="Runs the post-fetch phase of the REACH pipeline")
+    parser = argparse.ArgumentParser(description="Runs the post-fetch phase of the REDSS pipeline")
 
     parser.add_argument("user", help="User launching this program")
 
