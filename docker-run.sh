@@ -5,32 +5,37 @@ set -e
 IMAGE_NAME=redss
 
 # Check that the correct number of arguments were provided.
-if [ $# -ne 11 ]; then
-    echo "Usage: ./docker-run.sh <user> <phone-number-uuid-table-path> <messages-input-path> <survey-input-path> <prev-coded-dir> <json-output-path> <interface-output-dir> <icr-output-path> <coded-output-dir> <messages-output-csv> <individuals-output-csv>"
+if [ $# -ne 15 ]; then
+    echo "Usage: ./docker-run.sh <user> <phone-number-uuid-table-path> <s01e01-input-path> <s01e02-input-path> <s01e03-input-path> <s01e04-input-path> <demog-input-path> <evaluation-input-path> <prev-coded-dir> <json-output-path> <interface-output-dir> <icr-output-path> <coded-output-dir> <messages_datasets-output-csv> <individuals-output-csv>"
     exit
 fi
 
 # Assign the program arguments to bash variables.
 USER=$1
 INPUT_PHONE_UUID_TABLE=$2
-INPUT_MESSAGES=$3
-INPUT_SURVEYS=$4
-PREV_CODED_DIR=$5
-OUTPUT_JSON=$6
-OUTPUT_INTERFACE=$7
-OUTPUT_ICR=$8
-OUTPUT_CODED_DIR=$9
-OUTPUT_MESSAGES_CSV=${10}
-OUTPUT_INDIVIDUALS_CSV=${11}
+INPUT_S01E01=$3
+INPUT_S01E02=$4
+INPUT_S01E03=$5
+INPUT_S01E04=$6
+INPUT_DEMOG=$7
+INPUT_EVALUATION=$8
+PREV_CODED_DIR=$9
+OUTPUT_JSON=${10}
+OUTPUT_INTERFACE=${11}
+OUTPUT_ICR=${12}
+OUTPUT_CODED_DIR=${13}
+OUTPUT_MESSAGES_CSV=${14}
+OUTPUT_INDIVIDUALS_CSV=${15}
 
 # Build an image for this pipeline stage.
 docker build -t "$IMAGE_NAME" .
 
 # Create a container from the image that was just built.
 CMD="pipenv run python -u redss_pipeline.py $USER /data/phone-number-uuid-table-input.json
-    /data/messages-input.json /data/survey-input.json /data/prev-coded
+    /data/s01e01-input.json /data/s01e02-input.json /data/s01e03-input.json /data/s01e04-input.json
+    /data/demog-input.json /data/evaluation-input.json /data/prev-coded
     /data/output.json /data/output-interface /data/output-icr.csv /data/coded
-    /data/output-messages.csv /data/output-individuals.csv"
+    /data/output-messages_datasets.csv /data/output-individuals.csv"
 container="$(docker container create -w /app "$IMAGE_NAME" ${CMD})"
 
 function finish {
@@ -41,8 +46,12 @@ trap finish EXIT
 
 # Copy input data into the container
 docker cp "$INPUT_PHONE_UUID_TABLE" "$container:/data/phone-number-uuid-table-input.json"
-docker cp "$INPUT_MESSAGES" "$container:/data/messages-input.json"
-docker cp "$INPUT_SURVEYS" "$container:/data/survey-input.json"
+docker cp "$INPUT_S01E01" "$container:/data/s01e01-input.json"
+docker cp "$INPUT_S01E02" "$container:/data/s01e02-input.json"
+docker cp "$INPUT_S01E03" "$container:/data/s01e03-input.json"
+docker cp "$INPUT_S01E04" "$container:/data/s01e04-input.json"
+docker cp "$INPUT_DEMOG" "$container:/data/demog-input.json"
+docker cp "$INPUT_EVALUATION" "$container:/data/evaluation-input.json"
 if [ -d "$PREV_CODED_DIR" ]; then
     docker cp "$PREV_CODED_DIR" "$container:/data/prev-coded"
 fi
@@ -64,7 +73,7 @@ mkdir -p "$OUTPUT_CODED_DIR"
 docker cp "$container:/data/coded/." "$OUTPUT_CODED_DIR"
 
 mkdir -p "$(dirname "$OUTPUT_MESSAGES_CSV")"
-docker cp "$container:/data/output-messages.csv" "$OUTPUT_MESSAGES_CSV"
+docker cp "$container:/data/output-messages_datasets.csv" "$OUTPUT_MESSAGES_CSV"
 
 mkdir -p "$(dirname "$OUTPUT_INDIVIDUALS_CSV")"
 docker cp "$container:/data/output-individuals.csv" "$OUTPUT_INDIVIDUALS_CSV"
