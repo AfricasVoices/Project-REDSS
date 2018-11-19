@@ -2,7 +2,7 @@
 
 set -e
 
-IMAGE_NAME=redss
+IMAGE_NAME=redss-csap
 
 # Check that the correct number of arguments were provided.
 if [ $# -ne 11 ]; then
