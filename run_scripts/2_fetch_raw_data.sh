@@ -16,15 +16,23 @@ DATA_ROOT=$5
 
 TEST_CONTACTS_PATH="$(pwd)/test_contacts.json"
 
+SHOWS=(
+    "csap_s01e01_activation"
+    "csap_s01e02_activation"
+    "csap_s01e03_activation"
+    "csap_s01e04_activation"
+)
+
+SURVEYS=(
+    "csap_demog"
+    "csap_evaluation"
+)
+
 ./checkout_rapid_pro_tools.sh "$RP_DIR"
 
 mkdir -p "$DATA_ROOT/Raw Data"
 
-SHOWS=(
-    "esc4jmcna_activation"
-    )
-
-# Export radio show messages
+# Export radio show messages_datasets
 cd "$RP_DIR/fetch_runs"
 for SHOW in ${SHOWS[@]}
 do
@@ -35,9 +43,14 @@ do
         "$DATA_ROOT/UUIDs/phone_uuids.json" "$DATA_ROOT/Raw Data/$SHOW.json"
 done
 
-# Export contacts
-cd "$RP_DIR/fetch_contacts"
-echo "Exporting contacts"
-./docker-run.sh --test-contacts-path "$TEST_CONTACTS_PATH" "$RP_SERVER" "$RP_TOKEN" "$USER" \
-    "$DATA_ROOT/UUIDs/phone_uuids.json" "$DATA_ROOT/Raw Data/contacts.json"
+# Export surveys
+cd "$RP_DIR/fetch_runs"
 
+for SURVEY in ${SURVEYS[@]}
+do
+    echo "Exporting surveys"
+
+    ./docker-run.sh --flow-name "$SURVEY" --test-contacts-path "$TEST_CONTACTS_PATH" \
+        "$RP_SERVER" "$RP_TOKEN" "$USER" latest-only \
+        "$DATA_ROOT/UUIDs/phone_uuids.json" "$DATA_ROOT/Raw Data/$SURVEY.json"
+done
