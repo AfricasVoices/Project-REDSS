@@ -42,7 +42,7 @@ class AutoCodeShowMessages(object):
         for td in data:
             is_noise = True
             for rqa_key in cls.RQA_KEYS:
-                if rqa_key in td and not somali.DemographicCleaner.is_noise(td[rqa_key], min_length=10):
+                if rqa_key in td and not somali.DemographicCleaner.is_noise(td[rqa_key], min_length=1):
                     is_noise = False
             td.append_data({cls.NOISE_KEY: is_noise}, Metadata(user, Metadata.get_call_location(), time.time()))
 
@@ -66,7 +66,8 @@ class AutoCodeShowMessages(object):
             output_path = path.join(coda_output_dir, "{}.json".format(plan.coda_name))
             with open(output_path, "w") as f:
                 TracedDataCoda2IO.export_traced_data_iterable_to_coda_2(
-                    not_noise, plan.raw_field, cls.SENT_ON_KEY, plan.id_field, {}, f)
+                    not_noise, plan.raw_field, cls.SENT_ON_KEY, plan.id_field, {}, f
+                )
 
         # Randomly select some messages to export for ICR
         icr_messages = ICRTools.generate_sample_for_icr(not_noise, cls.ICR_MESSAGES_COUNT, random.Random(0))
