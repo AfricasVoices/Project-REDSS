@@ -8,8 +8,8 @@ RUN pip install pipenv
 WORKDIR /app
 
 # Install project dependencies.
-ADD Pipfile.lock /app
 ADD Pipfile /app
+ADD Pipfile.lock /app
 RUN pipenv sync
 
 # Make a directory for intermediate data

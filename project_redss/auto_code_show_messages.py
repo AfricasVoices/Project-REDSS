@@ -1,65 +1,82 @@
 import os
 import random
 import time
+from os import path
 
-from core_data_modules.cleaners import somali
+from core_data_modules.cleaners import somali, Codes
+from core_data_modules.cleaners.cleaning_utils import CleaningUtils
 from core_data_modules.traced_data import Metadata
-from core_data_modules.traced_data.io import TracedDataCodaIO, TracedDataCSVIO
+from core_data_modules.traced_data.io import TracedDataCodaIO, TracedDataCSVIO, TracedDataCoda2IO
 from core_data_modules.util import IOUtils
 from dateutil.parser import isoparse
 
 from project_redss.lib import ICRTools
 from project_redss.lib import MessageFilters
+from project_redss.lib.dataset_specification import DatasetSpecification
 
 
 class AutoCodeShowMessages(object):
-    VARIABLE_NAME = "S07E01_Humanitarian_Priorities"
-    FLOW_NAME = "esc4jmcna_activation"
-    PROJECT_START_DATE = isoparse("2018-09-09T00+03:00")
-    PROJECT_END_DATE = isoparse("2018-09-17T00+03:00")
-    SHOW_MESSAGE_KEY = "{} (Text) - {}".format(VARIABLE_NAME, FLOW_NAME)
+    RQA_KEYS = []
+    for plan in DatasetSpecification.RQA_CODING_PLANS:
+        RQA_KEYS.append(plan.raw_field)
+
+    SENT_ON_KEY = "sent_on"
+    NOISE_KEY = "noise"
+    PROJECT_START_DATE = isoparse("2010-01-01T00+03:00")
+    PROJECT_END_DATE = isoparse("2030-01-01T00+03:00")
     ICR_MESSAGES_COUNT = 200
 
     @classmethod
-    def auto_code_show_messages(cls, user, data, icr_output_path, coda_output_path, prev_coda_path):
+    def auto_code_show_messages(cls, user, data, icr_output_dir, coda_output_dir):
         # Filter out test messages sent by AVF.
-        data = MessageFilters.filter_test_messages(data)
+        # TODO: Re-enable before entering production mode
+        # data = MessageFilters.filter_test_messages(data)
 
-        # Filter for runs which contain a response to this week's question.
-        data = MessageFilters.filter_empty_messages(data, cls.SHOW_MESSAGE_KEY)
+        # Filter for runs which don't contain a response to any week's question
+        data = MessageFilters.filter_empty_messages(data, cls.RQA_KEYS)
 
-        time_key = "{} (Time) - {}".format(cls.VARIABLE_NAME, cls.FLOW_NAME)
-        data = MessageFilters.filter_time_range(data, time_key, cls.PROJECT_START_DATE, cls.PROJECT_END_DATE)
+        # Filter out runs sent outwith the project start and end dates
+        data = MessageFilters.filter_time_range(data, cls.SENT_ON_KEY, cls.PROJECT_START_DATE, cls.PROJECT_END_DATE)
 
         # Tag messages which are noise as being noise
         for td in data:
-            if somali.DemographicCleaner.is_noise(td[cls.SHOW_MESSAGE_KEY], min_length=20):
-                td.append_data({"noise": "true"}, Metadata(user, Metadata.get_call_location(), time.time()))
+            is_noise = True
+            for rqa_key in cls.RQA_KEYS:
+                if rqa_key in td and not somali.DemographicCleaner.is_noise(td[rqa_key], min_length=10):
+                    is_noise = False
+            td.append_data({cls.NOISE_KEY: is_noise}, Metadata(user, Metadata.get_call_location(), time.time()))
+
+        # Code data which is missing as missing
+        na_code = CleaningUtils.make_label("todo", "todo", Metadata.get_call_location(), "Auto-Missing",
+                                           control_code=Codes.TRUE_MISSING)
+        for td in data:
+            missing_dict = dict()
+            for plan in DatasetSpecification.RQA_CODING_PLANS:
+                if plan.raw_field not in td:
+                    missing_dict[plan.coded_field] = na_code
 
         # Filter for messages which aren't noise (in order to export to Coda and export for ICR)
         not_noise = MessageFilters.filter_noise(data, "noise", lambda x: x)
 
         # Output messages which aren't noise to Coda
-        IOUtils.ensure_dirs_exist_for_file(coda_output_path)
-        if os.path.exists(prev_coda_path):
-            # TODO: Modifying this line once the coding frame has been developed to include lots of Nones feels a bit
-            # TODO: cumbersome. We could instead modify export_traced_data_iterable_to_coda to support a prev_f argument
-            scheme_keys = {"Relevance": None, "Code 1": None, "Code 2": None, "Code 3": None, "Code 4": None}
-            with open(coda_output_path, "w") as f, open(prev_coda_path, "r") as prev_f:
-                TracedDataCodaIO.export_traced_data_iterable_to_coda_with_scheme(
-                    not_noise, cls.SHOW_MESSAGE_KEY, scheme_keys, f, prev_f=prev_f)
-        else:
-            with open(coda_output_path, "w") as f:
-                TracedDataCodaIO.export_traced_data_iterable_to_coda(not_noise, cls.SHOW_MESSAGE_KEY, f)
+        IOUtils.ensure_dirs_exist(coda_output_dir)
+        for plan in DatasetSpecification.RQA_CODING_PLANS:
+            TracedDataCoda2IO.add_message_ids(user, not_noise, plan.raw_field, plan.id_field)
+
+            output_path = path.join(coda_output_dir, "{}.json".format(plan.coda_name))
+            with open(output_path, "w") as f:
+                TracedDataCoda2IO.export_traced_data_iterable_to_coda_2(
+                    not_noise, plan.raw_field, cls.SENT_ON_KEY, plan.id_field, {}, f)
 
         # Randomly select some messages to export for ICR
         icr_messages = ICRTools.generate_sample_for_icr(not_noise, cls.ICR_MESSAGES_COUNT, random.Random(0))
 
         # Output ICR data to a CSV file
-        run_id_key = "{} (Run ID) - {}".format(cls.VARIABLE_NAME, cls.FLOW_NAME)
-        raw_text_key = "{} (Text) - {}".format(cls.VARIABLE_NAME, cls.FLOW_NAME)
-        IOUtils.ensure_dirs_exist_for_file(icr_output_path)
-        with open(icr_output_path, "w") as f:
-            TracedDataCSVIO.export_traced_data_iterable_to_csv(icr_messages, f, headers=[run_id_key, raw_text_key])
+        # run_id_key = "{} (Run ID) - {}".format(cls.VARIABLE_NAME, cls.FLOW_NAME)
+        # raw_text_key = "{} (Text) - {}".format(cls.VARIABLE_NAME, cls.FLOW_NAME)
+        # IOUtils.ensure_dirs_exist_for_file(icr_output_path)
+        with open(icr_output_dir, "w") as f:
+            f.write("")
+            # TracedDataCSVIO.export_traced_data_iterable_to_csv(icr_messages, f, headers=[run_id_key, raw_text_key])
 
         return data
