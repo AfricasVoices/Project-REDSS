@@ -3,8 +3,9 @@ import time
 from os import path
 
 from core_data_modules.cleaners import Codes, PhoneCleaner
+from core_data_modules.cleaners.cleaning_utils import CleaningUtils
 from core_data_modules.traced_data import Metadata
-from core_data_modules.traced_data.io import TracedDataCodaIO
+from core_data_modules.traced_data.io import TracedDataCodaIO, TracedDataCoda2IO
 from core_data_modules.util import IOUtils
 
 from project_redss.lib import Channels
@@ -13,50 +14,46 @@ from project_redss.lib.dataset_specification import DatasetSpecification
 
 class AutoCodeSurveys(object):
     @staticmethod
-    def auto_code_surveys(user, data, phone_uuid_table, coded_output_path, prev_coded_path):
-        # Mark missing entries in the raw data as true missing
+    def auto_code_surveys(user, data, phone_uuid_table, coda_output_dir):
         for td in data:
-            missing = dict()
-            for plan in DatasetSpecification.coding_plans:
-                if plan.source_field not in td:
-                    missing[plan.source_field] = Codes.TRUE_MISSING
-            td.append_data(missing, Metadata(user, Metadata.get_call_location(), time.time()))
+            coded_dict = dict()
+            for plan in DatasetSpecification.SURVEY_CODING_PLANS:
+                if plan.raw_field not in td:
+                    na_label = CleaningUtils.make_label(
+                        plan.code_translator.scheme_id, plan.code_translator.code_id(Codes.TRUE_MISSING),
+                        Metadata.get_call_location(), control_code=Codes.TRUE_MISSING
+                    )
+                    coded_dict[plan.coded_field] = na_label
+                else:
+                    coded_label = CleaningUtils.apply_cleaner_to_traced_data_iterable(
+                        user, data, plan.raw_field, plan.coded_field, plan.cleaner, plan.code_translator
+                    )
+                    coded_dict[plan.coded_field] = coded_label
+            td.append_data(coded_dict, Metadata(user, Metadata.get_call_location(), time.time()))
 
-        # Clean all responses
-        for td in data:
-            cleaned = dict()
-            for plan in DatasetSpecification.coding_plans:
-                if plan.cleaner is not None:
-                    cleaned[plan.auto_coded_field] = plan.cleaner(td[plan.source_field])
-            td.append_data(cleaned, Metadata(user, Metadata.get_call_location(), time.time()))
-
-        # Label each message with the operator of the sender
-        for td in data:
-            phone_number = phone_uuid_table.get_phone(td["avf_phone_id"])
-            operator = PhoneCleaner.clean_operator(phone_number)
-
-            td.append_data(
-                {"operator": operator},
-                Metadata(user, Metadata.get_call_location(), time.time())
-            )
-
-        # Label each message with channel keys
-        for td in data:
-            Channels.set_channel_keys(user, td)
+        # # Label each message with the operator of the sender
+        # for td in data:
+        #     phone_number = phone_uuid_table.get_phone(td["avf_phone_id"])
+        #     operator = PhoneCleaner.clean_operator(phone_number)
+        #
+        #     td.append_data(
+        #         {"operator": operator},
+        #         Metadata(user, Metadata.get_call_location(), time.time())
+        #     )
+        #
+        # # Label each message with channel keys
+        # for td in data:
+        #     Channels.set_channel_keys(user, td)
 
         # Output for manual verification + coding
-        IOUtils.ensure_dirs_exist(coded_output_path)
-        for plan in DatasetSpecification.coding_plans:
-            coded_output_file_path = path.join(coded_output_path, "{}.csv".format(plan.coda_name))
-            prev_coded_output_file_path = path.join(prev_coded_path, "{}_coded.csv".format(plan.coda_name))
+        IOUtils.ensure_dirs_exist(coda_output_dir)
+        for plan in DatasetSpecification.SURVEY_CODING_PLANS:
+            TracedDataCoda2IO.add_message_ids(user, data, plan.raw_field, plan.id_field)
 
-            if os.path.exists(prev_coded_output_file_path):
-                with open(coded_output_file_path, "w") as f, open(prev_coded_output_file_path, "r") as prev_f:
-                    TracedDataCodaIO.export_traced_data_iterable_to_coda_with_scheme(
-                        data, plan.source_field, {plan.coda_name: plan.manually_coded_field}, f, prev_f)
-            else:
-                with open(coded_output_file_path, "w") as f:
-                    TracedDataCodaIO.export_traced_data_iterable_to_coda_with_scheme(
-                        data, plan.source_field, {plan.coda_name: plan.manually_coded_field}, f)
+            output_path = path.join(coda_output_dir, "{}.json".format(plan.coda_name))
+            with open(output_path, "w") as f:
+                TracedDataCoda2IO.export_traced_data_iterable_to_coda_2(
+                    data, plan.raw_field, plan.time_field, plan.id_field, {plan.coded_field}, f
+                )
 
         return data
