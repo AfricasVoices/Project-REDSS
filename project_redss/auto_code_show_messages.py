@@ -48,16 +48,19 @@ class AutoCodeShowMessages(object):
 
         # Code data which is missing as missing
         # TODO: Set scheme/code ids once we have a code scheme for these
-        na_code = CleaningUtils.make_label("todo", "todo", Metadata.get_call_location(), "Auto-Missing",
-                                           control_code=Codes.TRUE_MISSING)
         for td in data:
             missing_dict = dict()
             for plan in DatasetSpecification.RQA_CODING_PLANS:
                 if plan.raw_field not in td:
-                    missing_dict[plan.coded_field] = na_code
+                    na_label = CleaningUtils.make_label(
+                        plan.code_translator.scheme_id, plan.code_translator.code_id(Codes.TRUE_MISSING),
+                        Metadata.get_call_location(), control_code=Codes.TRUE_MISSING
+                    )
+                    missing_dict[plan.coded_field] = na_label
+            td.append_data(missing_dict, Metadata(user, Metadata.get_call_location(), time.time()))
 
         # Filter for messages which aren't noise (in order to export to Coda and export for ICR)
-        not_noise = MessageFilters.filter_noise(data, "noise", lambda x: x)
+        not_noise = MessageFilters.filter_noise(data, cls.NOISE_KEY, lambda x: x)
 
         # Output messages which aren't noise to Coda
         IOUtils.ensure_dirs_exist(coda_output_dir)
