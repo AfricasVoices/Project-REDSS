@@ -56,7 +56,7 @@ class AutoCodeShowMessages(object):
                         plan.code_translator.scheme_id, plan.code_translator.code_id(Codes.TRUE_MISSING),
                         Metadata.get_call_location(), control_code=Codes.TRUE_MISSING
                     )
-                    missing_dict[plan.coded_field] = na_label.to_dict()
+                    missing_dict[plan.coded_field] = [na_label.to_dict()]
             td.append_data(missing_dict, Metadata(user, Metadata.get_call_location(), time.time()))
 
         # Filter for messages which aren't noise (in order to export to Coda and export for ICR)
