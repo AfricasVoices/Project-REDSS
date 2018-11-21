@@ -47,9 +47,9 @@ if __name__ == "__main__":
                         help="Path to a JSON file to write TracedData for final analysis file to")
     parser.add_argument("interface_output_dir", metavar="interface-output-dir",
                         help="Path to a directory to write The Interface files to")
-    parser.add_argument("icr_output_path", metavar="icr-output-path",
-                        help="Path to a CSV file to write 200 messages and run ids to, for use in inter-coder "
-                             "reliability evaluation")
+    parser.add_argument("icr_output_dir", metavar="icr-output-dir",
+                        help="Directory to write CSV files to, each containing 200 messages and message ids for use " 
+                             "in inter-code reliability evaluation"),
     parser.add_argument("coded_dir_path", metavar="coded-dir-path",
                         help="Directory to write coded Coda files to")
     parser.add_argument("csv_by_message_output_path", metavar="csv-by-message-output-path",
@@ -72,7 +72,7 @@ if __name__ == "__main__":
 
     json_output_path = args.json_output_path
     interface_output_dir = args.interface_output_dir
-    icr_output_path = args.icr_output_path
+    icr_output_dir = args.icr_output_dir
     coded_dir_path = args.coded_dir_path
     csv_by_message_output_path = args.csv_by_message_output_path
     csv_by_individual_output_path = args.csv_by_individual_output_path
@@ -108,7 +108,7 @@ if __name__ == "__main__":
     data = TranslateRapidProKeys.translate_rapid_pro_keys(user, data)
 
     print("Auto Coding Messages...")
-    data = AutoCodeShowMessages.auto_code_show_messages(user, data, icr_output_path, coded_dir_path)
+    data = AutoCodeShowMessages.auto_code_show_messages(user, data, icr_output_dir, coded_dir_path)
 
     # print("Auto Coding Surveys...")
     # data = AutoCodeSurveys.auto_code_surveys(user, data, phone_number_uuid_table, coded_dir_path, prev_coded_dir_path)

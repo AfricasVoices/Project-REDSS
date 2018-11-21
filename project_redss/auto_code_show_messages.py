@@ -1,4 +1,3 @@
-import os
 import random
 import time
 from os import path
@@ -6,7 +5,7 @@ from os import path
 from core_data_modules.cleaners import somali, Codes
 from core_data_modules.cleaners.cleaning_utils import CleaningUtils
 from core_data_modules.traced_data import Metadata
-from core_data_modules.traced_data.io import TracedDataCodaIO, TracedDataCSVIO, TracedDataCoda2IO
+from core_data_modules.traced_data.io import TracedDataCSVIO, TracedDataCoda2IO
 from core_data_modules.util import IOUtils
 from dateutil.parser import isoparse
 
@@ -72,16 +71,16 @@ class AutoCodeShowMessages(object):
                     not_noise, plan.raw_field, cls.SENT_ON_KEY, plan.id_field, {}, f
                 )
 
-        # Randomly select some messages to export for ICR
-        # TODO: ICR
-        icr_messages = ICRTools.generate_sample_for_icr(not_noise, cls.ICR_MESSAGES_COUNT, random.Random(0))
+        # Output messages for ICR
+        IOUtils.ensure_dirs_exist(icr_output_dir)
+        for plan in DatasetSpecification.RQA_CODING_PLANS:
+            possible_messages = [msg for msg in not_noise if "ControlCode" not in msg.get(plan.coded_field, [{}])[0]]
+            icr_messages = ICRTools.generate_sample_for_icr(possible_messages, cls.ICR_MESSAGES_COUNT, random.Random(0))
 
-        # Output ICR data to a CSV file
-        # run_id_key = "{} (Run ID) - {}".format(cls.VARIABLE_NAME, cls.FLOW_NAME)
-        # raw_text_key = "{} (Text) - {}".format(cls.VARIABLE_NAME, cls.FLOW_NAME)
-        # IOUtils.ensure_dirs_exist_for_file(icr_output_path)
-        with open(icr_output_dir, "w") as f:
-            f.write("")
-            # TracedDataCSVIO.export_traced_data_iterable_to_csv(icr_messages, f, headers=[run_id_key, raw_text_key])
+            icr_output_path = path.join(icr_output_dir, f"{plan.coda_filename}.csv")
+            with open(icr_output_path, "w") as f:
+                TracedDataCSVIO.export_traced_data_iterable_to_csv(
+                    icr_messages, f, headers=[plan.run_id_field, plan.raw_field]
+                )
 
         return data
