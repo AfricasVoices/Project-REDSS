@@ -22,8 +22,8 @@ class AutoCodeShowMessages(object):
 
     SENT_ON_KEY = "sent_on"
     NOISE_KEY = "noise"
-    PROJECT_START_DATE = isoparse("2010-01-01T00+03:00")
-    PROJECT_END_DATE = isoparse("2030-01-01T00+03:00")
+    PROJECT_START_DATE = isoparse("2010-01-01T00+03:00")  # TODO: Set when known
+    PROJECT_END_DATE = isoparse("2030-01-01T00+03:00")  # TODO: Set when known
     ICR_MESSAGES_COUNT = 200
 
     @classmethod
@@ -47,6 +47,7 @@ class AutoCodeShowMessages(object):
             td.append_data({cls.NOISE_KEY: is_noise}, Metadata(user, Metadata.get_call_location(), time.time()))
 
         # Code data which is missing as missing
+        # TODO: Set scheme/code ids once we have a code scheme for these
         na_code = CleaningUtils.make_label("todo", "todo", Metadata.get_call_location(), "Auto-Missing",
                                            control_code=Codes.TRUE_MISSING)
         for td in data:
@@ -70,6 +71,7 @@ class AutoCodeShowMessages(object):
                 )
 
         # Randomly select some messages to export for ICR
+        # TODO: ICR
         icr_messages = ICRTools.generate_sample_for_icr(not_noise, cls.ICR_MESSAGES_COUNT, random.Random(0))
 
         # Output ICR data to a CSV file
