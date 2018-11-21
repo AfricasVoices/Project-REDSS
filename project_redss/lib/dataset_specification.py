@@ -1,7 +1,7 @@
 # Note: This module project-specific and not yet suitable for migration to Core
 from core_data_modules.cleaners import somali
 
-from project_redss.redss_code_translators import *
+from project_redss.lib.redss_code_translators import *
 
 
 class CodingPlan(object):
