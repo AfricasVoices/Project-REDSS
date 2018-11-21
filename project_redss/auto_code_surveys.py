@@ -16,20 +16,20 @@ class AutoCodeSurveys(object):
     @staticmethod
     def auto_code_surveys(user, data, phone_uuid_table, coda_output_dir):
         for td in data:
-            coded_dict = dict()
+            labels_dict = dict()
             for plan in DatasetSpecification.SURVEY_CODING_PLANS:
                 if plan.raw_field not in td:
                     na_label = CleaningUtils.make_label(
                         plan.code_translator.scheme_id, plan.code_translator.code_id(Codes.TRUE_MISSING),
                         Metadata.get_call_location(), control_code=Codes.TRUE_MISSING
                     )
-                    coded_dict[plan.coded_field] = na_label
+                    labels_dict[plan.coded_field] = na_label
                 else:
                     coded_label = CleaningUtils.apply_cleaner_to_traced_data_iterable(
                         user, data, plan.raw_field, plan.coded_field, plan.cleaner, plan.code_translator
                     )
-                    coded_dict[plan.coded_field] = coded_label
-            td.append_data(coded_dict, Metadata(user, Metadata.get_call_location(), time.time()))
+                    labels_dict[plan.coded_field] = coded_label
+            td.append_data(labels_dict, Metadata(user, Metadata.get_call_location(), time.time()))
 
         # # Label each message with the operator of the sender
         # for td in data:
