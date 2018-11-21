@@ -42,7 +42,7 @@ class AutoCodeShowMessages(object):
         for td in data:
             is_noise = True
             for rqa_key in cls.RQA_KEYS:
-                if rqa_key in td and not somali.DemographicCleaner.is_noise(td[rqa_key], min_length=1):
+                if rqa_key in td and not somali.DemographicCleaner.is_noise(td[rqa_key], min_length=10):
                     is_noise = False
             td.append_data({cls.NOISE_KEY: is_noise}, Metadata(user, Metadata.get_call_location(), time.time()))
 
