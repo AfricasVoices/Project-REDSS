@@ -17,28 +17,26 @@ from project_redss.lib.dataset_specification import DatasetSpecification
 
 
 class ApplyManualCodes(object):
-    VARIABLE_NAME = "S07E01_Humanitarian_Priorities"
-    FLOW_NAME = "esc4jmcna_activation"
-
     @classmethod
     def apply_manual_codes(cls, user, data, coda_input_dir, interface_output_dir):
-        # merge manually coded radio show files into the cleaned dataset
-        for plan in DatasetSpecification.RQA_CODING_PLANS:
-            nr_label = CleaningUtils.make_label(
-                plan.code_translator.scheme_id, plan.code_translator.code_id(Codes.NOT_REVIEWED),
-                Metadata.get_call_location(), control_code=Codes.NOT_REVIEWED
-            )
-
-            coda_input_path = path.join(coda_input_dir, "{}.json".format(plan.coda_name))
-            if path.exists(coda_input_path):
-                with open(coda_input_path, "r") as f:
-                    TracedDataCoda2IO.import_coda_2_to_traced_data_iterable_multi_coded(
-                        user, data, plan.id_field, {plan.coded_field: plan.code_translator.scheme_id}, nr_label, f)
-            else:
-                # Read from simulated empty file
-                TracedDataCoda2IO.import_coda_2_to_traced_data_iterable_multi_coded(
-                    user, data, plan.id_field, {plan.coded_field: plan.code_translator.scheme_id}, nr_label,
-                    io.StringIO("[]"))
+        # Merge manually coded radio show files into the cleaned dataset
+        # TODO: This is already migrated for Coda 2. Enable once a decision on noise has been made
+        # for plan in DatasetSpecification.RQA_CODING_PLANS:
+        #     nr_label = CleaningUtils.make_label(
+        #         plan.code_translator.scheme_id, plan.code_translator.code_id(Codes.NOT_REVIEWED),
+        #         Metadata.get_call_location(), control_code=Codes.NOT_REVIEWED
+        #     )
+        #
+        #     coda_input_path = path.join(coda_input_dir, "{}.json".format(plan.coda_filename))
+        #     if path.exists(coda_input_path):
+        #         with open(coda_input_path, "r") as f:
+        #             TracedDataCoda2IO.import_coda_2_to_traced_data_iterable_multi_coded(
+        #                 user, data, plan.id_field, {plan.coded_field: plan.code_translator.scheme_id}, nr_label, f)
+        #     else:
+        #         # Read from simulated empty file
+        #         TracedDataCoda2IO.import_coda_2_to_traced_data_iterable_multi_coded(
+        #             user, data, plan.id_field, {plan.coded_field: plan.code_translator.scheme_id}, nr_label,
+        #             io.StringIO("[]"))
 
         # Merge manually coded survey files into the cleaned dataset
         for plan in DatasetSpecification.SURVEY_CODING_PLANS:
@@ -47,7 +45,7 @@ class ApplyManualCodes(object):
                 Metadata.get_call_location(), control_code=Codes.NOT_REVIEWED
             )
 
-            coda_input_path = path.join(coda_input_dir, "{}.json".format(plan.coda_name))
+            coda_input_path = path.join(coda_input_dir, "{}.json".format(plan.coda_filename))
             if path.exists(coda_input_path):
                 with open(coda_input_path, "r") as f:
                     TracedDataCoda2IO.import_coda_2_to_traced_data_iterable(
