@@ -9,7 +9,7 @@ from core_data_modules.traced_data.io import TracedDataCodaIO, TracedDataCoda2IO
 from core_data_modules.util import IOUtils
 
 from project_redss.lib import Channels
-from project_redss.lib.dataset_specification import DatasetSpecification
+from project_redss.lib.dataset_specification import DatasetSpecification, OperatorTranslator
 
 
 class AutoCodeSurveys(object):
@@ -32,16 +32,11 @@ class AutoCodeSurveys(object):
             CleaningUtils.apply_cleaner_to_traced_data_iterable(user, data, plan.raw_field, plan.coded_field,
                                                                 plan.cleaner, plan.code_translator)
 
-        # # Label each message with the operator of the sender
-        # for td in data:
-        #     phone_number = phone_uuid_table.get_phone(td["avf_phone_id"])
-        #     operator = PhoneCleaner.clean_operator(phone_number)
-        #
-        #     td.append_data(
-        #         {"operator": operator},
-        #         Metadata(user, Metadata.get_call_location(), time.time())
-        #     )
-        #
+        # Set operator from phone number
+        operator_cleaner = lambda phone_id: PhoneCleaner.clean_operator(phone_uuid_table.get_phone(phone_id))
+        CleaningUtils.apply_cleaner_to_traced_data_iterable(user, data, "avf_phone_id", "operator_coded",
+                                                            operator_cleaner, OperatorTranslator)
+
         # # Label each message with channel keys
         # for td in data:
         #     Channels.set_channel_keys(user, td)
