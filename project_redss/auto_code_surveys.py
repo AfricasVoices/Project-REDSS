@@ -15,21 +15,22 @@ from project_redss.lib.dataset_specification import DatasetSpecification
 class AutoCodeSurveys(object):
     @staticmethod
     def auto_code_surveys(user, data, phone_uuid_table, coda_output_dir):
+        # Label missing data
         for td in data:
-            labels_dict = dict()
+            missing_dict = dict()
             for plan in DatasetSpecification.SURVEY_CODING_PLANS:
                 if plan.raw_field not in td:
                     na_label = CleaningUtils.make_label(
                         plan.code_translator.scheme_id, plan.code_translator.code_id(Codes.TRUE_MISSING),
                         Metadata.get_call_location(), control_code=Codes.TRUE_MISSING
                     )
-                    labels_dict[plan.coded_field] = na_label
-                else:
-                    coded_label = CleaningUtils.apply_cleaner_to_traced_data_iterable(
-                        user, data, plan.raw_field, plan.coded_field, plan.cleaner, plan.code_translator
-                    )
-                    labels_dict[plan.coded_field] = coded_label
-            td.append_data(labels_dict, Metadata(user, Metadata.get_call_location(), time.time()))
+                    missing_dict[plan.coded_field] = na_label.to_dict()
+            td.append_data(missing_dict, Metadata(user, Metadata.get_call_location(), time.time()))
+
+        # Auto-code remaining data
+        for plan in DatasetSpecification.SURVEY_CODING_PLANS:
+            CleaningUtils.apply_cleaner_to_traced_data_iterable(user, data, plan.raw_field, plan.coded_field,
+                                                                plan.cleaner, plan.code_translator)
 
         # # Label each message with the operator of the sender
         # for td in data:

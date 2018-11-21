@@ -51,7 +51,7 @@ class DatasetSpecification(object):
         CodingPlan(raw_field="gender_raw",
                    coded_field="gender_coded",
                    time_field="gender_time",
-                   coda_name="Gender",
+                   coda_name="gender",
                    cleaner=somali.DemographicCleaner.clean_gender,
                    code_translator=GenderTranslator)
     ]

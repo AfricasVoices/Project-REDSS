@@ -46,7 +46,7 @@ class AutoCodeShowMessages(object):
                     is_noise = False
             td.append_data({cls.NOISE_KEY: is_noise}, Metadata(user, Metadata.get_call_location(), time.time()))
 
-        # Code data which is missing as missing
+        # Label missing data
         # TODO: Set scheme/code ids once we have a code scheme for these
         for td in data:
             missing_dict = dict()
