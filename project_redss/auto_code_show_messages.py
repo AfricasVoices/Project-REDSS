@@ -66,7 +66,7 @@ class AutoCodeShowMessages(object):
         for plan in DatasetSpecification.RQA_CODING_PLANS:
             TracedDataCoda2IO.add_message_ids(user, not_noise, plan.raw_field, plan.id_field)
 
-            output_path = path.join(coda_output_dir, "{}.json".format(plan.coda_name))
+            output_path = path.join(coda_output_dir, "{}.json".format(plan.coda_filename))
             with open(output_path, "w") as f:
                 TracedDataCoda2IO.export_traced_data_iterable_to_coda_2(
                     not_noise, plan.raw_field, cls.SENT_ON_KEY, plan.id_field, {}, f
