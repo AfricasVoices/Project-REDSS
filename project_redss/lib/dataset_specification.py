@@ -5,11 +5,10 @@ from project_redss.lib.redss_code_translators import *
 
 
 class CodingPlan(object):
-    def __init__(self, raw_field, coded_field, coda_name, cleaner=None, code_translator=None,
-                 time_field=None):
+    def __init__(self, raw_field, coded_field, coda_filename, cleaner=None, code_translator=None, time_field=None):
         self.raw_field = raw_field
         self.coded_field = coded_field
-        self.coda_name = coda_name
+        self.coda_filename = coda_filename
         self.cleaner = cleaner
         self.code_translator = code_translator
         self.time_field = time_field
@@ -21,28 +20,28 @@ class DatasetSpecification(object):
         CodingPlan(raw_field="rqa_s01e01_raw",
                    coded_field="rqa_s01_e01_coded",
                    time_field="sent_on",
-                   coda_name="s01e01",
+                   coda_filename="s01e01",
                    cleaner=None,
                    code_translator=S01E01Translator),
 
         CodingPlan(raw_field="rqa_s01e02_raw",
                    coded_field="rqa_s01_e02_coded",
                    time_field="sent_on",
-                   coda_name="s01e02",
+                   coda_filename="s01e02",
                    cleaner=None,
                    code_translator=S01E01Translator),  # TODO: Use S01E02 when available
 
         CodingPlan(raw_field="rqa_s01e02_raw",
                    coded_field="rqa_s01_e02_coded",
                    time_field="sent_on",
-                   coda_name="s01e03",
+                   coda_filename="s01e03",
                    cleaner=None,
                    code_translator=S01E01Translator),  # TODO: Use S01E03 when available
 
         CodingPlan(raw_field="rqa_s01e02_raw",
                    coded_field="rqa_s01_e02_coded",
                    time_field="sent_on",
-                   coda_name="s01e04",
+                   coda_filename="s01e04",
                    cleaner=None,
                    code_translator=S01E01Translator)  # TODO: Use S01E04 when available
     ]
@@ -51,7 +50,7 @@ class DatasetSpecification(object):
         CodingPlan(raw_field="gender_raw",
                    coded_field="gender_coded",
                    time_field="gender_time",
-                   coda_name="gender",
+                   coda_filename="gender",
                    cleaner=somali.DemographicCleaner.clean_gender,
                    code_translator=GenderTranslator)
     ]
