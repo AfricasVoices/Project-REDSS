@@ -13,8 +13,10 @@ from project_redss.lib.dataset_specification import DatasetSpecification, Operat
 
 
 class AutoCodeSurveys(object):
-    @staticmethod
-    def auto_code_surveys(user, data, phone_uuid_table, coda_output_dir):
+    SENT_ON_KEY = "sent_on"
+
+    @classmethod
+    def auto_code_surveys(cls, user, data, phone_uuid_table, coda_output_dir):
         # Label missing data
         for td in data:
             missing_dict = dict()
@@ -34,12 +36,11 @@ class AutoCodeSurveys(object):
 
         # Set operator from phone number
         operator_cleaner = lambda phone_id: PhoneCleaner.clean_operator(phone_uuid_table.get_phone(phone_id))
-        CleaningUtils.apply_cleaner_to_traced_data_iterable(user, data, "avf_phone_id", "operator_coded",
+        CleaningUtils.apply_cleaner_to_traced_data_iterable(user, data, "uid", "operator_coded",
                                                             operator_cleaner, OperatorTranslator)
 
-        # # Label each message with channel keys
-        # for td in data:
-        #     Channels.set_channel_keys(user, td)
+        # Label each message with channel keys
+        Channels.set_channel_keys(user, data, cls.SENT_ON_KEY)
 
         # Output for manual verification + coding
         IOUtils.ensure_dirs_exist(coda_output_dir)
