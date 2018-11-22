@@ -31,15 +31,15 @@ class DatasetSpecification(object):
                    cleaner=None,
                    code_translator=S01E01Translator),  # TODO: Use S01E02 when available
 
-        CodingPlan(raw_field="rqa_s01e02_raw",
-                   coded_field="rqa_s01_e02_coded",
+        CodingPlan(raw_field="rqa_s01e03_raw",
+                   coded_field="rqa_s01_e03_coded",
                    time_field="sent_on",
                    coda_filename="s01e03",
                    cleaner=None,
                    code_translator=S01E01Translator),  # TODO: Use S01E03 when available
 
-        CodingPlan(raw_field="rqa_s01e02_raw",
-                   coded_field="rqa_s01_e02_coded",
+        CodingPlan(raw_field="rqa_s01e04_raw",
+                   coded_field="rqa_s01_e04_coded",
                    time_field="sent_on",
                    coda_filename="s01e04",
                    cleaner=None,
