@@ -21,7 +21,7 @@ from project_redss.lib.redss_schemes import CodeSchemes
 
 class ApplyManualCodes(object):
     @classmethod
-    def apply_manual_codes(cls, user, data, coda_input_dir, interface_output_dir):
+    def apply_manual_codes(cls, user, data, coda_input_dir):
         # Merge manually coded radio show files into the cleaned dataset
         for plan in DatasetSpecification.RQA_CODING_PLANS:
             rqa_messages = [td for td in data if plan.raw_field in td]
