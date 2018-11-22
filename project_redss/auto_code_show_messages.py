@@ -74,8 +74,14 @@ class AutoCodeShowMessages(object):
         # Output messages for ICR
         IOUtils.ensure_dirs_exist(icr_output_dir)
         for plan in DatasetSpecification.RQA_CODING_PLANS:
-            possible_messages = [msg for msg in not_noise if "ControlCode" not in msg.get(plan.coded_field, [{}])[0]]
-            icr_messages = ICRTools.generate_sample_for_icr(possible_messages, cls.ICR_MESSAGES_COUNT, random.Random(0))
+            rqa_messages = []
+            for td in not_noise:
+                # This test works because the only codes which have been applied at this point are TRUE_MISSINGs.
+                # If any other coding is done above, this test will need to change.
+                if plan.coded_field not in td:
+                    rqa_messages.append(td)
+
+            icr_messages = ICRTools.generate_sample_for_icr(rqa_messages, cls.ICR_MESSAGES_COUNT, random.Random(0))
 
             icr_output_path = path.join(icr_output_dir, f"{plan.coda_filename}.csv")
             with open(icr_output_path, "w") as f:
