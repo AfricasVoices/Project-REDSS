@@ -32,6 +32,8 @@ class AutoCodeSurveys(object):
             CleaningUtils.apply_cleaner_to_traced_data_iterable(user, data, plan.raw_field, plan.coded_field,
                                                                 plan.cleaner, plan.code_translator)
 
+        # TODO: If mogadishu_sub_district isn't NC then make sure that district _is_ NC?
+
         # TODO: Auto-code operator + channels
         # # Label each message with the operator of the sender
         # for td in data:

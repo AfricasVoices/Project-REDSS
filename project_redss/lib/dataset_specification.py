@@ -52,5 +52,19 @@ class DatasetSpecification(object):
                    time_field="gender_time",
                    coda_filename="gender",
                    cleaner=somali.DemographicCleaner.clean_gender,
-                   code_translator=GenderTranslator)
+                   code_translator=GenderTranslator),
+
+        CodingPlan(raw_field="mogadishu_sub_district_raw",
+                   coded_field="mogadishu_sub_district_coded",
+                   time_field="mogadishu_sub_district_time",
+                   coda_filename="mogadishu_sub_district",
+                   cleaner=somali.DemographicCleaner.clean_mogadishu_sub_district,
+                   code_translator=None),
+
+        CodingPlan(raw_field="mogadishu_sub_district_raw",
+                   coded_field="district_coded",
+                   time_field="mogadishu_sub_district_time",
+                   coda_filename="district",
+                   cleaner=somali.DemographicCleaner.clean_somalia_district,
+                   code_translator=None)
     ]
