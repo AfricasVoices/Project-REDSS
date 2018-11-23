@@ -34,7 +34,7 @@ class AutoCodeSurveys(object):
 
         # For any locations where the cleaners assigned a code to a sub district, set the district code to NC
         # (this is because only one column should have a value set in Coda)
-        DistrictTranslator = None  # TODO: Set once the scheme is approved
+        DistrictTranslator = None  # TODO: Change once the district scheme is approved
         for td in data:
             if td["mogadishu_sub_district_coded"]["ControlCode"] != Codes.NOT_CODED:
                 nc_label = CleaningUtils.make_label(
