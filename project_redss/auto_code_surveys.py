@@ -63,7 +63,7 @@ class AutoCodeSurveys(object):
         for plan in DatasetSpecification.SURVEY_CODING_PLANS:
             TracedDataCoda2IO.add_message_ids(user, data, plan.raw_field, plan.id_field)
 
-            output_path = path.join(coda_output_dir, "{}.json".format(plan.coda_filename))
+            output_path = path.join(coda_output_dir, f"{plan.coda_filename}.json")
             with open(output_path, "w") as f:
                 TracedDataCoda2IO.export_traced_data_iterable_to_coda_2(
                     data, plan.raw_field, plan.time_field, plan.id_field, {plan.coded_field}, f
