@@ -1,5 +1,7 @@
 import argparse
+import time
 
+from core_data_modules.traced_data import Metadata
 from core_data_modules.traced_data.io import TracedDataJsonIO
 from core_data_modules.util import IOUtils, PhoneNumberUuidTable
 
@@ -8,6 +10,8 @@ from project_redss import ApplyManualCodes
 from project_redss import AutoCodeShowMessages
 from project_redss import AutoCodeSurveys
 from project_redss import CombineRawDatasets
+from project_redss.lib import AnalysisKeys
+from project_redss.translate_rapid_pro_keys import TranslateRapidProKeys
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Runs the post-fetch phase of the REDSS pipeline")
@@ -100,19 +104,20 @@ if __name__ == "__main__":
     print("Combining Datasets...")
     data = CombineRawDatasets.combine_raw_datasets(user, messages_datasets, [demographics, evaluation])
 
+    print("Translating Rapid Pro Keys...")
+    data = TranslateRapidProKeys.translate_rapid_pro_keys(user, data)
+
     print("Auto Coding Messages...")
-    prev_coda_path = "{}/esc4jmcna_activation.csv".format(prev_coded_dir_path)
-    coda_output_path = "{}/esc4jmcna_activation.csv".format(coded_dir_path)
-    data = AutoCodeShowMessages.auto_code_show_messages(user, data, icr_output_path, coda_output_path, prev_coda_path)
+    data = AutoCodeShowMessages.auto_code_show_messages(user, data, icr_output_path, coded_dir_path)
 
-    print("Auto Coding Surveys...")
-    data = AutoCodeSurveys.auto_code_surveys(user, data, phone_number_uuid_table, coded_dir_path, prev_coded_dir_path)
-
-    print("Applying Manual Codes from Coda...")
-    data = ApplyManualCodes.apply_manual_codes(user, data, prev_coded_dir_path, interface_output_dir)
-
-    print("Generating Analysis CSVs...")
-    data = AnalysisFile.generate(user, data, csv_by_message_output_path, csv_by_individual_output_path)
+    # print("Auto Coding Surveys...")
+    # data = AutoCodeSurveys.auto_code_surveys(user, data, phone_number_uuid_table, coded_dir_path, prev_coded_dir_path)
+    #
+    # print("Applying Manual Codes from Coda...")
+    # data = ApplyManualCodes.apply_manual_codes(user, data, prev_coded_dir_path, interface_output_dir)
+    #
+    # print("Generating Analysis CSVs...")
+    # data = AnalysisFile.generate(user, data, csv_by_message_output_path, csv_by_individual_output_path)
 
     # Write json output
     print("Writing TracedData to file...")
