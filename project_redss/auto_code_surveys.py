@@ -32,7 +32,16 @@ class AutoCodeSurveys(object):
             CleaningUtils.apply_cleaner_to_traced_data_iterable(user, data, plan.raw_field, plan.coded_field,
                                                                 plan.cleaner, plan.code_translator)
 
-        # TODO: If mogadishu_sub_district isn't NC then make sure that district _is_ NC?
+        # For any locations where the cleaners assigned a code to a sub district, set the district code to NC
+        # (this is because only one column should have a value set in Coda)
+        DistrictTranslator = None  # TODO: Set once the scheme is approved
+        for td in data:
+            if td["mogadishu_sub_district_coded"]["ControlCode"] != Codes.NOT_CODED:
+                nc_code = CleaningUtils.make_label(
+                    DistrictTranslator.scheme_id, DistrictTranslator.code_translator.code_id(Codes.NOT_CODED),
+                    Metadata.get_call_location(), control_code=Codes.NOT_CODED
+                )
+                td.append_data({"district_coded": nc_code}, Metadata(user, Metadata.get_call_location(), time.time()))
 
         # TODO: Auto-code operator + channels
         # # Label each message with the operator of the sender
