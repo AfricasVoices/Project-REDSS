@@ -8,16 +8,24 @@
       "CodeType": "Normal",
       "DisplayText": "male",
       "NumericValue": 1,
+      "StringValue": "male",
       "Shortcut": "m",
-      "VisibleInCoda": true
+      "VisibleInCoda": true,
+      "MatchValues" : [
+        "male"
+      ]
     },
     {
       "CodeID": "code-86a4602c",
       "CodeType": "Normal",
       "DisplayText": "female",
       "NumericValue": 2,
+      "StringValue" : "female",
       "Shortcut": "f",
-      "VisibleInCoda": true
+      "VisibleInCoda": true,
+      "MatchValues" : [
+        "female"
+      ]
     },
     {
       "CodeID": "code-NA-f93d3eb7",
@@ -25,6 +33,7 @@
       "ControlCode": "NA",
       "DisplayText": "NA (missing)",
       "NumericValue": -10,
+      "StringValue": "NA",
       "VisibleInCoda": false
     },
     {
@@ -33,6 +42,7 @@
       "ControlCode": "NS",
       "DisplayText": "NS (skip)",
       "NumericValue": -20,
+      "StringValue": "NS",
       "VisibleInCoda": false
     },
     {
@@ -41,6 +51,7 @@
       "ControlCode": "NC",
       "DisplayText": "NC (not coded)",
       "NumericValue": -30,
+      "StringValue": "NC",
       "VisibleInCoda": true
     },
     {
@@ -49,6 +60,7 @@
       "ControlCode": "NR",
       "DisplayText": "NR (not reviewed)",
       "NumericValue": -40,
+      "StringValue": "NR",
       "VisibleInCoda": false
     },
     {
@@ -57,6 +69,7 @@
       "ControlCode": "NIC",
       "DisplayText": "NIC (not internally consistent)",
       "NumericValue": -50,
+      "StringValue": "NIC",
       "VisibleInCoda": false
     },
     {
@@ -65,6 +78,7 @@
       "ControlCode": "STOP",
       "DisplayText": "STOP",
       "NumericValue": -90,
+      "StringValue": "STOP",
       "VisibleInCoda": true
     },
     {
@@ -73,6 +87,7 @@
       "ControlCode": "WS",
       "DisplayText": "WS (wrong scheme)",
       "NumericValue": -100,
+      "StringValue": "WS",
       "VisibleInCoda": true
     }
   ]
