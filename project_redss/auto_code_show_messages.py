@@ -52,8 +52,8 @@ class AutoCodeShowMessages(object):
             for plan in DatasetSpecification.RQA_CODING_PLANS:
                 if plan.raw_field not in td:
                     na_label = CleaningUtils.make_label(
-                        plan.code_translator.scheme_id, plan.code_translator.code_id(Codes.TRUE_MISSING),
-                        Metadata.get_call_location(), control_code=Codes.TRUE_MISSING
+                        plan.code_scheme, plan.code_scheme.get_code_with_control_code(Codes.TRUE_MISSING),
+                        Metadata.get_call_location()
                     )
                     missing_dict[plan.coded_field] = [na_label.to_dict()]
             td.append_data(missing_dict, Metadata(user, Metadata.get_call_location(), time.time()))

@@ -10,6 +10,7 @@ from core_data_modules.util import IOUtils
 
 from project_redss.lib import Channels
 from project_redss.lib.dataset_specification import DatasetSpecification
+from project_redss.lib.redss_schemes import CodeSchemes
 
 
 class AutoCodeSurveys(object):
@@ -21,8 +22,8 @@ class AutoCodeSurveys(object):
             for plan in DatasetSpecification.SURVEY_CODING_PLANS:
                 if plan.raw_field not in td:
                     na_label = CleaningUtils.make_label(
-                        plan.code_translator.scheme_id, plan.code_translator.code_id(Codes.TRUE_MISSING),
-                        Metadata.get_call_location(), control_code=Codes.TRUE_MISSING
+                        plan.code_scheme, plan.code_scheme.get_code_with_control_code(Codes.TRUE_MISSING),
+                        Metadata.get_call_location()
                     )
                     missing_dict[plan.coded_field] = na_label.to_dict()
             td.append_data(missing_dict, Metadata(user, Metadata.get_call_location(), time.time()))
@@ -30,18 +31,20 @@ class AutoCodeSurveys(object):
         # Auto-code remaining data
         for plan in DatasetSpecification.SURVEY_CODING_PLANS:
             CleaningUtils.apply_cleaner_to_traced_data_iterable(user, data, plan.raw_field, plan.coded_field,
-                                                                plan.cleaner, plan.code_translator)
+                                                                plan.cleaner, plan.code_scheme)
 
         # For any locations where the cleaners assigned a code to a sub district, set the district code to NC
         # (this is because only one column should have a value set in Coda)
-        DistrictTranslator = None  # TODO: Change once the district scheme is approved
         for td in data:
-            if td["mogadishu_sub_district_coded"]["ControlCode"] != Codes.NOT_CODED:
+            mogadishu_code_id = td["mogadishu_sub_district_coded"]["CodeID"]
+            if CodeSchemes.MOGADISHU_SUB_DISTRICT.get_code_with_id(mogadishu_code_id).control_code is not None:
                 nc_label = CleaningUtils.make_label(
-                    DistrictTranslator.scheme_id, DistrictTranslator.code_translator.code_id(Codes.NOT_CODED),
-                    Metadata.get_call_location(), control_code=Codes.NOT_CODED
+                    CodeSchemes.MOGADISHU_SUB_DISTRICT,
+                    CodeSchemes.MOGADISHU_SUB_DISTRICT.get_code_with_control_code(Codes.NOT_CODED),
+                    Metadata.get_call_location(),
                 )
-                td.append_data({"district_coded": nc_label}, Metadata(user, Metadata.get_call_location(), time.time()))
+                td.append_data({"district_coded": nc_label.to_dict()},
+                               Metadata(user, Metadata.get_call_location(), time.time()))
 
         # TODO: Auto-code operator + channels
         # # Label each message with the operator of the sender
