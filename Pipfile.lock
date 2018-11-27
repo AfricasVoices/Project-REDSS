@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "2b4fe3bab3a25a46932c76d57d3c14628b9bdadfb872cd8ea81da53a47d1ecbd"
+            "sha256": "8802035d380c5f303987cd0234c83b0c5342835b2884d3367e3206fefb14cf79"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -19,7 +19,7 @@
         "coredatamodules": {
             "editable": true,
             "git": "https://www.github.com/AfricasVoices/CoreDataModules",
-            "ref": "1b548dcb57fb028ea937dad6dbb8446f647dcec2"
+            "ref": "21f5364724ab15865a7e80cc570c2a9010e71772"
         },
         "deprecation": {
             "hashes": [
@@ -55,6 +55,7 @@
                 "sha256:063df5763652e21de43de7d9e00ccf239f953a832941e37be541614732cdfc93",
                 "sha256:88f9287c0174266bb0d8cedd395cfba9c58e87e5ad86b2ce58859bc11be3cf02"
             ],
+            "index": "pypi",
             "version": "==2.7.5"
         },
         "pytz": {
@@ -62,6 +63,7 @@
                 "sha256:31cb35c89bd7d333cd32c5f278fca91b523b0834369e757f4c5641ea252236ca",
                 "sha256:8e0f8568c118d3077b46be7d654cc8167fa916092e28320cde048e54bfc9f1e6"
             ],
+            "index": "pypi",
             "version": "==2018.7"
         },
         "six": {
