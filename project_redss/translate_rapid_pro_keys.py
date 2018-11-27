@@ -19,7 +19,10 @@ class TranslateRapidProKeys(object):
         ("sent_on", "Rqa_S01E01 (Time) - csap_s01e01_activation"),
         ("sent_on", "Rqa_S01E02 (Time) - csap_s01e02_activation"),
         ("sent_on", "Rqa_S01E03 (Time) - csap_s01e03_activation"),
-        ("sent_on", "Rqa_S01E04 (Time) - csap_s01e04_activation")
+        ("sent_on", "Rqa_S01E04 (Time) - csap_s01e04_activation"),
+
+        ("gender_raw", "Gender (Value) - csap_demog"),
+        ("gender_time", "Gender (Time) - csap_demog")
     ]
 
     @classmethod

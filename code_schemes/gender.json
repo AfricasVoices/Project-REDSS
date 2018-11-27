@@ -1,8 +1,32 @@
 {
-  "SchemeID": "Scheme-d7eb83ef",
-  "Name": "S01E01",
+  "SchemeID": "Scheme-12cb6f95",
+  "Name": "Gender",
   "Version": "0.0.0.1",
   "Codes": [
+    {
+      "CodeID": "code-63dcde9a",
+      "CodeType": "Normal",
+      "DisplayText": "male",
+      "NumericValue": 1,
+      "StringValue": "male",
+      "Shortcut": "m",
+      "VisibleInCoda": true,
+      "MatchValues" : [
+        "male"
+      ]
+    },
+    {
+      "CodeID": "code-86a4602c",
+      "CodeType": "Normal",
+      "DisplayText": "female",
+      "NumericValue": 2,
+      "StringValue" : "female",
+      "Shortcut": "f",
+      "VisibleInCoda": true,
+      "MatchValues" : [
+        "female"
+      ]
+    },
     {
       "CodeID": "code-NA-f93d3eb7",
       "CodeType": "Control",
@@ -68,4 +92,3 @@
     }
   ]
 }
-

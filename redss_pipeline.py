@@ -110,8 +110,8 @@ if __name__ == "__main__":
     print("Auto Coding Messages...")
     data = AutoCodeShowMessages.auto_code_show_messages(user, data, icr_output_dir, coded_dir_path)
 
-    # print("Auto Coding Surveys...")
-    # data = AutoCodeSurveys.auto_code_surveys(user, data, phone_number_uuid_table, coded_dir_path, prev_coded_dir_path)
+    print("Auto Coding Surveys...")
+    data = AutoCodeSurveys.auto_code_surveys(user, data, phone_number_uuid_table, coded_dir_path)
     #
     # print("Applying Manual Codes from Coda...")
     # data = ApplyManualCodes.apply_manual_codes(user, data, prev_coded_dir_path, interface_output_dir)
