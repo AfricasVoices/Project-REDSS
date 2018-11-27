@@ -29,8 +29,8 @@ class AutoCodeShowMessages(object):
     @classmethod
     def auto_code_show_messages(cls, user, data, icr_output_dir, coda_output_dir):
         # Filter out test messages sent by AVF.
-        # TODO: Re-enable before entering production mode
-        # data = MessageFilters.filter_test_messages(data)
+        if not DatasetSpecification.DEV_MODE:
+            data = MessageFilters.filter_test_messages(data)
 
         # Filter for runs which don't contain a response to any week's question
         data = MessageFilters.filter_empty_messages(data, cls.RQA_KEYS)

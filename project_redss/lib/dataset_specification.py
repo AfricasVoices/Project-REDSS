@@ -17,6 +17,8 @@ class CodingPlan(object):
 
 
 class DatasetSpecification(object):
+    DEV_MODE = True
+
     RQA_CODING_PLANS = [
         CodingPlan(raw_field="rqa_s01e01_raw",
                    coded_field="rqa_s01_e01_coded",
@@ -46,6 +48,14 @@ class DatasetSpecification(object):
                    cleaner=None,
                    code_scheme=CodeSchemes.S01E01)  # TODO: Use S01E04 when available
     ]
+
+    # If in production mode, check that the above TODOs have been dealt with
+    if not DEV_MODE:
+        s01e01_uses = 0
+        for plan in RQA_CODING_PLANS:
+            if plan.code_scheme == CodeSchemes.S01E01:
+                s01e01_uses += 1
+        assert s01e01_uses == 1
 
     SURVEY_CODING_PLANS = [
         CodingPlan(raw_field="gender_raw",
