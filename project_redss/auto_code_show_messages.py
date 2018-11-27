@@ -29,8 +29,8 @@ class AutoCodeShowMessages(object):
     @classmethod
     def auto_code_show_messages(cls, user, data, icr_output_dir, coda_output_dir):
         # Filter out test messages sent by AVF.
-        # TODO: Re-enable before entering production mode
-        # data = MessageFilters.filter_test_messages(data)
+        if not DatasetSpecification.DEV_MODE:
+            data = MessageFilters.filter_test_messages(data)
 
         # Filter for runs which don't contain a response to any week's question
         data = MessageFilters.filter_empty_messages(data, cls.RQA_KEYS)
@@ -46,14 +46,14 @@ class AutoCodeShowMessages(object):
                     is_noise = False
             td.append_data({cls.NOISE_KEY: is_noise}, Metadata(user, Metadata.get_call_location(), time.time()))
 
-        # Code data which is missing as missing
+        # Label missing data
         for td in data:
             missing_dict = dict()
             for plan in DatasetSpecification.RQA_CODING_PLANS:
                 if plan.raw_field not in td:
                     na_label = CleaningUtils.make_label(
-                        plan.code_translator.scheme_id, plan.code_translator.code_id(Codes.TRUE_MISSING),
-                        Metadata.get_call_location(), control_code=Codes.TRUE_MISSING
+                        plan.code_scheme, plan.code_scheme.get_code_with_control_code(Codes.TRUE_MISSING),
+                        Metadata.get_call_location()
                     )
                     missing_dict[plan.coded_field] = [na_label.to_dict()]
             td.append_data(missing_dict, Metadata(user, Metadata.get_call_location(), time.time()))
