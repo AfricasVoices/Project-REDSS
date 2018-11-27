@@ -77,5 +77,54 @@ class DatasetSpecification(object):
                    time_field="mogadishu_sub_district_time",
                    coda_filename="district",
                    cleaner=somali.DemographicCleaner.clean_somalia_district,
-                   code_scheme=CodeSchemes.DISTRICT)
+                   code_scheme=CodeSchemes.DISTRICT),
+
+        CodingPlan(raw_field="mogadishu_sub_district_raw",
+                   coded_field="region_coded",
+                   time_field="mogadishu_sub_district_time",
+                   coda_filename="region",
+                   cleaner=None,
+                   code_scheme=CodeSchemes.REGION),
+
+        CodingPlan(raw_field="mogadishu_sub_district_raw",
+                   coded_field="state_coded",
+                   time_field="mogadishu_sub_district_time",
+                   coda_filename="state",
+                   cleaner=None,
+                   code_scheme=CodeSchemes.STATE),
+
+        CodingPlan(raw_field="mogadishu_sub_district_raw",
+                   coded_field="zone_coded",
+                   time_field="mogadishu_sub_district_time",
+                   coda_filename="zone",
+                   cleaner=None,
+                   code_scheme=CodeSchemes.ZONE),
+
+        CodingPlan(raw_field="age_raw",
+                   coded_field="age_coded",
+                   time_field="age_time",
+                   coda_filename="age",
+                   cleaner=lambda text: str(somali.DemographicCleaner.clean_age(text)),  # TODO: NC data out of range
+                   code_scheme=CodeSchemes.AGE),
+
+        CodingPlan(raw_field="idp_camp_raw",
+                   coded_field="idp_camp_coded",
+                   time_field="idp_camp_time",
+                   coda_filename="idp_camp",
+                   cleaner=somali.DemographicCleaner.clean_yes_no,
+                   code_scheme=CodeSchemes.IDP_CAMP),
+
+        CodingPlan(raw_field="recently_displaced_raw",
+                   coded_field="recently_displaced_coded",
+                   time_field="recently_displaced_time",
+                   coda_filename="recently_displaced",
+                   cleaner=somali.DemographicCleaner.clean_yes_no,
+                   code_scheme=CodeSchemes.RECENTLY_DISPLACED),
+
+        CodingPlan(raw_field="hh_language_raw",
+                   coded_field="hh_language_coded",
+                   time_field="hh_language_time",
+                   coda_filename="hh_language",
+                   cleaner=None,
+                   code_scheme=CodeSchemes.S01E01)
     ]

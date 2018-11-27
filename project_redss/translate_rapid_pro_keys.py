@@ -17,7 +17,17 @@ class TranslateRapidProKeys(object):
         ("sent_on", "Rqa_S01E04 (Time) - csap_s01e04_activation"),
 
         ("gender_raw", "Gender (Value) - csap_demog"),
-        ("gender_time", "Gender (Time) - csap_demog")
+        ("gender_time", "Gender (Time) - csap_demog"),
+        ("mogadishu_sub_district_raw", "Mog_Sub_District (Value) - csap_demog"),
+        ("mogadishu_sub_district_time", "Mog_Sub_District (Time) - csap_demog"),
+        ("age_raw", "Age (Value) - csap_demog"),
+        ("age_time", "Age (Time) - csap_demog"),
+        ("idp_camp_raw", "Idp_Camp (Value) - csap_demog"),
+        ("idp_camp_time", "Idp_Camp (Time) - csap_demog"),
+        ("recently_displaced_raw", "Recently_Displaced (Value) - csap_demog"),
+        ("recently_displaced_time", "Recently_Displaced (Time) - csap_demog"),
+        ("hh_language_raw", "Hh_Language (Value) - csap_demog"),
+        ("hh_language_time", "Hh_Language (Time) - csap_demog")
     ]
 
     @classmethod
