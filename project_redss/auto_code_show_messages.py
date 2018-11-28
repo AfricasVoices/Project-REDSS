@@ -87,7 +87,7 @@ class AutoCodeShowMessages(object):
 
             icr_messages = ICRTools.generate_sample_for_icr(rqa_messages, cls.ICR_MESSAGES_COUNT, random.Random(0))
 
-            icr_output_path = path.join(icr_output_dir, f"{plan.coda_filename}.csv")
+            icr_output_path = path.join(icr_output_dir, f"{plan.icr_filename}.csv")
             with open(icr_output_path, "w") as f:
                 TracedDataCSVIO.export_traced_data_iterable_to_csv(
                     icr_messages, f, headers=[plan.run_id_field, plan.raw_field]
