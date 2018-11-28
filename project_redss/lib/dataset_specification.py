@@ -126,5 +126,5 @@ class DatasetSpecification(object):
                    time_field="hh_language_time",
                    coda_filename="hh_language",
                    cleaner=None,
-                   code_scheme=CodeSchemes.S01E01)
+                   code_scheme=CodeSchemes.HH_LANGUAGE)
     ]
