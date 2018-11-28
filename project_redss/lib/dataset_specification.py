@@ -6,13 +6,16 @@ from project_redss.lib.redss_schemes import CodeSchemes
 
 
 class CodingPlan(object):
-    def __init__(self, raw_field, coded_field, coda_filename, cleaner=None, code_scheme=None, time_field=None):
+    def __init__(self, raw_field, coded_field, coda_filename, cleaner=None, code_scheme=None, time_field=None,
+                 run_id_field=None, icr_filename=None):
         self.raw_field = raw_field
         self.coded_field = coded_field
         self.coda_filename = coda_filename
+        self.icr_filename = icr_filename
         self.cleaner = cleaner
         self.code_scheme = code_scheme
         self.time_field = time_field
+        self.run_id_field = run_id_field
         self.id_field = "{}_id".format(self.raw_field)
 
 
@@ -21,30 +24,38 @@ class DatasetSpecification(object):
 
     RQA_CODING_PLANS = [
         CodingPlan(raw_field="rqa_s01e01_raw",
-                   coded_field="rqa_s01_e01_coded",
+                   coded_field="rqa_s01e01_coded",
                    time_field="sent_on",
                    coda_filename="s01e01",
+                   icr_filename="s01e01",
+                   run_id_field="rqa_s01e01_run_id",
                    cleaner=None,
                    code_scheme=CodeSchemes.S01E01),
 
         CodingPlan(raw_field="rqa_s01e02_raw",
-                   coded_field="rqa_s01_e02_coded",
+                   coded_field="rqa_s01e02_coded",
                    time_field="sent_on",
                    coda_filename="s01e02",
+                   icr_filename="s01e02",
+                   run_id_field="rqa_s01e02_run_id",
                    cleaner=None,
                    code_scheme=CodeSchemes.S01E01),  # TODO: Use S01E02 when available
 
-        CodingPlan(raw_field="rqa_s01e02_raw",
-                   coded_field="rqa_s01_e02_coded",
+        CodingPlan(raw_field="rqa_s01e03_raw",
+                   coded_field="rqa_s01e03_coded",
                    time_field="sent_on",
                    coda_filename="s01e03",
+                   icr_filename="s01e03",
+                   run_id_field="rqa_s01e03_run_id",
                    cleaner=None,
                    code_scheme=CodeSchemes.S01E01),  # TODO: Use S01E03 when available
 
-        CodingPlan(raw_field="rqa_s01e02_raw",
-                   coded_field="rqa_s01_e02_coded",
+        CodingPlan(raw_field="rqa_s01e04_raw",
+                   coded_field="rqa_s01e04_coded",
                    time_field="sent_on",
                    coda_filename="s01e04",
+                   icr_filename="s01e04",
+                   run_id_field="rqa_s01e04_run_id",
                    cleaner=None,
                    code_scheme=CodeSchemes.S01E01)  # TODO: Use S01E04 when available
     ]
