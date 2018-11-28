@@ -57,6 +57,16 @@ class DatasetSpecification(object):
                 s01e01_uses += 1
         assert s01e01_uses == 1
 
+    @staticmethod
+    def redss_clean_age(text):
+        age = somali.DemographicCleaner.clean_age(text)
+        if type(age) == int and 10 <= age < 100:
+            return str(text)
+            # TODO: Once the cleaners are updated to not return Codes.NOT_CODED, this should be updated to still return 
+            #       NC in the case where age is an int but is out of range
+        else:
+            return Codes.NOT_CODED
+
     SURVEY_CODING_PLANS = [
         CodingPlan(raw_field="gender_raw",
                    coded_field="gender_coded",
@@ -104,7 +114,7 @@ class DatasetSpecification(object):
                    coded_field="age_coded",
                    time_field="age_time",
                    coda_filename="age",
-                   cleaner=lambda text: str(somali.DemographicCleaner.clean_age(text)),  # TODO: NC data out of range
+                   cleaner=lambda text: DatasetSpecification.redss_clean_age(text),
                    code_scheme=CodeSchemes.AGE),
 
         CodingPlan(raw_field="idp_camp_raw",
