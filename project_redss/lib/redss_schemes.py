@@ -21,3 +21,4 @@ class CodeSchemes(object):
     AGE = _open_scheme("age.json")
     IDP_CAMP = _open_scheme("idp_camp.json")
     RECENTLY_DISPLACED = _open_scheme("recently_displaced.json")
+    HH_LANGUAGE = _open_scheme("hh_language.json")

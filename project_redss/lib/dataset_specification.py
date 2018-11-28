@@ -6,13 +6,16 @@ from project_redss.lib.redss_schemes import CodeSchemes
 
 
 class CodingPlan(object):
-    def __init__(self, raw_field, coded_field, coda_filename, cleaner=None, code_scheme=None, time_field=None):
+    def __init__(self, raw_field, coded_field, coda_filename, cleaner=None, code_scheme=None, time_field=None,
+                 run_id_field=None, icr_filename=None):
         self.raw_field = raw_field
         self.coded_field = coded_field
         self.coda_filename = coda_filename
+        self.icr_filename = icr_filename
         self.cleaner = cleaner
         self.code_scheme = code_scheme
         self.time_field = time_field
+        self.run_id_field = run_id_field
         self.id_field = "{}_id".format(self.raw_field)
 
 
@@ -21,30 +24,38 @@ class DatasetSpecification(object):
 
     RQA_CODING_PLANS = [
         CodingPlan(raw_field="rqa_s01e01_raw",
-                   coded_field="rqa_s01_e01_coded",
+                   coded_field="rqa_s01e01_coded",
                    time_field="sent_on",
                    coda_filename="s01e01",
+                   icr_filename="s01e01",
+                   run_id_field="rqa_s01e01_run_id",
                    cleaner=None,
                    code_scheme=CodeSchemes.S01E01),
 
         CodingPlan(raw_field="rqa_s01e02_raw",
-                   coded_field="rqa_s01_e02_coded",
+                   coded_field="rqa_s01e02_coded",
                    time_field="sent_on",
                    coda_filename="s01e02",
+                   icr_filename="s01e02",
+                   run_id_field="rqa_s01e02_run_id",
                    cleaner=None,
                    code_scheme=CodeSchemes.S01E01),  # TODO: Use S01E02 when available
 
         CodingPlan(raw_field="rqa_s01e03_raw",
-                   coded_field="rqa_s01_e03_coded",
+                   coded_field="rqa_s01e03_coded",
                    time_field="sent_on",
                    coda_filename="s01e03",
+                   icr_filename="s01e03",
+                   run_id_field="rqa_s01e03_run_id",
                    cleaner=None,
                    code_scheme=CodeSchemes.S01E01),  # TODO: Use S01E03 when available
 
         CodingPlan(raw_field="rqa_s01e04_raw",
-                   coded_field="rqa_s01_e04_coded",
+                   coded_field="rqa_s01e04_coded",
                    time_field="sent_on",
                    coda_filename="s01e04",
+                   icr_filename="s01e04",
+                   run_id_field="rqa_s01e04_run_id",
                    cleaner=None,
                    code_scheme=CodeSchemes.S01E01)  # TODO: Use S01E04 when available
     ]
@@ -56,6 +67,16 @@ class DatasetSpecification(object):
             if plan.code_scheme == CodeSchemes.S01E01:
                 s01e01_uses += 1
         assert s01e01_uses == 1
+
+    @staticmethod
+    def redss_clean_age(text):
+        age = somali.DemographicCleaner.clean_age(text)
+        if type(age) == int and 10 <= age < 100:
+            return str(text)
+            # TODO: Once the cleaners are updated to not return Codes.NOT_CODED, this should be updated to still return
+            #       NC in the case where age is an int but is out of range
+        else:
+            return Codes.NOT_CODED
 
     SURVEY_CODING_PLANS = [
         CodingPlan(raw_field="gender_raw",
@@ -104,7 +125,7 @@ class DatasetSpecification(object):
                    coded_field="age_coded",
                    time_field="age_time",
                    coda_filename="age",
-                   cleaner=lambda text: str(somali.DemographicCleaner.clean_age(text)),  # TODO: NC data out of range
+                   cleaner=lambda text: DatasetSpecification.redss_clean_age(text),
                    code_scheme=CodeSchemes.AGE),
 
         CodingPlan(raw_field="idp_camp_raw",
@@ -126,5 +147,5 @@ class DatasetSpecification(object):
                    time_field="hh_language_time",
                    coda_filename="hh_language",
                    cleaner=None,
-                   code_scheme=CodeSchemes.S01E01)
+                   code_scheme=CodeSchemes.HH_LANGUAGE)
     ]

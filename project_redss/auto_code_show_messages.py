@@ -1,4 +1,3 @@
-import os
 import random
 import time
 from os import path
@@ -6,7 +5,7 @@ from os import path
 from core_data_modules.cleaners import somali, Codes
 from core_data_modules.cleaners.cleaning_utils import CleaningUtils
 from core_data_modules.traced_data import Metadata
-from core_data_modules.traced_data.io import TracedDataCodaIO, TracedDataCSVIO, TracedDataCoda2IO
+from core_data_modules.traced_data.io import TracedDataCSVIO, TracedDataCoda2IO
 from core_data_modules.util import IOUtils
 from dateutil.parser import isoparse
 
@@ -25,6 +24,7 @@ class AutoCodeShowMessages(object):
     PROJECT_START_DATE = isoparse("2010-01-01T00+03:00")  # TODO: Set when known
     PROJECT_END_DATE = isoparse("2030-01-01T00+03:00")  # TODO: Set when known
     ICR_MESSAGES_COUNT = 200
+    ICR_SEED = 0
 
     @classmethod
     def auto_code_show_messages(cls, user, data, icr_output_dir, coda_output_dir):
@@ -72,16 +72,27 @@ class AutoCodeShowMessages(object):
                     not_noise, plan.raw_field, cls.SENT_ON_KEY, plan.id_field, {}, f
                 )
 
-        # Randomly select some messages to export for ICR
-        # TODO: ICR
-        icr_messages = ICRTools.generate_sample_for_icr(not_noise, cls.ICR_MESSAGES_COUNT, random.Random(0))
+        # Output messages for ICR
+        IOUtils.ensure_dirs_exist(icr_output_dir)
+        for plan in DatasetSpecification.RQA_CODING_PLANS:
+            rqa_messages = []
+            for td in not_noise:
+                # This test works because the only codes which have been applied at this point are TRUE_MISSING.
+                # If any other coding is done above, this test will need to change.
+                if plan.coded_field not in td:
+                    rqa_messages.append(td)
+                else:
+                    assert len(td[plan.coded_field]) == 1
+                    assert td[plan.coded_field][0]["CodeID"] == \
+                        plan.code_scheme.get_code_with_control_code(Codes.TRUE_MISSING).code_id
 
-        # Output ICR data to a CSV file
-        # run_id_key = "{} (Run ID) - {}".format(cls.VARIABLE_NAME, cls.FLOW_NAME)
-        # raw_text_key = "{} (Text) - {}".format(cls.VARIABLE_NAME, cls.FLOW_NAME)
-        # IOUtils.ensure_dirs_exist_for_file(icr_output_path)
-        with open(icr_output_dir, "w") as f:
-            f.write("")
-            # TracedDataCSVIO.export_traced_data_iterable_to_csv(icr_messages, f, headers=[run_id_key, raw_text_key])
+            icr_messages = ICRTools.generate_sample_for_icr(
+                rqa_messages, cls.ICR_MESSAGES_COUNT, random.Random(cls.ICR_SEED))
+
+            icr_output_path = path.join(icr_output_dir, f"{plan.icr_filename}.csv")
+            with open(icr_output_path, "w") as f:
+                TracedDataCSVIO.export_traced_data_iterable_to_csv(
+                    icr_messages, f, headers=[plan.run_id_field, plan.raw_field]
+                )
 
         return data
