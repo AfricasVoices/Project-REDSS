@@ -24,6 +24,7 @@ class AutoCodeShowMessages(object):
     PROJECT_START_DATE = isoparse("2010-01-01T00+03:00")  # TODO: Set when known
     PROJECT_END_DATE = isoparse("2030-01-01T00+03:00")  # TODO: Set when known
     ICR_MESSAGES_COUNT = 200
+    ICR_SEED = 0
 
     @classmethod
     def auto_code_show_messages(cls, user, data, icr_output_dir, coda_output_dir):
@@ -85,7 +86,8 @@ class AutoCodeShowMessages(object):
                     assert td[plan.coded_field][0]["CodeID"] == \
                         plan.code_scheme.get_code_with_control_code(Codes.TRUE_MISSING).code_id
 
-            icr_messages = ICRTools.generate_sample_for_icr(rqa_messages, cls.ICR_MESSAGES_COUNT, random.Random(0))
+            icr_messages = ICRTools.generate_sample_for_icr(
+                rqa_messages, cls.ICR_MESSAGES_COUNT, random.Random(cls.ICR_SEED))
 
             icr_output_path = path.join(icr_output_dir, f"{plan.icr_filename}.csv")
             with open(icr_output_path, "w") as f:
