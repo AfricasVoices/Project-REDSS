@@ -5,11 +5,73 @@ from core_data_modules.cleaners import Codes
 from core_data_modules.traced_data import Metadata
 from core_data_modules.traced_data.io import TracedDataCSVIO
 from core_data_modules.traced_data.util import FoldTracedData
-from core_data_modules.pipeline_utils.consent_utils import ConsentUtils
 
 from project_redss.lib import AnalysisKeys
 from project_redss.lib.dataset_specification import DatasetSpecification
 from project_redss.lib.redss_schemes import CodeSchemes
+
+
+class ConsentUtils(object):
+    @staticmethod
+    def td_has_stop_code(td, coding_plans):
+        """
+        Returns whether any of the values for the given keys are Codes.STOP in the given TracedData object.
+
+        :param td: TracedData object to search for stop codes.
+        :type td: TracedData
+        :param keys: Keys to check for stop codes in 'td'.
+        :type keys: iterable of str
+        :return: Whether td contains Codes.STOP in any of the keys in 'keys'.
+        :rtype: bool
+        """
+        for plan in coding_plans:
+            if plan.code_scheme.get_code_with_id(td[plan.coded_field]["CodeID"]).control_code == Codes.STOP:
+                return True
+        return False
+
+    @classmethod
+    def determine_consent_withdrawn(cls, user, data, coding_plans, withdrawn_key="consent_withdrawn"):
+        """
+        Determines whether consent has been withdrawn, by searching for Codes.STOP in the given list of keys.
+
+        TracedData objects where a stop code is found will have the key-value pair <withdrawn_key>: Codes.TRUE
+        appended. Objects where a stop code is not found are not modified.
+
+        Note that this does not actually set any other keys to Codes.STOP. Use Consent.set_stopped for this purpose.
+
+        :param user: Identifier of the user running this program, for TracedData Metadata.
+        :type user: str
+        :param data: TracedData objects to determine consent for.
+        :type data: iterable of TracedData
+        :param keys: Keys to check for stop codes.
+        :type keys: iterable of str
+        :param withdrawn_key: Name of key to use for the consent withdrawn field.
+        :type withdrawn_key: str
+        """
+        for td in data:
+            if cls.td_has_stop_code(td, coding_plans):
+                td.append_data(
+                    {withdrawn_key: Codes.TRUE},
+                    Metadata(user, Metadata.get_call_location(), time.time())
+                )
+
+    @staticmethod
+    def set_stopped(user, data, withdrawn_key="consent_withdrawn"):
+        """
+        For each TracedData object in an iterable whose 'withdrawn_key' is Codes.True, sets every other key to
+        Codes.STOP. If there is no withdrawn_key or the value is not Codes.True, that TracedData object is not modified.
+
+        :param user: Identifier of the user running this program, for TracedData Metadata.
+        :type user: str
+        :param data: TracedData objects to set to stopped if consent has been withdrawn.
+        :type data: iterable of TracedData
+        :param withdrawn_key: Key in each TracedData object which indicates whether consent has been withdrawn.
+        :type withdrawn_key: str
+        """
+        for td in data:
+            if td.get(withdrawn_key) == Codes.TRUE:
+                stop_dict = {key: Codes.STOP for key in td.keys() if key != withdrawn_key}
+                td.append_data(stop_dict, Metadata(user, Metadata.get_call_location(), time.time()))
 
 
 class AnalysisFile(object):
@@ -19,6 +81,12 @@ class AnalysisFile(object):
         # TODO: Investigate/address the cause of this.
         sys.setrecursionlimit(10000)
 
+        consent_withdrawn_key = "consent_withdrawn"
+        for td in data:
+            td.append_data({consent_withdrawn_key: Codes.FALSE},
+                           Metadata(user, Metadata.get_call_location(), time.time()))
+
+        # Set the list of raw/coded keys which
         demog_keys = []
         for plan in DatasetSpecification.SURVEY_CODING_PLANS:
             if plan.analysis_file_key not in demog_keys:
@@ -71,7 +139,7 @@ class AnalysisFile(object):
             "rqa_s01e04_raw"
         ]
         bool_keys = [
-            # avf_consent_withdrawn_key,
+            consent_withdrawn_key,
 
             "sms_ad",
             "radio_promo",
@@ -91,41 +159,16 @@ class AnalysisFile(object):
         export_keys.extend(demog_keys)
         export_keys.extend(evaluation_keys)
 
-        # TODO: Delete in time?
-        # export_keys = [
-        #     "uid",
-        #     "rqa_s01e01_raw",
-        #     "rqa_s01e02_raw",
-        #     "rqa_s01e03_raw",
-        #     "rqa_s01e04_raw",
-        #     "gender_raw",
-        #     "mogadishu_sub_district_raw",
-        #     "age_raw",
-        #     "idp_camp_raw",
-        #     "recently_displaced_raw",
-        #     "hh_language_raw",
-        # ]
-
         # Set consent withdrawn based on presence of data coded as "stop"
-        # ConsentUtils.determine_consent_withdrawn(user, data, export_keys, avf_consent_withdrawn_key)
+        ConsentUtils.determine_consent_withdrawn(
+            user, data, DatasetSpecification.SURVEY_CODING_PLANS, consent_withdrawn_key)
 
-        # Set consent withdrawn based on stop codes from humanitarian priorities.
-        # TODO: Update Core Data to set 'stop's instead of '1's?
-        # for td in data:
-        #     if td.get("humanitarian_priorities_stop") == Codes.MATRIX_1:
-        #         td.append_data({avf_consent_withdrawn_key: Codes.TRUE},
-        #                        Metadata(user, Metadata.get_call_location(), time.time()))
-        #
-        # # Set consent withdrawn based on auto-categorisation in Rapid Pro
-        # for td in data:
-        #     if td.get(rapid_pro_consent_withdrawn_key) == "yes":  # Not using Codes.YES because this is from Rapid Pro
-        #         td.append_data({avf_consent_withdrawn_key: Codes.TRUE},
-        #                        Metadata(user, Metadata.get_call_location(), time.time()))
-        #
-        # for td in data:
-        #     if avf_consent_withdrawn_key not in td:
-        #         td.append_data({avf_consent_withdrawn_key: Codes.FALSE},
-        #                        Metadata(user, Metadata.get_call_location(), time.time()))
+        # Set consent withdrawn based on stop codes from radio question answers
+        for td in data:
+            for plan in DatasetSpecification.RQA_CODING_PLANS:
+                if td[f"{plan.analysis_file_key}{Codes.STOP}"] == Codes.MATRIX_1:
+                    td.append_data({consent_withdrawn_key: Codes.TRUE},
+                                   Metadata(user, Metadata.get_call_location(), time.time()))
 
         # Fold data to have one respondent per row
         to_be_folded = []
@@ -138,8 +181,8 @@ class AnalysisFile(object):
         )
 
         # Process consent
-        # ConsentUtils.set_stopped(user, data, avf_consent_withdrawn_key)
-        # ConsentUtils.set_stopped(user, folded_data, avf_consent_withdrawn_key)
+        ConsentUtils.set_stopped(user, data, consent_withdrawn_key)
+        ConsentUtils.set_stopped(user, folded_data, consent_withdrawn_key)
 
         # Output to CSV with one message per row
         with open(csv_by_message_output_path, "w") as f:
