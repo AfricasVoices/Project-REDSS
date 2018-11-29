@@ -9,7 +9,7 @@ from core_data_modules.traced_data.io import TracedDataCodaIO, TracedDataCoda2IO
 from core_data_modules.util import IOUtils
 
 from project_redss.lib import Channels
-from project_redss.lib.dataset_specification import DatasetSpecification, OperatorTranslator
+from project_redss.lib.dataset_specification import DatasetSpecification
 from project_redss.lib.redss_schemes import CodeSchemes
 
 
