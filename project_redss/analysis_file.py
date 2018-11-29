@@ -9,6 +9,7 @@ from core_data_modules.pipeline_utils.consent_utils import ConsentUtils
 
 from project_redss.lib import AnalysisKeys
 from project_redss.lib.dataset_specification import DatasetSpecification
+from project_redss.lib.redss_schemes import CodeSchemes
 
 
 class AnalysisFile(object):
@@ -29,6 +30,12 @@ class AnalysisFile(object):
             td.append_data(
                 {plan.analysis_file_key: plan.code_scheme.get_code_with_id(td[plan.coded_field]["CodeID"]).string_value
                  for plan in DatasetSpecification.SURVEY_CODING_PLANS},
+                Metadata(user, Metadata.get_call_location(), time.time())
+            )
+
+        for td in data:
+            td.append_data(
+                {"operator": CodeSchemes.OPERATOR.get_code_with_id(td["operator_coded"]["CodeID"]).string_value},
                 Metadata(user, Metadata.get_call_location(), time.time())
             )
 
