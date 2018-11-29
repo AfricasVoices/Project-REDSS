@@ -5,7 +5,7 @@ from core_data_modules.cleaners import Codes
 from core_data_modules.traced_data import Metadata
 from core_data_modules.traced_data.io import TracedDataCSVIO
 from core_data_modules.traced_data.util import FoldTracedData
-from core_data_modules.util.consent_utils import ConsentUtils
+from core_data_modules.pipeline_utils.consent_utils import ConsentUtils
 
 from project_redss.lib import AnalysisKeys
 

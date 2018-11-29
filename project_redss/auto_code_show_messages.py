@@ -29,8 +29,8 @@ class AutoCodeShowMessages(object):
     @classmethod
     def auto_code_show_messages(cls, user, data, icr_output_dir, coda_output_dir):
         # Filter out test messages sent by AVF.
-        # TODO: Re-enable before entering production mode
-        # data = MessageFilters.filter_test_messages(data)
+        if not DatasetSpecification.DEV_MODE:
+            data = MessageFilters.filter_test_messages(data)
 
         # Filter for runs which don't contain a response to any week's question
         data = MessageFilters.filter_empty_messages(data, cls.RQA_KEYS)
@@ -42,19 +42,18 @@ class AutoCodeShowMessages(object):
         for td in data:
             is_noise = True
             for rqa_key in cls.RQA_KEYS:
-                if rqa_key in td and not somali.DemographicCleaner.is_noise(td[rqa_key], min_length=1):
+                if rqa_key in td and not somali.DemographicCleaner.is_noise(td[rqa_key], min_length=10):
                     is_noise = False
             td.append_data({cls.NOISE_KEY: is_noise}, Metadata(user, Metadata.get_call_location(), time.time()))
 
         # Label missing data
-        # TODO: Set scheme/code ids once we have a code scheme for these
         for td in data:
             missing_dict = dict()
             for plan in DatasetSpecification.RQA_CODING_PLANS:
                 if plan.raw_field not in td:
                     na_label = CleaningUtils.make_label(
-                        plan.code_translator.scheme_id, plan.code_translator.code_id(Codes.TRUE_MISSING),
-                        Metadata.get_call_location(), control_code=Codes.TRUE_MISSING
+                        plan.code_scheme, plan.code_scheme.get_code_with_control_code(Codes.TRUE_MISSING),
+                        Metadata.get_call_location()
                     )
                     missing_dict[plan.coded_field] = [na_label.to_dict()]
             td.append_data(missing_dict, Metadata(user, Metadata.get_call_location(), time.time()))
@@ -67,7 +66,7 @@ class AutoCodeShowMessages(object):
         for plan in DatasetSpecification.RQA_CODING_PLANS:
             TracedDataCoda2IO.add_message_ids(user, not_noise, plan.raw_field, plan.id_field)
 
-            output_path = path.join(coda_output_dir, "{}.json".format(plan.coda_name))
+            output_path = path.join(coda_output_dir, "{}.json".format(plan.coda_filename))
             with open(output_path, "w") as f:
                 TracedDataCoda2IO.export_traced_data_iterable_to_coda_2(
                     not_noise, plan.raw_field, cls.SENT_ON_KEY, plan.id_field, {}, f
