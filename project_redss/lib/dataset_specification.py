@@ -79,15 +79,7 @@ class DatasetSpecification(object):
         else:
             return Codes.NOT_CODED
 
-    SURVEY_CODING_PLANS = [
-        CodingPlan(raw_field="gender_raw",
-                   coded_field="gender_coded",
-                   time_field="gender_time",
-                   coda_filename="gender",
-                   analysis_file_key="gender",
-                   cleaner=somali.DemographicCleaner.clean_gender,
-                   code_scheme=CodeSchemes.GENDER),
-
+    LOCATION_CODING_PLANS = [
         CodingPlan(raw_field="mogadishu_sub_district_raw",
                    coded_field="mogadishu_sub_district_coded",
                    time_field="mogadishu_sub_district_time",
@@ -123,7 +115,18 @@ class DatasetSpecification(object):
                    coda_filename="zone",
                    cleaner=None,
                    code_scheme=CodeSchemes.ZONE),
+    ]
 
+    SURVEY_CODING_PLANS = [
+        CodingPlan(raw_field="gender_raw",
+                   coded_field="gender_coded",
+                   time_field="gender_time",
+                   coda_filename="gender",
+                   cleaner=somali.DemographicCleaner.clean_gender,
+                   code_scheme=CodeSchemes.GENDER)
+    ]
+    SURVEY_CODING_PLANS.extend(LOCATION_CODING_PLANS)
+    SURVEY_CODING_PLANS.extend([
         CodingPlan(raw_field="age_raw",
                    coded_field="age_coded",
                    time_field="age_time",
@@ -151,4 +154,4 @@ class DatasetSpecification(object):
                    coda_filename="hh_language",
                    cleaner=None,
                    code_scheme=CodeSchemes.HH_LANGUAGE)
-    ]
+    ])
