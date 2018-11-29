@@ -49,9 +49,19 @@ class AutoCodeSurveys(object):
                                    Metadata(user, Metadata.get_call_location(), time.time()))
 
         # Set operator from phone number
-        operator_cleaner = lambda phone_id: PhoneCleaner.clean_operator(phone_uuid_table.get_phone(phone_id))
-        CleaningUtils.apply_cleaner_to_traced_data_iterable(user, data, "uid", "operator_coded",
-                                                            operator_cleaner, CodeSchemes.OPERATOR)
+        for td in data:
+            operator_clean = PhoneCleaner.clean_operator(phone_uuid_table.get_phone(td["uid"]))
+            if operator_clean == Codes.NOT_CODED:
+                label = CleaningUtils.make_label(
+                    CodeSchemes.OPERATOR, CodeSchemes.OPERATOR.get_code_with_control_code(Codes.NOT_CODED),
+                    Metadata.get_call_location()
+                )
+            else:
+                label = CleaningUtils.make_label(
+                    CodeSchemes.OPERATOR, CodeSchemes.OPERATOR.get_code_with_match_value(operator_clean),
+                    Metadata.get_call_location()
+                )
+            td.append_data({"operator_coded": label.to_dict()}, Metadata(user, Metadata.get_call_location(), time.time()))
 
         # # Label each message with channel keys
         # for td in data:
