@@ -14,7 +14,7 @@ from project_redss.lib.redss_schemes import CodeSchemes
 
 class AnalysisFile(object):
     @staticmethod
-    def generate(user, data, csv_by_message_output_path, csv_by_individual_output_path):
+    def generate(user, data, csv_by_message_output_path, csv_by_individual_output_path, production_csv_output_path):
         # Serializer is currently overflowing
         # TODO: Investigate/address the cause of this.
         sys.setrecursionlimit(10000)
@@ -147,5 +147,21 @@ class AnalysisFile(object):
 
         with open(csv_by_individual_output_path, "w") as f:
             TracedDataCSVIO.export_traced_data_iterable_to_csv(folded_data, f, headers=export_keys)
+
+        production_keys = [
+            "uid",
+            "rqa_s01e01_raw",
+            "rqa_s01e02_raw",
+            "rqa_s01e03_raw",
+            "rqa_s01e04_raw",
+            "gender_raw",
+            "mogadishu_sub_district_raw",
+            "age_raw",
+            "idp_camp_raw",
+            "recently_displaced_raw",
+            "hh_language_raw",
+        ]
+        with open(production_csv_output_path, "w") as f:
+            TracedDataCSVIO.export_traced_data_iterable_to_csv(data, f, headers=production_keys)
 
         return data

@@ -5,8 +5,8 @@ set -e
 IMAGE_NAME=redss-csap
 
 # Check that the correct number of arguments were provided.
-if [ $# -ne 15 ]; then
-    echo "Usage: ./docker-run.sh <user> <phone-number-uuid-table-path> <s01e01-input-path> <s01e02-input-path> <s01e03-input-path> <s01e04-input-path> <demog-input-path> <evaluation-input-path> <prev-coded-dir> <json-output-path> <interface-output-dir> <icr-output-dir> <coded-output-dir> <messages_datasets-output-csv> <individuals-output-csv>"
+if [ $# -ne 16 ]; then
+    echo "Usage: ./docker-run.sh <user> <phone-number-uuid-table-path> <s01e01-input-path> <s01e02-input-path> <s01e03-input-path> <s01e04-input-path> <demog-input-path> <evaluation-input-path> <prev-coded-dir> <json-output-path> <interface-output-dir> <icr-output-dir> <coded-output-dir> <messages_datasets-output-csv> <individuals-output-csv> <production-output-csv>"
     exit
 fi
 
@@ -26,6 +26,7 @@ OUTPUT_ICR_DIR=${12}
 OUTPUT_CODED_DIR=${13}
 OUTPUT_MESSAGES_CSV=${14}
 OUTPUT_INDIVIDUALS_CSV=${15}
+OUTPUT_PRODUCTION_CSV=${16}
 
 # Build an image for this pipeline stage.
 docker build -t "$IMAGE_NAME" .
@@ -35,7 +36,7 @@ CMD="pipenv run python -u redss_pipeline.py $USER /data/phone-number-uuid-table-
     /data/s01e01-input.json /data/s01e02-input.json /data/s01e03-input.json /data/s01e04-input.json
     /data/demog-input.json /data/evaluation-input.json /data/prev-coded
     /data/output.json /data/output-interface /data/output-icr /data/coded
-    /data/output-messages.csv /data/output-individuals.csv"
+    /data/output-messages.csv /data/output-individuals.csv /data/output-production.csv"
 container="$(docker container create -w /app "$IMAGE_NAME" ${CMD})"
 
 function finish {
@@ -77,3 +78,6 @@ docker cp "$container:/data/output-messages.csv" "$OUTPUT_MESSAGES_CSV"
 
 mkdir -p "$(dirname "$OUTPUT_INDIVIDUALS_CSV")"
 docker cp "$container:/data/output-individuals.csv" "$OUTPUT_INDIVIDUALS_CSV"
+
+mkdir -p "$(dirname "$OUTPUT_PRODUCTION_CSV")"
+docker cp "$container:/data/output-production.csv" "$OUTPUT_PRODUCTION_CSV"
