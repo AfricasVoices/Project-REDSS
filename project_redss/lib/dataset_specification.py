@@ -7,7 +7,7 @@ from project_redss.lib.redss_schemes import CodeSchemes
 
 class CodingPlan(object):
     def __init__(self, raw_field, coded_field, coda_filename, cleaner=None, code_scheme=None, time_field=None,
-                 run_id_field=None, icr_filename=None):
+                 run_id_field=None, icr_filename=None, analysis_file_key=None):
         self.raw_field = raw_field
         self.coded_field = coded_field
         self.coda_filename = coda_filename
@@ -16,6 +16,7 @@ class CodingPlan(object):
         self.code_scheme = code_scheme
         self.time_field = time_field
         self.run_id_field = run_id_field
+        self.analysis_file_key = coda_filename  # TODO: Use analysis_file_key
         self.id_field = "{}_id".format(self.raw_field)
 
 
@@ -83,6 +84,7 @@ class DatasetSpecification(object):
                    coded_field="gender_coded",
                    time_field="gender_time",
                    coda_filename="gender",
+                   analysis_file_key="gender",
                    cleaner=somali.DemographicCleaner.clean_gender,
                    code_scheme=CodeSchemes.GENDER),
 
@@ -90,6 +92,7 @@ class DatasetSpecification(object):
                    coded_field="mogadishu_sub_district_coded",
                    time_field="mogadishu_sub_district_time",
                    coda_filename="mogadishu_sub_district",
+                   analysis_file_key="mogadishu_sub_district",
                    cleaner=somali.DemographicCleaner.clean_mogadishu_sub_district,
                    code_scheme=CodeSchemes.MOGADISHU_SUB_DISTRICT),
 

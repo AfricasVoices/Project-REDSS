@@ -35,7 +35,7 @@ CMD="pipenv run python -u redss_pipeline.py $USER /data/phone-number-uuid-table-
     /data/s01e01-input.json /data/s01e02-input.json /data/s01e03-input.json /data/s01e04-input.json
     /data/demog-input.json /data/evaluation-input.json /data/prev-coded
     /data/output.json /data/output-interface /data/output-icr /data/coded
-    /data/output-messages_datasets.csv /data/output-individuals.csv"
+    /data/output-messages.csv /data/output-individuals.csv"
 container="$(docker container create -w /app "$IMAGE_NAME" ${CMD})"
 
 function finish {
@@ -73,7 +73,7 @@ mkdir -p "$OUTPUT_CODED_DIR"
 docker cp "$container:/data/coded/." "$OUTPUT_CODED_DIR"
 
 mkdir -p "$(dirname "$OUTPUT_MESSAGES_CSV")"
-docker cp "$container:/data/output-messages_datasets.csv" "$OUTPUT_MESSAGES_CSV"
+docker cp "$container:/data/output-messages.csv" "$OUTPUT_MESSAGES_CSV"
 
 mkdir -p "$(dirname "$OUTPUT_INDIVIDUALS_CSV")"
 docker cp "$container:/data/output-individuals.csv" "$OUTPUT_INDIVIDUALS_CSV"
