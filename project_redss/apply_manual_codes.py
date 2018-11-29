@@ -117,12 +117,12 @@ class ApplyManualCodes(object):
                         make_location_code(CodeSchemes.REGION,
                                            SomaliaLocations.region_for_location_code(location)),
                         Metadata.get_call_location()).to_dict(),
-                    "state": CleaningUtils.make_label(
+                    "state_coded": CleaningUtils.make_label(
                         CodeSchemes.STATE,
                         make_location_code(CodeSchemes.STATE,
                                            SomaliaLocations.state_for_location_code(location)),
                         Metadata.get_call_location()).to_dict(),
-                    "zone": CleaningUtils.make_label(
+                    "zone_coded": CleaningUtils.make_label(
                         CodeSchemes.ZONE,
                         make_location_code(CodeSchemes.ZONE,
                                            SomaliaLocations.zone_for_location_code(location)),
