@@ -12,6 +12,8 @@ def _open_scheme(filename):
 class CodeSchemes(object):
     S01E01 = _open_scheme("s01e01.json")
 
+    OPERATOR = _open_scheme("operator.json")
+
     GENDER = _open_scheme("gender.json")
     MOGADISHU_SUB_DISTRICT = _open_scheme("mogadishu_sub_district.json")
     DISTRICT = _open_scheme("district.json")
