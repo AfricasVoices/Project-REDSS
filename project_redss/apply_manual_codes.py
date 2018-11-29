@@ -47,6 +47,9 @@ class ApplyManualCodes(object):
             if td["noise"]:
                 nc_dict = dict()
                 for plan in DatasetSpecification.RQA_CODING_PLANS:
+                    if plan.coded_field in td:
+                        continue
+                    
                     nc_label = CleaningUtils.make_label(
                         plan.code_scheme, plan.code_scheme.get_code_with_control_code(Codes.NOT_CODED),
                         Metadata.get_call_location()

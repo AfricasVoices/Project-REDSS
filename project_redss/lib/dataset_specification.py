@@ -30,6 +30,7 @@ class DatasetSpecification(object):
                    coda_filename="s01e01",
                    icr_filename="s01e01",
                    run_id_field="rqa_s01e01_run_id",
+                   analysis_file_key="rqa_s01e01_",
                    cleaner=None,
                    code_scheme=CodeSchemes.S01E01),
 
@@ -39,6 +40,7 @@ class DatasetSpecification(object):
                    coda_filename="s01e02",
                    icr_filename="s01e02",
                    run_id_field="rqa_s01e02_run_id",
+                   analysis_file_key="rqa_s01e02_",
                    cleaner=None,
                    code_scheme=CodeSchemes.S01E01),  # TODO: Use S01E02 when available
 
@@ -48,6 +50,7 @@ class DatasetSpecification(object):
                    coda_filename="s01e03",
                    icr_filename="s01e03",
                    run_id_field="rqa_s01e03_run_id",
+                   analysis_file_key="rqa_s01e03_",
                    cleaner=None,
                    code_scheme=CodeSchemes.S01E01),  # TODO: Use S01E03 when available
 
@@ -57,6 +60,7 @@ class DatasetSpecification(object):
                    coda_filename="s01e04",
                    icr_filename="s01e04",
                    run_id_field="rqa_s01e04_run_id",
+                   analysis_file_key="rqa_s01e04_",
                    cleaner=None,
                    code_scheme=CodeSchemes.S01E01)  # TODO: Use S01E04 when available
     ]

@@ -47,15 +47,19 @@ class AnalysisFile(object):
         ]
 
         # Translate keys to final values for analysis
-        all_matrix_keys = set()
-        for code in CodeSchemes.S01E01.codes:
-            all_matrix_keys.add(f"rqa_s01e01_{code.string_value}")
+        matrix_keys = []
 
-        AnalysisKeys.set_matrix_keys(user, data, all_matrix_keys, CodeSchemes.S01E01, "rqa_s01e01_coded", "rqa_s01e01_")
+        for plan in DatasetSpecification.RQA_CODING_PLANS:
+            show_matrix_keys = set()
+            for code in plan.code_scheme.codes:
+                show_matrix_keys.add(f"{plan.analysis_file_key}{code.string_value}")
 
-        show_keys = []
-        show_keys.extend(all_matrix_keys)
-        show_keys.sort()
+            AnalysisKeys.set_matrix_keys(
+                user, data, show_matrix_keys, plan.code_scheme, plan.coded_field, plan.analysis_file_key)
+
+            matrix_keys.extend(show_matrix_keys)
+
+        matrix_keys.sort()
 
         equal_keys = ["uid", "operator"]
         equal_keys.extend(demog_keys)
@@ -66,7 +70,6 @@ class AnalysisFile(object):
             "rqa_s01e03_raw",
             "rqa_s01e04_raw"
         ]
-        matrix_keys = show_keys
         bool_keys = [
             # avf_consent_withdrawn_key,
 
@@ -83,7 +86,7 @@ class AnalysisFile(object):
         # Export to CSV
         export_keys = ["uid", "operator"]
         export_keys.extend(bool_keys)
-        export_keys.extend(show_keys)
+        export_keys.extend(matrix_keys)
         export_keys.extend(concat_keys)
         export_keys.extend(demog_keys)
         export_keys.extend(evaluation_keys)
