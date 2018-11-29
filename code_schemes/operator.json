@@ -37,10 +37,21 @@
       ]
     },
     {
+      "CodeID": "code-524167c7",
+      "CodeType": "Normal",
+      "DisplayText": "somnet",
+      "NumericValue": 4,
+      "StringValue": "somnet",
+      "VisibleInCoda": true,
+      "MatchValues": [
+        "somnet"
+      ]
+    },
+    {
       "CodeID": "code-605d77ed",
       "CodeType": "Normal",
       "DisplayText": "somtel",
-      "NumericValue": 4,
+      "NumericValue": 5,
       "StringValue": "sometel",
       "VisibleInCoda": true,
       "MatchValues": [
@@ -51,7 +62,7 @@
       "CodeID": "code-3e6ddc70",
       "CodeType": "Normal",
       "DisplayText": "telesom",
-      "NumericValue": 5,
+      "NumericValue": 6,
       "StringValue": "telesom",
       "VisibleInCoda": true,
       "MatchValues":  [
