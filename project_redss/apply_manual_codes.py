@@ -35,12 +35,24 @@ class ApplyManualCodes(object):
             if path.exists(coda_input_path):
                 with open(coda_input_path, "r") as f:
                     TracedDataCoda2IO.import_coda_2_to_traced_data_iterable_multi_coded(
-                        user, rqa_messages, plan.id_field, {plan.coded_field: plan.code_scheme.scheme_id}, nr_label, f)
+                        user, rqa_messages, plan.id_field, {plan.coded_field: {plan.code_scheme.scheme_id, "Scheme-8abbdf12"}}, nr_label, f)
             else:
                 # Read from simulated empty file
                 TracedDataCoda2IO.import_coda_2_to_traced_data_iterable_multi_coded(
-                    user, rqa_messages, plan.id_field, {plan.coded_field: plan.code_scheme.scheme_id}, nr_label,
+                    user, rqa_messages, plan.id_field, {plan.coded_field: {plan.code_scheme.scheme_id}}, nr_label,
                     io.StringIO("[]"))
+
+        # Mark data that is noise as Codes.NOT_CODED
+        for td in data:
+            if td["noise"]:
+                nc_dict = dict()
+                for plan in DatasetSpecification.RQA_CODING_PLANS:
+                    nc_label = CleaningUtils.make_label(
+                        plan.code_scheme, plan.code_scheme.get_code_with_control_code(Codes.NOT_CODED),
+                        Metadata.get_call_location()
+                    )
+                    nc_dict[plan.coded_field] = [nc_label.to_dict()]
+                td.append_data(nc_dict, Metadata(user, Metadata.get_call_location(), time.time()))
 
         # Merge manually coded survey files into the cleaned dataset
         for plan in DatasetSpecification.SURVEY_CODING_PLANS:

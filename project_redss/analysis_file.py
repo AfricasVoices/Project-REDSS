@@ -47,13 +47,14 @@ class AnalysisFile(object):
         ]
 
         # Translate keys to final values for analysis
-        show_keys = set()  # of all radio show matrix keys
-        # AnalysisKeys.set_matrix_keys(
-        #     user, data, show_keys, "S07E01_Humanitarian_Priorities (Text) - esc4jmcna_activation_coded",
-        #     "humanitarian_priorities"
-        # )
+        all_matrix_keys = set()
+        for code in CodeSchemes.S01E01.codes:
+            all_matrix_keys.add(f"rqa_s01e01_{code.string_value}")
 
-        show_keys = list(show_keys)
+        AnalysisKeys.set_matrix_keys(user, data, all_matrix_keys, CodeSchemes.S01E01, "rqa_s01e01_coded", "rqa_s01e01_")
+
+        show_keys = []
+        show_keys.extend(all_matrix_keys)
         show_keys.sort()
 
         equal_keys = ["uid", "operator"]

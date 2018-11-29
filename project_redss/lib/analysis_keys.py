@@ -39,26 +39,18 @@ class AnalysisKeys(object):
                     matrix_d[code_no_key] = td[key] if yes_no == Codes.NO else Codes.MATRIX_0
 
             td.append_data(matrix_d, Metadata(user, Metadata.get_call_location(), time.time()))
-
+            
     @staticmethod
-    def set_matrix_keys(user, data, show_keys, coded_shows_prefix, radio_q_prefix):
+    def set_matrix_keys(user, data, all_matrix_keys, scheme, coded_key, matrix_prefix=""):
         for td in data:
             matrix_d = dict()
 
-            stopped = td.get("{}_{}".format(coded_shows_prefix, Codes.STOP)) == Codes.MATRIX_1
+            for label in td.get(coded_key, []):
+                matrix_d[f"{matrix_prefix}{scheme.get_code_with_id(label['CodeID']).string_value}"] = Codes.MATRIX_1
 
-            for output_key in td:
-                if output_key.startswith(coded_shows_prefix):
-                    code_key = output_key.replace(coded_shows_prefix, radio_q_prefix)
-
-                    if code_key.endswith(Codes.STOP):
-                        continue
-
-                    show_keys.add(code_key)
-                    if stopped:
-                        matrix_d[code_key] = Codes.STOP
-                    else:
-                        matrix_d[code_key] = td[output_key]
+            for key in all_matrix_keys:
+                if key not in matrix_d:
+                    matrix_d[key] = Codes.MATRIX_0
 
             td.append_data(matrix_d, Metadata(user, Metadata.get_call_location(), time.time()))
 
