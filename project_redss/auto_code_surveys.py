@@ -48,8 +48,8 @@ class AutoCodeSurveys(object):
 
         # Set operator from phone number
         operator_cleaner = lambda phone_id: PhoneCleaner.clean_operator(phone_uuid_table.get_phone(phone_id))
-        CleaningUtils.apply_cleaner_to_traced_data_iterable(user, data, "avf_phone_id", "operator_coded",
-                                                            operator_cleaner, OperatorTranslator)
+        CleaningUtils.apply_cleaner_to_traced_data_iterable(user, data, "uid", "operator_coded",
+                                                            operator_cleaner, CodeSchemes.OPERATOR)
 
         # # Label each message with channel keys
         # for td in data:
