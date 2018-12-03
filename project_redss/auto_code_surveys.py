@@ -32,21 +32,23 @@ class AutoCodeSurveys(object):
 
         # Auto-code remaining data
         for plan in DatasetSpecification.SURVEY_CODING_PLANS:
-            CleaningUtils.apply_cleaner_to_traced_data_iterable(user, data, plan.raw_field, plan.coded_field,
-                                                                plan.cleaner, plan.code_scheme)
+            if plan.cleaner is not None:
+                CleaningUtils.apply_cleaner_to_traced_data_iterable(user, data, plan.raw_field, plan.coded_field,
+                                                                    plan.cleaner, plan.code_scheme)
 
         # For any locations where the cleaners assigned a code to a sub district, set the district code to NC
         # (this is because only one column should have a value set in Coda)
         for td in data:
-            mogadishu_code_id = td["mogadishu_sub_district_coded"]["CodeID"]
-            if CodeSchemes.MOGADISHU_SUB_DISTRICT.get_code_with_id(mogadishu_code_id).control_code is not None:
-                nc_label = CleaningUtils.make_label(
-                    CodeSchemes.MOGADISHU_SUB_DISTRICT,
-                    CodeSchemes.MOGADISHU_SUB_DISTRICT.get_code_with_control_code(Codes.NOT_CODED),
-                    Metadata.get_call_location(),
-                )
-                td.append_data({"district_coded": nc_label.to_dict()},
-                               Metadata(user, Metadata.get_call_location(), time.time()))
+            if "mogadishu_sub_district_coded" in td:
+                mogadishu_code_id = td["mogadishu_sub_district_coded"]["CodeID"]
+                if CodeSchemes.MOGADISHU_SUB_DISTRICT.get_code_with_id(mogadishu_code_id).code_type == "Normal":
+                    nc_label = CleaningUtils.make_label(
+                        CodeSchemes.MOGADISHU_SUB_DISTRICT,
+                        CodeSchemes.MOGADISHU_SUB_DISTRICT.get_code_with_control_code(Codes.NOT_CODED),
+                        Metadata.get_call_location(),
+                    )
+                    td.append_data({"district_coded": nc_label.to_dict()},
+                                   Metadata(user, Metadata.get_call_location(), time.time()))
 
         # Set operator from phone number
         for td in data:
@@ -66,9 +68,12 @@ class AutoCodeSurveys(object):
         # Label each message with channel keys
         Channels.set_channel_keys(user, data, cls.SENT_ON_KEY)
 
-        # Output for manual verification + coding
+        # Output single-scheme answers to coda for manual verification + coding
         IOUtils.ensure_dirs_exist(coda_output_dir)
         for plan in DatasetSpecification.SURVEY_CODING_PLANS:
+            if plan.raw_field == "mogadishu_sub_district_raw":
+                continue
+            
             TracedDataCoda2IO.add_message_ids(user, data, plan.raw_field, plan.id_field)
 
             output_path = path.join(coda_output_dir, f"{plan.coda_filename}.json")
@@ -76,5 +81,14 @@ class AutoCodeSurveys(object):
                 TracedDataCoda2IO.export_traced_data_iterable_to_coda_2(
                     data, plan.raw_field, plan.time_field, plan.id_field, {plan.coded_field}, f
                 )
+
+        # Output location scheme to coda for manual verification + coding
+        output_path = path.join(coda_output_dir, "location.json")
+        with open(output_path, "w") as f:
+            TracedDataCoda2IO.add_message_ids(user, data, "mogadishu_sub_district_raw", "mogadishu_sub_district_id")
+            TracedDataCoda2IO.export_traced_data_iterable_to_coda_2(
+                data, "mogadishu_sub_district_raw", "mogadishu_sub_district_time", "mogadishu_sub_district_id",
+                {"mogadishu_sub_district_coded", "district_coded", "region_coded", "state_coded", "zone_coded"}, f
+            )
 
         return data
