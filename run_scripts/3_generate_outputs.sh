@@ -20,6 +20,6 @@ cd ..
     "$DATA_ROOT/Raw Data/csap_s01e03_activation.json" "$DATA_ROOT/Raw Data/csap_s01e04_activation.json" \
     "$DATA_ROOT/Raw Data/csap_demog.json" "$DATA_ROOT/Raw Data/csap_evaluation.json" "$DATA_ROOT/Coded Coda Files/" \
     "$DATA_ROOT/Outputs/traced_data.json" "$DATA_ROOT/Outputs/Interface Files/" \
-    "$DATA_ROOT/Outputs/esc4jmcna_activation_icr.csv" "$DATA_ROOT/Outputs/Coda Files/" \
+    "$DATA_ROOT/Outputs/ICR/" "$DATA_ROOT/Outputs/Coda Files/" \
     "$DATA_ROOT/Outputs/esc4jmcna_analysis_messages.csv" \
     "$DATA_ROOT/Outputs/esc4jmcna_analysis_individuals.csv"
