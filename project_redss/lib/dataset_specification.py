@@ -21,7 +21,7 @@ class CodingPlan(object):
 
 
 class DatasetSpecification(object):
-    DEV_MODE = True
+    DEV_MODE = False
 
     RQA_CODING_PLANS = [
         CodingPlan(raw_field="rqa_s01e01_raw",
@@ -77,7 +77,7 @@ class DatasetSpecification(object):
     def redss_clean_age(text):
         age = somali.DemographicCleaner.clean_age(text)
         if type(age) == int and 10 <= age < 100:
-            return str(text)
+            return str(age)
             # TODO: Once the cleaners are updated to not return Codes.NOT_CODED, this should be updated to still return
             #       NC in the case where age is an int but is out of range
         else:
