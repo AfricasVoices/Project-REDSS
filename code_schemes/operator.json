@@ -18,7 +18,7 @@
       "CodeID": "code-c7b32481",
       "CodeType": "Normal",
       "DisplayText": "hormud",
-      "NumericValue": 1,
+      "NumericValue": 2,
       "StringValue": "hormud",
       "VisibleInCoda": true,
       "MatchValues": [
@@ -29,7 +29,7 @@
       "CodeID": "code-b83b9be1",
       "CodeType": "Normal",
       "DisplayText": "nationlink",
-      "NumericValue": 1,
+      "NumericValue": 3,
       "StringValue": "nationlink",
       "VisibleInCoda": true,
       "MatchValues": [
@@ -37,10 +37,21 @@
       ]
     },
     {
+      "CodeID": "code-524167c7",
+      "CodeType": "Normal",
+      "DisplayText": "somnet",
+      "NumericValue": 4,
+      "StringValue": "somnet",
+      "VisibleInCoda": true,
+      "MatchValues": [
+        "somnet"
+      ]
+    },
+    {
       "CodeID": "code-605d77ed",
       "CodeType": "Normal",
       "DisplayText": "somtel",
-      "NumericValue": 1,
+      "NumericValue": 5,
       "StringValue": "sometel",
       "VisibleInCoda": true,
       "MatchValues": [
@@ -51,7 +62,7 @@
       "CodeID": "code-3e6ddc70",
       "CodeType": "Normal",
       "DisplayText": "telesom",
-      "NumericValue": 1,
+      "NumericValue": 6,
       "StringValue": "telesom",
       "VisibleInCoda": true,
       "MatchValues":  [
@@ -68,15 +79,6 @@
       "VisibleInCoda": false
     },
     {
-      "CodeID": "code-NS-2c11b7c9",
-      "CodeType": "Control",
-      "ControlCode": "NS",
-      "DisplayText": "NS (skip)",
-      "NumericValue": -20,
-      "StringValue": "NS",
-      "VisibleInCoda": false
-    },
-    {
       "CodeID": "code-NC-42f1d983",
       "CodeType": "Control",
       "ControlCode": "NC",
@@ -84,43 +86,6 @@
       "NumericValue": -30,
       "StringValue": "NC",
       "VisibleInCoda": true
-    },
-    {
-      "CodeID": "code-NR-5e3eee23",
-      "CodeType": "Control",
-      "ControlCode": "NR",
-      "DisplayText": "NR (not reviewed)",
-      "NumericValue": -40,
-      "StringValue": "NR",
-      "VisibleInCoda": false
-    },
-    {
-      "CodeID": "code-NIC-99631cb8",
-      "CodeType": "Control",
-      "ControlCode": "NIC",
-      "DisplayText": "NIC (not internally consistent)",
-      "NumericValue": -50,
-      "StringValue": "NIC",
-      "VisibleInCoda": false
-    },
-    {
-      "CodeID": "code-STOP-08b832a8",
-      "CodeType": "Control",
-      "ControlCode": "STOP",
-      "DisplayText": "STOP",
-      "NumericValue": -90,
-      "StringValue": "STOP",
-      "VisibleInCoda": true
-    },
-    {
-      "CodeID": "code-WS-adb25603b7af",
-      "CodeType": "Control",
-      "ControlCode": "WS",
-      "DisplayText": "WS (wrong scheme)",
-      "NumericValue": -100,
-      "StringValue": "WS",
-      "VisibleInCoda": true
     }
   ]
 }
-
