@@ -35,11 +35,11 @@ class ApplyManualCodes(object):
             if path.exists(coda_input_path):
                 with open(coda_input_path, "r") as f:
                     TracedDataCoda2IO.import_coda_2_to_traced_data_iterable_multi_coded(
-                        user, rqa_messages, plan.id_field, {plan.coded_field: {plan.code_scheme.scheme_id, "Scheme-8abbdf12"}}, nr_label, f)
+                        user, rqa_messages, plan.id_field, {plan.coded_field: {plan.code_scheme}}, nr_label, f)
             else:
                 # Read from simulated empty file
                 TracedDataCoda2IO.import_coda_2_to_traced_data_iterable_multi_coded(
-                    user, rqa_messages, plan.id_field, {plan.coded_field: {plan.code_scheme.scheme_id}}, nr_label,
+                    user, rqa_messages, plan.id_field, {plan.coded_field: {plan.code_scheme}}, nr_label,
                     io.StringIO("[]"))
 
         # Mark data that is noise as Codes.NOT_CODED
@@ -68,11 +68,11 @@ class ApplyManualCodes(object):
             if path.exists(coda_input_path):
                 with open(coda_input_path, "r") as f:
                     TracedDataCoda2IO.import_coda_2_to_traced_data_iterable(
-                        user, data, plan.id_field, {plan.coded_field: plan.code_scheme.scheme_id}, nr_label, f)
+                        user, data, plan.id_field, {plan.coded_field: plan.code_scheme}, nr_label, f)
             else:
                 # Read from simulated empty file
                 TracedDataCoda2IO.import_coda_2_to_traced_data_iterable(
-                    user, data, plan.id_field, {plan.coded_field: plan.code_scheme.scheme_id}, nr_label,
+                    user, data, plan.id_field, {plan.coded_field: plan.code_scheme}, nr_label,
                     io.StringIO("[]"))
 
         # Set district/region/state/zone codes from the coded district field.
