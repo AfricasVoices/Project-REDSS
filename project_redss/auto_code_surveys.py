@@ -23,7 +23,7 @@ class AutoCodeSurveys(object):
             missing_dict = dict()
             for plan in DatasetSpecification.SURVEY_CODING_PLANS:
                 if td.get(plan.raw_field, "") == "":  # TODO: Is this correct behaviour?
-                    na_label = CleaningUtils.make_label(
+                    na_label = CleaningUtils.make_cleaner_label(
                         plan.code_scheme, plan.code_scheme.get_code_with_control_code(Codes.TRUE_MISSING),
                         Metadata.get_call_location()
                     )
@@ -42,7 +42,7 @@ class AutoCodeSurveys(object):
             if "mogadishu_sub_district_coded" in td:
                 mogadishu_code_id = td["mogadishu_sub_district_coded"]["CodeID"]
                 if CodeSchemes.MOGADISHU_SUB_DISTRICT.get_code_with_id(mogadishu_code_id).code_type == "Normal":
-                    nc_label = CleaningUtils.make_label(
+                    nc_label = CleaningUtils.make_cleaner_label(
                         CodeSchemes.MOGADISHU_SUB_DISTRICT,
                         CodeSchemes.MOGADISHU_SUB_DISTRICT.get_code_with_control_code(Codes.NOT_CODED),
                         Metadata.get_call_location(),
@@ -54,12 +54,12 @@ class AutoCodeSurveys(object):
         for td in data:
             operator_clean = PhoneCleaner.clean_operator(phone_uuid_table.get_phone(td["uid"]))
             if operator_clean == Codes.NOT_CODED:
-                label = CleaningUtils.make_label(
+                label = CleaningUtils.make_cleaner_label(
                     CodeSchemes.OPERATOR, CodeSchemes.OPERATOR.get_code_with_control_code(Codes.NOT_CODED),
                     Metadata.get_call_location()
                 )
             else:
-                label = CleaningUtils.make_label(
+                label = CleaningUtils.make_cleaner_label(
                     CodeSchemes.OPERATOR, CodeSchemes.OPERATOR.get_code_with_match_value(operator_clean),
                     Metadata.get_call_location()
                 )
