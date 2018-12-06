@@ -26,7 +26,7 @@ class ApplyManualCodes(object):
         for plan in DatasetSpecification.RQA_CODING_PLANS:
             rqa_messages = [td for td in data if plan.raw_field in td]
 
-            nr_label = CleaningUtils.make_cleaner_label(
+            nr_label = CleaningUtils.make_label_from_cleaner_code(
                 plan.code_scheme, plan.code_scheme.get_code_with_control_code(Codes.NOT_REVIEWED),
                 Metadata.get_call_location()
             )
@@ -50,7 +50,7 @@ class ApplyManualCodes(object):
                     if plan.coded_field in td:
                         continue
                     
-                    nc_label = CleaningUtils.make_cleaner_label(
+                    nc_label = CleaningUtils.make_label_from_cleaner_code(
                         plan.code_scheme, plan.code_scheme.get_code_with_control_code(Codes.NOT_CODED),
                         Metadata.get_call_location()
                     )
@@ -59,7 +59,7 @@ class ApplyManualCodes(object):
 
         # Merge manually coded survey files into the cleaned dataset
         for plan in DatasetSpecification.SURVEY_CODING_PLANS:
-            nr_label = CleaningUtils.make_cleaner_label(
+            nr_label = CleaningUtils.make_label_from_cleaner_code(
                 plan.code_scheme, plan.code_scheme.get_code_with_control_code(Codes.NOT_REVIEWED),
                 Metadata.get_call_location()
             )
@@ -92,17 +92,14 @@ class ApplyManualCodes(object):
             # If no code was found, then this location is still not reviewed.
             # Synthesise a NOT_REVIEWED code accordingly.
             if location_code is None:
-                location_code = Code()
-                location_code.code_type = "Control"
-                location_code.control_code = Codes.NOT_REVIEWED
-                # location_code = Code(None, "Control", None, None, None, None, control_code=Codes.NOT_REVIEWED)
+                location_code = Code(None, "Control", None, None, None, None, control_code=Codes.NOT_REVIEWED)
 
             # If a control code was found, set all other location keys to that control code,
             # otherwise convert the provided location to the other locations in the hierarchy.
             if location_code.code_type == "Control":
                 for plan in DatasetSpecification.LOCATION_CODING_PLANS:
                     td.append_data({
-                        plan.coded_field: CleaningUtils.make_cleaner_label(
+                        plan.coded_field: CleaningUtils.make_label_from_cleaner_code(
                             plan.code_scheme,
                             plan.code_scheme.get_code_with_control_code(location_code.control_code),
                             Metadata.get_call_location()
@@ -118,27 +115,27 @@ class ApplyManualCodes(object):
                         return scheme.get_code_with_match_value(clean_value)
 
                 td.append_data({
-                    "mogadishu_sub_district_coded": CleaningUtils.make_cleaner_label(
+                    "mogadishu_sub_district_coded": CleaningUtils.make_label_from_cleaner_code(
                         CodeSchemes.MOGADISHU_SUB_DISTRICT,
                         make_location_code(CodeSchemes.MOGADISHU_SUB_DISTRICT,
                                            SomaliaLocations.mogadishu_sub_district_for_location_code(location)),
                         Metadata.get_call_location()).to_dict(),
-                    "district_coded": CleaningUtils.make_cleaner_label(
+                    "district_coded": CleaningUtils.make_label_from_cleaner_code(
                         CodeSchemes.DISTRICT,
                         make_location_code(CodeSchemes.DISTRICT,
                                            SomaliaLocations.district_for_location_code(location)),
                         Metadata.get_call_location()).to_dict(),
-                    "region_coded": CleaningUtils.make_cleaner_label(
+                    "region_coded": CleaningUtils.make_label_from_cleaner_code(
                         CodeSchemes.REGION,
                         make_location_code(CodeSchemes.REGION,
                                            SomaliaLocations.region_for_location_code(location)),
                         Metadata.get_call_location()).to_dict(),
-                    "state_coded": CleaningUtils.make_cleaner_label(
+                    "state_coded": CleaningUtils.make_label_from_cleaner_code(
                         CodeSchemes.STATE,
                         make_location_code(CodeSchemes.STATE,
                                            SomaliaLocations.state_for_location_code(location)),
                         Metadata.get_call_location()).to_dict(),
-                    "zone_coded": CleaningUtils.make_cleaner_label(
+                    "zone_coded": CleaningUtils.make_label_from_cleaner_code(
                         CodeSchemes.ZONE,
                         make_location_code(CodeSchemes.ZONE,
                                            SomaliaLocations.zone_for_location_code(location)),

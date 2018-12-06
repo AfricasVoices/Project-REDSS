@@ -51,7 +51,7 @@ class AutoCodeShowMessages(object):
             missing_dict = dict()
             for plan in DatasetSpecification.RQA_CODING_PLANS:
                 if plan.raw_field not in td:
-                    na_label = CleaningUtils.make_cleaner_label(
+                    na_label = CleaningUtils.make_label_from_cleaner_code(
                         plan.code_scheme, plan.code_scheme.get_code_with_control_code(Codes.TRUE_MISSING),
                         Metadata.get_call_location()
                     )
