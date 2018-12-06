@@ -6,7 +6,7 @@ from core_data_modules.traced_data import Metadata
 from core_data_modules.traced_data.io import TracedDataCSVIO
 from core_data_modules.traced_data.util import FoldTracedData
 
-from project_redss.lib import AnalysisKeys
+from project_redss.lib import AnalysisKeys, MessageFilters
 from project_redss.lib.dataset_specification import DatasetSpecification
 from project_redss.lib.redss_schemes import CodeSchemes
 
@@ -204,7 +204,8 @@ class AnalysisFile(object):
             "recently_displaced_raw",
             "hh_language_raw",
         ]
+        not_noise = MessageFilters.filter_noise(data, "noise", lambda x: x)
         with open(production_csv_output_path, "w") as f:
-            TracedDataCSVIO.export_traced_data_iterable_to_csv(data, f, headers=production_keys)
+            TracedDataCSVIO.export_traced_data_iterable_to_csv(not_noise, f, headers=production_keys)
 
         return data
