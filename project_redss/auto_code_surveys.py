@@ -9,7 +9,7 @@ from core_data_modules.traced_data.io import TracedDataCodaIO, TracedDataCoda2IO
 from core_data_modules.util import IOUtils
 
 from project_redss.lib import Channels
-from project_redss.lib.dataset_specification import DatasetSpecification
+from project_redss.lib.dataset_specification import DatasetSpecification, OperatorTranslator
 from project_redss.lib.redss_schemes import CodeSchemes
 
 
@@ -48,17 +48,21 @@ class AutoCodeSurveys(object):
                     td.append_data({"district_coded": nc_label.to_dict()},
                                    Metadata(user, Metadata.get_call_location(), time.time()))
 
-        # TODO: Auto-code operator + channels
-        # # Label each message with the operator of the sender
-        # for td in data:
-        #     phone_number = phone_uuid_table.get_phone(td["avf_phone_id"])
-        #     operator = PhoneCleaner.clean_operator(phone_number)
-        #
-        #     td.append_data(
-        #         {"operator": operator},
-        #         Metadata(user, Metadata.get_call_location(), time.time())
-        #     )
-        #
+        # Set operator from phone number
+        for td in data:
+            operator_clean = PhoneCleaner.clean_operator(phone_uuid_table.get_phone(td["uid"]))
+            if operator_clean == Codes.NOT_CODED:
+                label = CleaningUtils.make_label(
+                    CodeSchemes.OPERATOR, CodeSchemes.OPERATOR.get_code_with_control_code(Codes.NOT_CODED),
+                    Metadata.get_call_location()
+                )
+            else:
+                label = CleaningUtils.make_label(
+                    CodeSchemes.OPERATOR, CodeSchemes.OPERATOR.get_code_with_match_value(operator_clean),
+                    Metadata.get_call_location()
+                )
+            td.append_data({"operator_coded": label.to_dict()}, Metadata(user, Metadata.get_call_location(), time.time()))
+
         # # Label each message with channel keys
         # for td in data:
         #     Channels.set_channel_keys(user, td)
