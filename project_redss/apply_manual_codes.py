@@ -31,16 +31,16 @@ class ApplyManualCodes(object):
                 Metadata.get_call_location()
             )
 
-            coda_input_path = path.join(coda_input_dir, plan.coda_filename)
-            if path.exists(coda_input_path):
-                with open(coda_input_path, "r") as f:
-                    TracedDataCoda2IO.import_coda_2_to_traced_data_iterable_multi_coded(
-                        user, rqa_messages, plan.id_field, {plan.coded_field: plan.code_scheme.scheme_id}, nr_label, f)
-            else:
-                # Read from simulated empty file
+            f = None
+            try:
+                coda_input_path = path.join(coda_input_dir, plan.coda_filename)
+                if path.exists(coda_input_path):
+                    f = open(coda_input_path, "r")
                 TracedDataCoda2IO.import_coda_2_to_traced_data_iterable_multi_coded(
-                    user, rqa_messages, plan.id_field, {plan.coded_field: plan.code_scheme.scheme_id}, nr_label,
-                    io.StringIO("[]"))
+                    user, rqa_messages, plan.id_field, {plan.coded_field: plan.code_scheme.scheme_id}, nr_label, f)
+            finally:
+                if f is not None:
+                    f.close()
 
         # Merge manually coded survey files into the cleaned dataset
         for plan in DatasetSpecification.SURVEY_CODING_PLANS:
@@ -49,16 +49,16 @@ class ApplyManualCodes(object):
                 Metadata.get_call_location()
             )
 
-            coda_input_path = path.join(coda_input_dir, plan.coda_filename)
-            if path.exists(coda_input_path):
-                with open(coda_input_path, "r") as f:
-                    TracedDataCoda2IO.import_coda_2_to_traced_data_iterable(
-                        user, data, plan.id_field, {plan.coded_field: plan.code_scheme.scheme_id}, nr_label, f)
-            else:
-                # Read from simulated empty file
+            f = None
+            try:
+                coda_input_path = path.join(coda_input_dir, plan.coda_filename)
+                if path.exists(coda_input_path):
+                    f = open(coda_input_path, "r")
                 TracedDataCoda2IO.import_coda_2_to_traced_data_iterable(
-                    user, data, plan.id_field, {plan.coded_field: plan.code_scheme.scheme_id}, nr_label,
-                    io.StringIO("[]"))
+                    user, data, plan.id_field, {plan.coded_field: plan.code_scheme.scheme_id}, nr_label, f)
+            finally:
+                if f is not None:
+                    f.close()
 
         # Set district/region/state/zone codes from the coded district field.
         for td in data:
