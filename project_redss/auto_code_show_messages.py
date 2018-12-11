@@ -66,7 +66,7 @@ class AutoCodeShowMessages(object):
         for plan in DatasetSpecification.RQA_CODING_PLANS:
             TracedDataCoda2IO.add_message_ids(user, not_noise, plan.raw_field, plan.id_field)
 
-            output_path = path.join(coda_output_dir, "{}.json".format(plan.coda_filename))
+            output_path = path.join(coda_output_dir, plan.coda_filename)
             with open(output_path, "w") as f:
                 TracedDataCoda2IO.export_traced_data_iterable_to_coda_2(
                     not_noise, plan.raw_field, cls.SENT_ON_KEY, plan.id_field, {}, f
@@ -89,7 +89,7 @@ class AutoCodeShowMessages(object):
             icr_messages = ICRTools.generate_sample_for_icr(
                 rqa_messages, cls.ICR_MESSAGES_COUNT, random.Random(cls.ICR_SEED))
 
-            icr_output_path = path.join(icr_output_dir, f"{plan.icr_filename}.csv")
+            icr_output_path = path.join(icr_output_dir, plan.icr_filename)
             with open(icr_output_path, "w") as f:
                 TracedDataCSVIO.export_traced_data_iterable_to_csv(
                     icr_messages, f, headers=[plan.run_id_field, plan.raw_field]

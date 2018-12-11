@@ -20,6 +20,13 @@ from project_redss.lib.redss_schemes import CodeSchemes
 
 
 class ApplyManualCodes(object):
+    @staticmethod
+    def make_location_code(scheme, clean_value):
+        if clean_value == Codes.NOT_CODED:
+            return scheme.get_code_with_control_code(Codes.NOT_CODED)
+        else:
+            return scheme.get_code_with_match_value(clean_value)
+
     @classmethod
     def apply_manual_codes(cls, user, data, coda_input_dir, interface_output_dir):
         # Merge manually coded radio show files into the cleaned dataset
@@ -31,16 +38,16 @@ class ApplyManualCodes(object):
                 Metadata.get_call_location()
             )
 
-            coda_input_path = path.join(coda_input_dir, "{}.json".format(plan.coda_filename))
-            if path.exists(coda_input_path):
-                with open(coda_input_path, "r") as f:
-                    TracedDataCoda2IO.import_coda_2_to_traced_data_iterable_multi_coded(
-                        user, rqa_messages, plan.id_field, {plan.coded_field: {plan.code_scheme}}, nr_label, f)
-            else:
-                # Read from simulated empty file
+            f = None
+            try:
+                coda_input_path = path.join(coda_input_dir, plan.coda_filename)
+                if path.exists(coda_input_path):
+                    f = open(coda_input_path, "r")
                 TracedDataCoda2IO.import_coda_2_to_traced_data_iterable_multi_coded(
-                    user, rqa_messages, plan.id_field, {plan.coded_field: {plan.code_scheme}}, nr_label,
-                    io.StringIO("[]"))
+                    user, rqa_messages, plan.id_field, {plan.coded_field: {plan.code_scheme}}, nr_label, f)
+            finally:
+                if f is not None:
+                    f.close()
 
         # Mark data that is noise as Codes.NOT_CODED
         for td in data:
@@ -49,7 +56,7 @@ class ApplyManualCodes(object):
                 for plan in DatasetSpecification.RQA_CODING_PLANS:
                     if plan.coded_field in td:
                         continue
-                    
+
                     nc_label = CleaningUtils.make_label_from_cleaner_code(
                         plan.code_scheme, plan.code_scheme.get_code_with_control_code(Codes.NOT_CODED),
                         Metadata.get_call_location()
@@ -64,16 +71,16 @@ class ApplyManualCodes(object):
                 Metadata.get_call_location()
             )
 
-            coda_input_path = path.join(coda_input_dir, "{}.json".format(plan.coda_filename))
-            if path.exists(coda_input_path):
-                with open(coda_input_path, "r") as f:
-                    TracedDataCoda2IO.import_coda_2_to_traced_data_iterable(
-                        user, data, plan.id_field, {plan.coded_field: plan.code_scheme}, nr_label, f)
-            else:
-                # Read from simulated empty file
+            f = None
+            try:
+                coda_input_path = path.join(coda_input_dir, plan.coda_filename)
+                if path.exists(coda_input_path):
+                    f = open(coda_input_path, "r")
                 TracedDataCoda2IO.import_coda_2_to_traced_data_iterable(
-                    user, data, plan.id_field, {plan.coded_field: plan.code_scheme}, nr_label,
-                    io.StringIO("[]"))
+                    user, data, plan.id_field, {plan.coded_field: plan.code_scheme}, nr_label, f)
+            finally:
+                if f is not None:
+                    f.close()
 
         # Set district/region/state/zone codes from the coded district field.
         for td in data:
@@ -108,37 +115,31 @@ class ApplyManualCodes(object):
             else:
                 location = location_code.match_values[0]
 
-                def make_location_code(scheme, clean_value):
-                    if clean_value == Codes.NOT_CODED:
-                        return scheme.get_code_with_control_code(Codes.NOT_CODED)
-                    else:
-                        return scheme.get_code_with_match_value(clean_value)
-
                 td.append_data({
                     "mogadishu_sub_district_coded": CleaningUtils.make_label_from_cleaner_code(
                         CodeSchemes.MOGADISHU_SUB_DISTRICT,
-                        make_location_code(CodeSchemes.MOGADISHU_SUB_DISTRICT,
-                                           SomaliaLocations.mogadishu_sub_district_for_location_code(location)),
+                        cls.make_location_code(CodeSchemes.MOGADISHU_SUB_DISTRICT,
+                                               SomaliaLocations.mogadishu_sub_district_for_location_code(location)),
                         Metadata.get_call_location()).to_dict(),
                     "district_coded": CleaningUtils.make_label_from_cleaner_code(
                         CodeSchemes.DISTRICT,
-                        make_location_code(CodeSchemes.DISTRICT,
-                                           SomaliaLocations.district_for_location_code(location)),
+                        cls.make_location_code(CodeSchemes.DISTRICT,
+                                               SomaliaLocations.district_for_location_code(location)),
                         Metadata.get_call_location()).to_dict(),
                     "region_coded": CleaningUtils.make_label_from_cleaner_code(
                         CodeSchemes.REGION,
-                        make_location_code(CodeSchemes.REGION,
-                                           SomaliaLocations.region_for_location_code(location)),
+                        cls.make_location_code(CodeSchemes.REGION,
+                                               SomaliaLocations.region_for_location_code(location)),
                         Metadata.get_call_location()).to_dict(),
                     "state_coded": CleaningUtils.make_label_from_cleaner_code(
                         CodeSchemes.STATE,
-                        make_location_code(CodeSchemes.STATE,
-                                           SomaliaLocations.state_for_location_code(location)),
+                        cls.make_location_code(CodeSchemes.STATE,
+                                               SomaliaLocations.state_for_location_code(location)),
                         Metadata.get_call_location()).to_dict(),
                     "zone_coded": CleaningUtils.make_label_from_cleaner_code(
                         CodeSchemes.ZONE,
-                        make_location_code(CodeSchemes.ZONE,
-                                           SomaliaLocations.zone_for_location_code(location)),
+                        cls.make_location_code(CodeSchemes.ZONE,
+                                               SomaliaLocations.zone_for_location_code(location)),
                         Metadata.get_call_location()).to_dict()
                 }, Metadata(user, Metadata.get_call_location(), time.time()))
 
