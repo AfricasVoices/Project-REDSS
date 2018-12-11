@@ -20,6 +20,13 @@ from project_redss.lib.redss_schemes import CodeSchemes
 
 
 class ApplyManualCodes(object):
+    @staticmethod
+    def make_location_code(scheme, clean_value):
+        if clean_value == Codes.NOT_CODED:
+            return scheme.get_code_with_control_code(Codes.NOT_CODED)
+        else:
+            return scheme.get_code_with_match_value(clean_value)
+
     @classmethod
     def apply_manual_codes(cls, user, data, coda_input_dir, interface_output_dir):
         # Merge manually coded radio show files into the cleaned dataset
@@ -95,37 +102,31 @@ class ApplyManualCodes(object):
             else:
                 location = location_code.match_values[0]
 
-                def make_location_code(scheme, clean_value):
-                    if clean_value == Codes.NOT_CODED:
-                        return scheme.get_code_with_control_code(Codes.NOT_CODED)
-                    else:
-                        return scheme.get_code_with_match_value(clean_value)
-
                 td.append_data({
                     "mogadishu_sub_district_coded": CleaningUtils.make_label(
                         CodeSchemes.MOGADISHU_SUB_DISTRICT,
-                        make_location_code(CodeSchemes.MOGADISHU_SUB_DISTRICT,
-                                           SomaliaLocations.mogadishu_sub_district_for_location_code(location)),
+                        cls.make_location_code(CodeSchemes.MOGADISHU_SUB_DISTRICT,
+                                               SomaliaLocations.mogadishu_sub_district_for_location_code(location)),
                         Metadata.get_call_location()).to_dict(),
                     "district_coded": CleaningUtils.make_label(
                         CodeSchemes.DISTRICT,
-                        make_location_code(CodeSchemes.DISTRICT,
-                                           SomaliaLocations.district_for_location_code(location)),
+                        cls.make_location_code(CodeSchemes.DISTRICT,
+                                               SomaliaLocations.district_for_location_code(location)),
                         Metadata.get_call_location()).to_dict(),
                     "region_coded": CleaningUtils.make_label(
                         CodeSchemes.REGION,
-                        make_location_code(CodeSchemes.REGION,
-                                           SomaliaLocations.region_for_location_code(location)),
+                        cls.make_location_code(CodeSchemes.REGION,
+                                               SomaliaLocations.region_for_location_code(location)),
                         Metadata.get_call_location()).to_dict(),
                     "state": CleaningUtils.make_label(
                         CodeSchemes.STATE,
-                        make_location_code(CodeSchemes.STATE,
-                                           SomaliaLocations.state_for_location_code(location)),
+                        cls.make_location_code(CodeSchemes.STATE,
+                                               SomaliaLocations.state_for_location_code(location)),
                         Metadata.get_call_location()).to_dict(),
                     "zone": CleaningUtils.make_label(
                         CodeSchemes.ZONE,
-                        make_location_code(CodeSchemes.ZONE,
-                                           SomaliaLocations.zone_for_location_code(location)),
+                        cls.make_location_code(CodeSchemes.ZONE,
+                                               SomaliaLocations.zone_for_location_code(location)),
                         Metadata.get_call_location()).to_dict()
                 }, Metadata(user, Metadata.get_call_location(), time.time()))
 
