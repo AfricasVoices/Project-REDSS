@@ -31,7 +31,7 @@ class ApplyManualCodes(object):
                 Metadata.get_call_location()
             )
 
-            coda_input_path = path.join(coda_input_dir, "{}.json".format(plan.coda_filename))
+            coda_input_path = path.join(coda_input_dir, plan.coda_filename)
             if path.exists(coda_input_path):
                 with open(coda_input_path, "r") as f:
                     TracedDataCoda2IO.import_coda_2_to_traced_data_iterable_multi_coded(
@@ -49,7 +49,7 @@ class ApplyManualCodes(object):
                 Metadata.get_call_location()
             )
 
-            coda_input_path = path.join(coda_input_dir, "{}.json".format(plan.coda_filename))
+            coda_input_path = path.join(coda_input_dir, plan.coda_filename)
             if path.exists(coda_input_path):
                 with open(coda_input_path, "r") as f:
                     TracedDataCoda2IO.import_coda_2_to_traced_data_iterable(
