@@ -9,13 +9,15 @@ from core_data_modules.traced_data.io import TracedDataCodaIO, TracedDataCoda2IO
 from core_data_modules.util import IOUtils
 
 from project_redss.lib import Channels
-from project_redss.lib.dataset_specification import DatasetSpecification
+from project_redss.lib.dataset_specification import DatasetSpecification, OperatorTranslator
 from project_redss.lib.redss_schemes import CodeSchemes
 
 
 class AutoCodeSurveys(object):
-    @staticmethod
-    def auto_code_surveys(user, data, phone_uuid_table, coda_output_dir):
+    SENT_ON_KEY = "sent_on"
+
+    @classmethod
+    def auto_code_surveys(cls, user, data, phone_uuid_table, coda_output_dir):
         # Label missing data
         for td in data:
             missing_dict = dict()
@@ -48,20 +50,23 @@ class AutoCodeSurveys(object):
                     td.append_data({"district_coded": nc_label.to_dict()},
                                    Metadata(user, Metadata.get_call_location(), time.time()))
 
-        # TODO: Auto-code operator + channels
-        # # Label each message with the operator of the sender
-        # for td in data:
-        #     phone_number = phone_uuid_table.get_phone(td["avf_phone_id"])
-        #     operator = PhoneCleaner.clean_operator(phone_number)
-        #
-        #     td.append_data(
-        #         {"operator": operator},
-        #         Metadata(user, Metadata.get_call_location(), time.time())
-        #     )
-        #
-        # # Label each message with channel keys
-        # for td in data:
-        #     Channels.set_channel_keys(user, td)
+        # Set operator from phone number
+        for td in data:
+            operator_clean = PhoneCleaner.clean_operator(phone_uuid_table.get_phone(td["uid"]))
+            if operator_clean == Codes.NOT_CODED:
+                label = CleaningUtils.make_label(
+                    CodeSchemes.OPERATOR, CodeSchemes.OPERATOR.get_code_with_control_code(Codes.NOT_CODED),
+                    Metadata.get_call_location()
+                )
+            else:
+                label = CleaningUtils.make_label(
+                    CodeSchemes.OPERATOR, CodeSchemes.OPERATOR.get_code_with_match_value(operator_clean),
+                    Metadata.get_call_location()
+                )
+            td.append_data({"operator_coded": label.to_dict()}, Metadata(user, Metadata.get_call_location(), time.time()))
+
+        # Label each message with channel keys
+        Channels.set_channel_keys(user, data, cls.SENT_ON_KEY)
 
         # Output single-scheme answers to coda for manual verification + coding
         IOUtils.ensure_dirs_exist(coda_output_dir)
@@ -71,7 +76,7 @@ class AutoCodeSurveys(object):
             
             TracedDataCoda2IO.add_message_ids(user, data, plan.raw_field, plan.id_field)
 
-            coda_output_path = path.join(coda_output_dir, f"{plan.coda_filename}.json")
+            coda_output_path = path.join(coda_output_dir, plan.coda_filename)
             with open(coda_output_path, "w") as f:
                 TracedDataCoda2IO.export_traced_data_iterable_to_coda_2(
                     data, plan.raw_field, plan.time_field, plan.id_field, {plan.coded_field}, f
