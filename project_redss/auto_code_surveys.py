@@ -76,18 +76,18 @@ class AutoCodeSurveys(object):
             
             TracedDataCoda2IO.add_message_ids(user, data, plan.raw_field, plan.id_field)
 
-            output_path = path.join(coda_output_dir, f"{plan.coda_filename}.json")
-            with open(output_path, "w") as f:
+            coda_output_path = path.join(coda_output_dir, plan.coda_filename)
+            with open(coda_output_path, "w") as f:
                 TracedDataCoda2IO.export_traced_data_iterable_to_coda_2(
                     data, plan.raw_field, plan.time_field, plan.id_field, {plan.coded_field}, f
                 )
 
         # Output location scheme to coda for manual verification + coding
         output_path = path.join(coda_output_dir, "location.json")
+        TracedDataCoda2IO.add_message_ids(user, data, "mogadishu_sub_district_raw", "mogadishu_sub_district_raw_id")
         with open(output_path, "w") as f:
-            TracedDataCoda2IO.add_message_ids(user, data, "mogadishu_sub_district_raw", "mogadishu_sub_district_id")
             TracedDataCoda2IO.export_traced_data_iterable_to_coda_2(
-                data, "mogadishu_sub_district_raw", "mogadishu_sub_district_time", "mogadishu_sub_district_id",
+                data, "mogadishu_sub_district_raw", "mogadishu_sub_district_time", "mogadishu_sub_district_raw_id",
                 {"mogadishu_sub_district_coded", "district_coded", "region_coded", "state_coded", "zone_coded"}, f
             )
 

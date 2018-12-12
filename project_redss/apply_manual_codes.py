@@ -1,127 +1,133 @@
+import io
 import time
+from io import BytesIO
 from os import path
 
 import pytz
 from core_data_modules.cleaners import CharacterCleaner, Codes
+from core_data_modules.cleaners.cleaning_utils import CleaningUtils
 from core_data_modules.cleaners.codes import SomaliaCodes
 from core_data_modules.cleaners.location_tools import SomaliaLocations
+from core_data_modules.data_models import Code
 from core_data_modules.traced_data import Metadata
-from core_data_modules.traced_data.io import TracedDataCodaIO, TracedDataTheInterfaceIO
+from core_data_modules.traced_data.io import TracedDataCodaIO, TracedDataTheInterfaceIO, TracedDataCoda2IO
 from core_data_modules.util import IOUtils
 from dateutil.parser import isoparse
 
+from project_redss.lib import MessageFilters
 from project_redss.lib.dataset_specification import DatasetSpecification
+from project_redss.lib.redss_schemes import CodeSchemes
 
 
 class ApplyManualCodes(object):
-    VARIABLE_NAME = "S07E01_Humanitarian_Priorities"
-    FLOW_NAME = "esc4jmcna_activation"
+    @staticmethod
+    def make_location_code(scheme, clean_value):
+        if clean_value == Codes.NOT_CODED:
+            return scheme.get_code_with_control_code(Codes.NOT_CODED)
+        else:
+            return scheme.get_code_with_match_value(clean_value)
 
     @classmethod
-    def apply_manual_codes(cls, user, data, coded_input_path, interface_output_dir):
-        # Merge manually coded survey/evaluation Coda files into the cleaned dataset
-        for plan in DatasetSpecification.coding_plans:
-            coda_file_path = path.join(coded_input_path, "{}_coded.csv".format(plan.coda_name))
+    def apply_manual_codes(cls, user, data, coda_input_dir, interface_output_dir):
+        # Merge manually coded radio show files into the cleaned dataset
+        for plan in DatasetSpecification.RQA_CODING_PLANS:
+            rqa_messages = [td for td in data if plan.raw_field in td]
 
-            if not path.exists(coda_file_path):
-                print("Warning: No Coda file found for key '{}'".format(plan.coda_name))
-                for td in data:
-                    td.append_data(
-                        {plan.manually_coded_field: Codes.NOT_REVIEWED},
-                        Metadata(user, Metadata.get_call_location(), time.time())
-                    )
-                continue
+            nr_label = CleaningUtils.make_label(
+                plan.code_scheme, plan.code_scheme.get_code_with_control_code(Codes.NOT_REVIEWED),
+                Metadata.get_call_location()
+            )
 
-            with open(coda_file_path, "r") as f:
-                TracedDataCodaIO.import_coda_to_traced_data_iterable(
-                    user, data, plan.source_field, {plan.coda_name: plan.manually_coded_field}, f, True)
+            f = None
+            try:
+                coda_input_path = path.join(coda_input_dir, plan.coda_filename)
+                if path.exists(coda_input_path):
+                    f = open(coda_input_path, "r")
+                TracedDataCoda2IO.import_coda_2_to_traced_data_iterable_multi_coded(
+                    user, rqa_messages, plan.id_field, {plan.coded_field: plan.code_scheme.scheme_id}, nr_label, f)
+            finally:
+                if f is not None:
+                    f.close()
 
-        # Set districts coded as 'other' to 'NOT_CODED'
-        for td in data:
-            if td["district_coded"] == "other":
-                td.append_data({"district_coded": Codes.NOT_CODED},
-                               Metadata(user, Metadata.get_call_location(), time.time()))
+        # Merge manually coded survey files into the cleaned dataset
+        for plan in DatasetSpecification.SURVEY_CODING_PLANS:
+            nr_label = CleaningUtils.make_label(
+                plan.code_scheme, plan.code_scheme.get_code_with_control_code(Codes.NOT_REVIEWED),
+                Metadata.get_call_location()
+            )
+
+            f = None
+            try:
+                coda_input_path = path.join(coda_input_dir, plan.coda_filename)
+                if path.exists(coda_input_path):
+                    f = open(coda_input_path, "r")
+                TracedDataCoda2IO.import_coda_2_to_traced_data_iterable(
+                    user, data, plan.id_field, {plan.coded_field: plan.code_scheme.scheme_id}, nr_label, f)
+            finally:
+                if f is not None:
+                    f.close()
 
         # Set district/region/state/zone codes from the coded district field.
         for td in data:
-            if td["district_review"] in {Codes.TRUE_MISSING, Codes.STOP}:
-                td.append_data({
-                    "district_coded": td["district_review"],
-                    "region_coded": td["district_review"],
-                    "state_coded": td["district_review"],
-                    "zone_coded": td["district_review"],
-                    "district_coda": td["district_review"]
-                }, Metadata(user, Metadata.get_call_location(), time.time()))
+            # Up to 1 location code should have been assigned in Coda. Search for that code,
+            # ensuring that only 1 has been assigned or, if multiple have been assigned, that they are non-conflicting
+            # control codes
+            location_code = None
+
+            for plan in DatasetSpecification.LOCATION_CODING_PLANS:
+                coda_coda = plan.code_scheme.get_code_with_id(td[plan.coded_field]["CodeID"])
+                if location_code is not None:
+                    assert coda_coda.code_id == location_code.code_id or coda_coda.control_code == Codes.NOT_REVIEWED
+                if coda_coda.control_code != Codes.NOT_REVIEWED:
+                    location_code = coda_coda
+
+            # If no code was found, then this location is still not reviewed.
+            # Synthesise a NOT_REVIEWED code accordingly.
+            if location_code is None:
+                location_code = Code()
+                location_code.code_type = "Control"
+                location_code.control_code = Codes.NOT_REVIEWED
+
+            # If a control code was found, set all other location keys to that control code,
+            # otherwise convert the provided location to the other locations in the hierarchy.
+            if location_code.code_type == "Control":
+                for plan in DatasetSpecification.LOCATION_CODING_PLANS:
+                    td.append_data({
+                        plan.coded_field: CleaningUtils.make_label(
+                            plan.code_scheme,
+                            plan.code_scheme.get_code_with_control_code(location_code.control_code),
+                            Metadata.get_call_location()
+                        ).to_dict()
+                    }, Metadata(user, Metadata.get_call_location(), time.time()))
             else:
+                location = location_code.match_values[0]
+
                 td.append_data({
-                    "district_coded": SomaliaLocations.district_for_location_code(td["district_coded"]),
-                    "region_coded": SomaliaLocations.region_for_location_code(td["district_coded"]),
-                    "state_coded": SomaliaLocations.state_for_location_code(td["district_coded"]),
-                    "zone_coded": SomaliaLocations.zone_for_location_code(td["district_coded"]),
-                    "district_coda": Codes.TRUE_MISSING if td["district_review"] == Codes.TRUE_MISSING else td[
-                        "district_coded"]
+                    "mogadishu_sub_district_coded": CleaningUtils.make_label(
+                        CodeSchemes.MOGADISHU_SUB_DISTRICT,
+                        cls.make_location_code(CodeSchemes.MOGADISHU_SUB_DISTRICT,
+                                               SomaliaLocations.mogadishu_sub_district_for_location_code(location)),
+                        Metadata.get_call_location()).to_dict(),
+                    "district_coded": CleaningUtils.make_label(
+                        CodeSchemes.DISTRICT,
+                        cls.make_location_code(CodeSchemes.DISTRICT,
+                                               SomaliaLocations.district_for_location_code(location)),
+                        Metadata.get_call_location()).to_dict(),
+                    "region_coded": CleaningUtils.make_label(
+                        CodeSchemes.REGION,
+                        cls.make_location_code(CodeSchemes.REGION,
+                                               SomaliaLocations.region_for_location_code(location)),
+                        Metadata.get_call_location()).to_dict(),
+                    "state": CleaningUtils.make_label(
+                        CodeSchemes.STATE,
+                        cls.make_location_code(CodeSchemes.STATE,
+                                               SomaliaLocations.state_for_location_code(location)),
+                        Metadata.get_call_location()).to_dict(),
+                    "zone": CleaningUtils.make_label(
+                        CodeSchemes.ZONE,
+                        cls.make_location_code(CodeSchemes.ZONE,
+                                               SomaliaLocations.zone_for_location_code(location)),
+                        Metadata.get_call_location()).to_dict()
                 }, Metadata(user, Metadata.get_call_location(), time.time()))
-
-            # If we failed to find a zone after searching location codes, try inferring from the operator code instead
-            if td["zone_coded"] not in SomaliaCodes.ZONES:
-                td.append_data({
-                    "zone_coded": SomaliaLocations.zone_for_operator_code(td["operator"])
-                }, Metadata(user, Metadata.get_call_location(), time.time()))
-
-        # Merge manually coded activation Coda files into the cleaned dataset
-        coda_file_path = path.join(coded_input_path, "esc4jmcna_activation_coded.csv")
-        key_of_raw = "S07E01_Humanitarian_Priorities (Text) - esc4jmcna_activation"
-        key_of_coded_prefix = "{}_coded_".format(key_of_raw)
-        key_of_coded_relevance = "{}_relevance_coded".format(key_of_raw)
-        if path.exists(coda_file_path):
-            with open(coda_file_path, "r") as f:
-                TracedDataCodaIO.import_coda_to_traced_data_iterable_as_matrix(
-                    user, data, key_of_raw, {"Code 1", "Code 2", "Code 3", "Code 4", "Code 5"}, f, key_of_coded_prefix)
-
-            with open(coda_file_path, "r") as f:
-                TracedDataCodaIO.import_coda_to_traced_data_iterable(
-                    user, data, key_of_raw, {"Relevance": key_of_coded_relevance}, f)
-
-        # Fix Not Reviewed to account for data which had relevant set only, to work around a Coda bug
-        key_of_coded_nr = "{}{}".format(key_of_coded_prefix, Codes.NOT_REVIEWED)
-        for td in data:
-            if td.get(key_of_coded_relevance) is not None and td.get(key_of_coded_relevance) != Codes.NOT_REVIEWED \
-                    and td.get(key_of_coded_relevance) != Codes.TRUE_MISSING:
-                # Note: The third check (on Codes.TRUE_MISSING) here is incorrect behaviour - codes which are
-                # TRUE_MISSING should also be labelled as key_of_coded_nr: "0" because they don't need review.
-                # This check is needed to in order to continue producing analysis datasets identical to those used
-                # in the report for REACH.
-                # This error impacts 1 line in the messages analysis dataset (of about 26,000).
-                td.append_data({key_of_coded_nr: Codes.MATRIX_0}, Metadata(user, Metadata.get_call_location(), time.time()))
-
-        # Assume everything that wasn't reviewed should have been assigned NOT_CODED, to work around a Coda bug
-        key_of_coded_nc = "{}{}".format(key_of_coded_prefix, Codes.NOT_CODED)
-        for td in data:
-            if td.get(key_of_coded_nr) == Codes.MATRIX_1:
-                td.append_data({key_of_coded_nc: Codes.MATRIX_1}, Metadata(user, Metadata.get_call_location(), time.time()))
-
-        # Set messages that weren't relevant as NOT_CODED
-        for td in data:
-            if td.get(key_of_coded_relevance) == Codes.NO or td.get("noise") is not None:
-                td.append_data({key_of_coded_nc: Codes.MATRIX_1}, Metadata(user, Metadata.get_call_location(), time.time()))
-
-        # Output to The Interface
-        utc_key = "{} (Time) - {}".format(cls.VARIABLE_NAME, cls.FLOW_NAME)
-        eat_key = "{} (Time EAT) - {}".format(cls.VARIABLE_NAME, cls.FLOW_NAME)
-        for td in data:
-            # TODO: If we still need The Interface, update Core to do the timezone conversion in the exporter.
-            utc_time = isoparse(td[utc_key])
-            eat_time = utc_time.astimezone(pytz.timezone("Africa/Nairobi")).isoformat()
-            td.append_data({
-                "district_review_interface": CharacterCleaner.clean_text(td["district_review"]),
-                "gender_review_interface": CharacterCleaner.clean_text(td["gender_review"]),
-                eat_key: eat_time
-            }, Metadata(user, Metadata.get_call_location(), time.time()))
-
-        IOUtils.ensure_dirs_exist(interface_output_dir)
-        TracedDataTheInterfaceIO.export_traced_data_iterable_to_the_interface(
-            data, interface_output_dir, "avf_phone_id", "S07E01_Humanitarian_Priorities (Text) - esc4jmcna_activation",
-            "S07E01_Humanitarian_Priorities (Time EAT) - esc4jmcna_activation",
-            county_key="district_review_interface", gender_key="gender_review_interface")
 
         return data
