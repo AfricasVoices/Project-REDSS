@@ -39,7 +39,7 @@ class DatasetSpecification(object):
                    icr_filename="s01e02.csv",
                    run_id_field="rqa_s01e02_run_id",
                    cleaner=None,
-                   code_scheme=CodeSchemes.S01E01),  # TODO: Use S01E02 when available
+                   code_scheme=CodeSchemes.S01E02),
 
         CodingPlan(raw_field="rqa_s01e03_raw",
                    coded_field="rqa_s01e03_coded",
@@ -48,7 +48,7 @@ class DatasetSpecification(object):
                    icr_filename="s01e03.csv",
                    run_id_field="rqa_s01e03_run_id",
                    cleaner=None,
-                   code_scheme=CodeSchemes.S01E01),  # TODO: Use S01E03 when available
+                   code_scheme=CodeSchemes.S01E03),
 
         CodingPlan(raw_field="rqa_s01e04_raw",
                    coded_field="rqa_s01e04_coded",
@@ -57,16 +57,8 @@ class DatasetSpecification(object):
                    icr_filename="s01e04.csv",
                    run_id_field="rqa_s01e04_run_id",
                    cleaner=None,
-                   code_scheme=CodeSchemes.S01E01)  # TODO: Use S01E04 when available
+                   code_scheme=CodeSchemes.S01E04)
     ]
-
-    # If in production mode, check that the above TODOs have been dealt with
-    if not DEV_MODE:
-        s01e01_uses = 0
-        for plan in RQA_CODING_PLANS:
-            if plan.code_scheme == CodeSchemes.S01E01:
-                s01e01_uses += 1
-        assert s01e01_uses == 1
 
     @staticmethod
     def redss_clean_age(text):
