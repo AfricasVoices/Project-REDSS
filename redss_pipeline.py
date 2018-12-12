@@ -45,8 +45,6 @@ if __name__ == "__main__":
 
     parser.add_argument("json_output_path", metavar="json-output-path",
                         help="Path to a JSON file to write TracedData for final analysis file to")
-    parser.add_argument("interface_output_dir", metavar="interface-output-dir",
-                        help="Path to a directory to write The Interface files to")
     parser.add_argument("icr_output_dir", metavar="icr-output-dir",
                         help="Directory to write CSV files to, each containing 200 messages and message ids for use " 
                              "in inter-code reliability evaluation"),
@@ -74,7 +72,6 @@ if __name__ == "__main__":
     prev_coded_dir_path = args.prev_coded_dir_path
 
     json_output_path = args.json_output_path
-    interface_output_dir = args.interface_output_dir
     icr_output_dir = args.icr_output_dir
     coded_dir_path = args.coded_dir_path
     csv_by_message_output_path = args.csv_by_message_output_path
@@ -118,7 +115,7 @@ if __name__ == "__main__":
     data = AutoCodeSurveys.auto_code_surveys(user, data, phone_number_uuid_table, coded_dir_path)
 
     print("Applying Manual Codes from Coda...")
-    data = ApplyManualCodes.apply_manual_codes(user, data, prev_coded_dir_path, interface_output_dir)
+    data = ApplyManualCodes.apply_manual_codes(user, data, prev_coded_dir_path)
 
     print("Generating Analysis CSVs...")
     data = AnalysisFile.generate(

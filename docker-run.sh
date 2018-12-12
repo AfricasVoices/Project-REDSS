@@ -5,8 +5,8 @@ set -e
 IMAGE_NAME=redss-csap
 
 # Check that the correct number of arguments were provided.
-if [ $# -ne 16 ]; then
-    echo "Usage: ./docker-run.sh <user> <phone-number-uuid-table-path> <s01e01-input-path> <s01e02-input-path> <s01e03-input-path> <s01e04-input-path> <demog-input-path> <evaluation-input-path> <prev-coded-dir> <json-output-path> <interface-output-dir> <icr-output-dir> <coded-output-dir> <messages_datasets-output-csv> <individuals-output-csv> <production-output-csv>"
+if [ $# -ne 15 ]; then
+    echo "Usage: ./docker-run.sh <user> <phone-number-uuid-table-path> <s01e01-input-path> <s01e02-input-path> <s01e03-input-path> <s01e04-input-path> <demog-input-path> <evaluation-input-path> <prev-coded-dir> <json-output-path> <interface-output-dir> <icr-output-dir> <coded-output-dir> <messages_datasets-output-csv> <individuals-output-csv>"
     exit
 fi
 
@@ -21,12 +21,11 @@ INPUT_DEMOG=$7
 INPUT_EVALUATION=$8
 PREV_CODED_DIR=$9
 OUTPUT_JSON=${10}
-OUTPUT_INTERFACE=${11}
-OUTPUT_ICR_DIR=${12}
-OUTPUT_CODED_DIR=${13}
-OUTPUT_MESSAGES_CSV=${14}
-OUTPUT_INDIVIDUALS_CSV=${15}
-OUTPUT_PRODUCTION_CSV=${16}
+OUTPUT_ICR_DIR=${11}
+OUTPUT_CODED_DIR=${12}
+OUTPUT_MESSAGES_CSV=${13}
+OUTPUT_INDIVIDUALS_CSV=${14}
+OUTPUT_PRODUCTION_CSV=${15}
 
 # Build an image for this pipeline stage.
 docker build -t "$IMAGE_NAME" .
@@ -35,7 +34,7 @@ docker build -t "$IMAGE_NAME" .
 CMD="pipenv run python -u redss_pipeline.py $USER /data/phone-number-uuid-table-input.json
     /data/s01e01-input.json /data/s01e02-input.json /data/s01e03-input.json /data/s01e04-input.json
     /data/demog-input.json /data/evaluation-input.json /data/prev-coded
-    /data/output.json /data/output-interface /data/output-icr /data/coded
+    /data/output.json /data/output-icr /data/coded
     /data/output-messages.csv /data/output-individuals.csv /data/output-production.csv"
 container="$(docker container create -w /app "$IMAGE_NAME" ${CMD})"
 
@@ -63,9 +62,6 @@ docker start -a -i "$container"
 # Copy the output data back out of the container
 mkdir -p "$(dirname "$OUTPUT_JSON")"
 docker cp "$container:/data/output.json" "$OUTPUT_JSON"
-
-mkdir -p "$(dirname "$OUTPUT_INTERFACE")"
-docker cp "$container:/data/output-interface" "$OUTPUT_INTERFACE"
 
 mkdir -p "$OUTPUT_ICR_DIR"
 docker cp "$container:/data/output-icr/." "$OUTPUT_ICR_DIR"
