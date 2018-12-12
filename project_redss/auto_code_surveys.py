@@ -22,7 +22,7 @@ class AutoCodeSurveys(object):
         for td in data:
             missing_dict = dict()
             for plan in DatasetSpecification.SURVEY_CODING_PLANS:
-                if td.get(plan.raw_field, "") == "":  # TODO: Is this correct behaviour?
+                if td.get(plan.raw_field, "") == "":
                     na_label = CleaningUtils.make_label_from_cleaner_code(
                         plan.code_scheme, plan.code_scheme.get_code_with_control_code(Codes.TRUE_MISSING),
                         Metadata.get_call_location()

@@ -12,6 +12,8 @@ from project_redss.lib.redss_schemes import CodeSchemes
 
 
 class ConsentUtils(object):
+    # TODO: This used to be in Core but has been duplicated then modified here in order to test the updates
+    #       needed to support Labels instead of strings.
     @staticmethod
     def td_has_stop_code(td, coding_plans):
         """
@@ -19,8 +21,8 @@ class ConsentUtils(object):
 
         :param td: TracedData object to search for stop codes.
         :type td: TracedData
-        :param keys: Keys to check for stop codes in 'td'.
-        :type keys: iterable of str
+        :param coding_plans:
+        :type coding_plans: iterable of CodingPlan
         :return: Whether td contains Codes.STOP in any of the keys in 'keys'.
         :rtype: bool
         """
@@ -43,8 +45,8 @@ class ConsentUtils(object):
         :type user: str
         :param data: TracedData objects to determine consent for.
         :type data: iterable of TracedData
-        :param keys: Keys to check for stop codes.
-        :type keys: iterable of str
+        :param coding_plans:
+        :type coding_plans: iterable of CodingPlan
         :param withdrawn_key: Name of key to use for the consent withdrawn field.
         :type withdrawn_key: str
         """
