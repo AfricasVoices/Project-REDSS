@@ -4,6 +4,70 @@
   "Version": "0.0.0.1",
   "Codes": [
     {
+      "CodeID": "code-23cf3616",
+      "CodeType": "Normal",
+      "DisplayText": "somali",
+      "NumericValue": 1,
+      "StringValue": "somali",
+      "VisibleInCoda": true
+    },
+    {
+      "CodeID": "code-83d97143",
+      "CodeType": "Normal",
+      "DisplayText": "mother-tongue",
+      "NumericValue": 2,
+      "StringValue": "mother-tongue",
+      "VisibleInCoda": true
+    },
+    {
+      "CodeID": "code-ee4f6f30",
+      "CodeType": "Normal",
+      "DisplayText": "english",
+      "NumericValue": 3,
+      "StringValue": "english",
+      "VisibleInCoda": true
+    },
+    {
+      "CodeID": "code-cf7da7d2",
+      "CodeType": "Normal",
+      "DisplayText": "kiswahili",
+      "NumericValue": 4,
+      "StringValue": "kiswahili",
+      "VisibleInCoda": true
+    },
+    {
+      "CodeID": "code-92844263",
+      "CodeType": "Normal",
+      "DisplayText": "arabic",
+      "NumericValue": 5,
+      "StringValue": "arabic",
+      "VisibleInCoda": true
+    },
+    {
+      "CodeID": "code-f61048db",
+      "CodeType": "Normal",
+      "DisplayText": "maimai",
+      "NumericValue": 6,
+      "StringValue": "maimai",
+      "VisibleInCoda": true
+    },
+    {
+      "CodeID": "code-b190b739",
+      "CodeType": "Normal",
+      "DisplayText": "barawe",
+      "NumericValue": 7,
+      "StringValue": "barawe",
+      "VisibleInCoda": true
+    },
+    {
+      "CodeID": "code-49087f30",
+      "CodeType": "Normal",
+      "DisplayText": "other",
+      "NumericValue": 8,
+      "StringValue": "other",
+      "VisibleInCoda": true
+    },
+    {
       "CodeID": "code-NA-f93d3eb7",
       "CodeType": "Control",
       "ControlCode": "NA",
