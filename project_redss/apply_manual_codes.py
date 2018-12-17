@@ -85,11 +85,11 @@ class ApplyManualCodes(object):
             location_code = None
 
             for plan in DatasetSpecification.LOCATION_CODING_PLANS:
-                coda_coda = plan.code_scheme.get_code_with_id(td[plan.coded_field]["CodeID"])
+                coda_code = plan.code_scheme.get_code_with_id(td[plan.coded_field]["CodeID"])
                 if location_code is not None:
-                    assert coda_coda.code_id == location_code.code_id or coda_coda.control_code == Codes.NOT_REVIEWED
-                if coda_coda.control_code != Codes.NOT_REVIEWED:
-                    location_code = coda_coda
+                    assert coda_code.code_id == location_code.code_id or coda_code.control_code == Codes.NOT_REVIEWED
+                if coda_code.control_code != Codes.NOT_REVIEWED:
+                    location_code = coda_code
 
             # If no code was found, then this location is still not reviewed.
             # Synthesise a NOT_REVIEWED code accordingly.
