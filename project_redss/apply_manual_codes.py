@@ -44,7 +44,7 @@ class ApplyManualCodes(object):
                 if path.exists(coda_input_path):
                     f = open(coda_input_path, "r")
                 TracedDataCoda2IO.import_coda_2_to_traced_data_iterable_multi_coded(
-                    user, rqa_messages, plan.id_field, {plan.coded_field: {plan.code_scheme}}, nr_label, f)
+                    user, rqa_messages, plan.id_field, {plan.coded_field: plan.code_scheme}, nr_label, f)
             finally:
                 if f is not None:
                     f.close()
