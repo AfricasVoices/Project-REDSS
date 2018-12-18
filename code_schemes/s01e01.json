@@ -3,6 +3,158 @@
   "Name": "S01E01",
   "Version": "0.0.0.1",
   "Codes": [
+     {
+      "CodeID": "code-1c2837d7",
+      "CodeType": "Normal",
+      "DisplayText": "financial support",
+      "NumericValue": 1,
+      "StringValue": "financial support",
+      "VisibleInCoda": true
+    },
+    {
+      "CodeID": "code-aaaab0f3",
+      "CodeType": "Normal",
+      "DisplayText": "job creation",
+      "NumericValue": 2,
+      "StringValue": "job creation",
+      "VisibleInCoda": true
+    },
+    {
+      "CodeID": "code-8bd1ea02",
+      "CodeType": "Normal",
+      "DisplayText": "skills training",
+      "NumericValue": 3,
+      "StringValue": "skills training",
+      "VisibleInCoda": true
+    },
+    {
+      "CodeID": "code-76859e02",
+      "CodeType": "Normal",
+      "DisplayText": "availability of health facilities",
+      "NumericValue": 4,
+      "StringValue": "availability of health facilities",
+      "VisibleInCoda": true
+    },
+    {
+      "CodeID": "code-69260ca0",
+      "CodeType": "Normal",
+      "DisplayText": "food assistance",
+      "NumericValue": 5,
+      "StringValue": "food assistance",
+      "VisibleInCoda": true
+    },
+    {
+      "CodeID": "code-ac249875",
+      "CodeType": "Normal",
+      "DisplayText": "access to water",
+      "NumericValue": 6,
+      "StringValue": "access to water",
+      "VisibleInCoda": true
+    },
+    {
+      "CodeID": "code-219e9adc",
+      "CodeType": "Normal",
+      "DisplayText": "access to education",
+      "NumericValue": 7,
+      "StringValue": "access to education",
+      "VisibleInCoda": true
+    },
+    {
+      "CodeID": "code-f67329ab",
+      "CodeType": "Normal",
+      "DisplayText": "sanitation and hygiene",
+      "NumericValue": 8,
+      "StringValue": "sanitation and hygiene",
+      "VisibleInCoda": true
+    },
+    {
+      "CodeID": "code-6215c2c3",
+      "CodeType": "Normal",
+      "DisplayText": "shelter",
+      "NumericValue": 9,
+      "StringValue": "shelter",
+      "VisibleInCoda": true
+    },
+    {
+      "CodeID": "code-e1dc9360",
+      "CodeType": "Normal",
+      "DisplayText": "land",
+      "NumericValue": 10,
+      "StringValue": "land",
+      "VisibleInCoda": true
+    },
+    {
+      "CodeID": "code-816ad5ac",
+      "CodeType": "Normal",
+      "DisplayText": "peace and security",
+      "NumericValue": 11,
+      "StringValue": "peace and security",
+      "VisibleInCoda": true
+    },
+    {
+      "CodeID": "code-0541b6de",
+      "CodeType": "Normal",
+      "DisplayText": "committees to be organised on displacement",
+      "NumericValue": 12,
+      "StringValue": "committees to be organised on displacement",
+      "VisibleInCoda": true
+    },
+    {
+      "CodeID": "code-fdd84a58",
+      "CodeType": "Normal",
+      "DisplayText": "community consultation",
+      "NumericValue": 13,
+      "StringValue": "community consultation",
+      "VisibleInCoda": true
+    },
+    {
+      "CodeID": "code-468a63a1",
+      "CodeType": "Normal",
+      "DisplayText": "government to support communities",
+      "NumericValue": 14,
+      "StringValue": "government to support communities",
+      "VisibleInCoda": true
+    },
+    {
+      "CodeID": "code-1b785bd3",
+      "CodeType": "Normal",
+      "DisplayText": "just and transparent delivery of aid",
+      "NumericValue": 15,
+      "StringValue": "just and transparent delivery of aid",
+      "VisibleInCoda": true
+    },
+    {
+      "CodeID": "code-4437592d",
+      "CodeType": "Normal",
+      "DisplayText": "crowdfunding",
+      "NumericValue": 16,
+      "StringValue": "crowdfunding",
+      "VisibleInCoda": true
+    },
+    {
+      "CodeID": "code-845b0231",
+      "CodeType": "Normal",
+      "DisplayText": "return to area of origin",
+      "NumericValue": 17,
+      "StringValue": "return to area of origin",
+      "VisibleInCoda": true
+    },
+    {
+      "CodeID": "code-774a61fb",
+      "CodeType": "Normal",
+      "DisplayText": "keep in one place",
+      "NumericValue": 18,
+      "StringValue": "keep in one place",
+      "VisibleInCoda": true
+    },
+    {
+      "CodeID": "code-7b037534",
+      "CodeType": "Normal",
+      "DisplayText": "other",
+      "NumericValue": 19,
+      "StringValue": "other",
+      "VisibleInCoda": true
+    },
     {
       "CodeID": "code-NA-f93d3eb7",
       "CodeType": "Control",
