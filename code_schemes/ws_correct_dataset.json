@@ -1,0 +1,87 @@
+{
+  "SchemeID": "de6bfc6e",
+  "Name": "WS - Correct Dataset",
+  "Version": "0.0.0.1",
+  "Codes": [
+    {
+      "CodeID": "code-70ac05ab",
+      "CodeType": "Normal",
+      "DisplayText": "age",
+      "StringValue": "age",
+      "NumericValue": 1,
+      "VisibleInCoda": true
+    },
+    {
+      "CodeID": "code-6774cedd",
+      "CodeType": "Normal",
+      "DisplayText": "gender",
+      "StringValue": "gender",
+      "NumericValue": 2,
+      "VisibleInCoda": true
+    },
+    {
+      "CodeID": "code-dda6e4b4",
+      "CodeType": "Normal",
+      "DisplayText": "location",
+      "StringValue": "location",
+      "NumericValue": 3,
+      "VisibleInCoda": true
+    },
+    {
+      "CodeID": "code-c2ef3b7f",
+      "CodeType": "Normal",
+      "DisplayText": "recently displaced",
+      "StringValue": "recently displaced",
+      "NumericValue": 4,
+      "VisibleInCoda": true
+    },
+    {
+      "CodeID": "code-cd9eeed9",
+      "CodeType": "Normal",
+      "DisplayText": "idp camp",
+      "StringValue": "idp camp",
+      "NumericValue": 5,
+      "VisibleInCoda": true
+    },
+    {
+      "CodeID": "code-87ec1cb8",
+      "CodeType": "Normal",
+      "DisplayText": "hh language",
+      "StringValue": "hh language",
+      "NumericValue": 6,
+      "VisibleInCoda": true
+    },
+    {
+      "CodeID": "code-9bd0f2b1",
+      "CodeType": "Normal",
+      "DisplayText": "s01e01",
+      "StringValue": "s01e01",
+      "NumericValue": 7,
+      "VisibleInCoda": true
+    },
+    {
+      "CodeID": "code-9a5f15d6",
+      "CodeType": "Normal",
+      "DisplayText": "s01e02",
+      "StringValue": "s01e02",
+      "NumericValue": 8,
+      "VisibleInCoda": true
+    },
+    {
+      "CodeID": "code-e8621530",
+      "CodeType": "Normal",
+      "DisplayText": "s01e03",
+      "StringValue": "s01e03",
+      "NumericValue": 9,
+      "VisibleInCoda": true
+    },
+    {
+      "CodeID": "code-f7a875ee",
+      "CodeType": "Normal",
+      "DisplayText": "s01e04",
+      "StringValue": "s01e04",
+      "NumericValue": 10,
+      "VisibleInCoda": true
+    }
+  ]
+}
