@@ -10,7 +10,7 @@ class TranslateRapidProKeys(object):
 
         ("rqa_s01e01_raw", "Rqa_S01E01 (Value) - csap_s01e01_activation"),
         ("rqa_s01e02_raw", "Rqa_S01E02 (Value) - csap_s01e02_activation"),
-        ("rqa_s01e03_raw", "Rqa_S01E04 (Value) - csap_s01e03_activation"),
+        ("rqa_s01e03_raw", "Rqa_S01E03 (Value) - csap_s01e03_activation"),
         ("rqa_s01e04_raw", "Rqa_S01E04 (Value) - csap_s01e04_activation"),
 
         ("rqa_s01e01_run_id", "Rqa_S01E01 (Run ID) - csap_s01e01_activation"),

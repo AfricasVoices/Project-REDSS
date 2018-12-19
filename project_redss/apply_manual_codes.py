@@ -33,18 +33,13 @@ class ApplyManualCodes(object):
         for plan in DatasetSpecification.RQA_CODING_PLANS:
             rqa_messages = [td for td in data if plan.raw_field in td]
 
-            nr_label = CleaningUtils.make_label_from_cleaner_code(
-                plan.code_scheme, plan.code_scheme.get_code_with_control_code(Codes.NOT_REVIEWED),
-                Metadata.get_call_location()
-            )
-
             f = None
             try:
                 coda_input_path = path.join(coda_input_dir, plan.coda_filename)
                 if path.exists(coda_input_path):
                     f = open(coda_input_path, "r")
                 TracedDataCoda2IO.import_coda_2_to_traced_data_iterable_multi_coded(
-                    user, rqa_messages, plan.id_field, {plan.coded_field: {plan.code_scheme}}, nr_label, f)
+                    user, rqa_messages, plan.id_field, {plan.coded_field: plan.code_scheme}, f)
             finally:
                 if f is not None:
                     f.close()
@@ -66,18 +61,13 @@ class ApplyManualCodes(object):
 
         # Merge manually coded survey files into the cleaned dataset
         for plan in DatasetSpecification.SURVEY_CODING_PLANS:
-            nr_label = CleaningUtils.make_label_from_cleaner_code(
-                plan.code_scheme, plan.code_scheme.get_code_with_control_code(Codes.NOT_REVIEWED),
-                Metadata.get_call_location()
-            )
-
             f = None
             try:
                 coda_input_path = path.join(coda_input_dir, plan.coda_filename)
                 if path.exists(coda_input_path):
                     f = open(coda_input_path, "r")
                 TracedDataCoda2IO.import_coda_2_to_traced_data_iterable(
-                    user, data, plan.id_field, {plan.coded_field: plan.code_scheme}, nr_label, f)
+                    user, data, plan.id_field, {plan.coded_field: plan.code_scheme}, f)
             finally:
                 if f is not None:
                     f.close()
@@ -90,11 +80,12 @@ class ApplyManualCodes(object):
             location_code = None
 
             for plan in DatasetSpecification.LOCATION_CODING_PLANS:
-                coda_coda = plan.code_scheme.get_code_with_id(td[plan.coded_field]["CodeID"])
+                coda_code = plan.code_scheme.get_code_with_id(td[plan.coded_field]["CodeID"])
                 if location_code is not None:
-                    assert coda_coda.code_id == location_code.code_id or coda_coda.control_code == Codes.NOT_REVIEWED
-                if coda_coda.control_code != Codes.NOT_REVIEWED:
-                    location_code = coda_coda
+                    if not (coda_code.code_id == location_code.code_id or coda_code.control_code == Codes.NOT_REVIEWED):
+                        location_code = Code(None, "Control", None, None, None, None, control_code=Codes.NOT_INTERNALLY_CONSISTENT)
+                elif coda_code.control_code != Codes.NOT_REVIEWED:
+                    location_code = coda_code
 
             # If no code was found, then this location is still not reviewed.
             # Synthesise a NOT_REVIEWED code accordingly.

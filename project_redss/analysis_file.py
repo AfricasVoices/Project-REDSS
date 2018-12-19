@@ -5,6 +5,7 @@ from core_data_modules.cleaners import Codes
 from core_data_modules.traced_data import Metadata
 from core_data_modules.traced_data.io import TracedDataCSVIO
 from core_data_modules.traced_data.util import FoldTracedData
+from core_data_modules.util import TimeUtils
 
 from project_redss.lib import AnalysisKeys, MessageFilters
 from project_redss.lib.dataset_specification import DatasetSpecification
@@ -181,6 +182,24 @@ class AnalysisFile(object):
             user, data, fold_id_fn=lambda td: td["uid"],
             equal_keys=equal_keys, concat_keys=concat_keys, matrix_keys=matrix_keys, bool_keys=bool_keys
         )
+
+        # Fix-up _NA and _NC keys, which are currently being set incorrectly by
+        # FoldTracedData.fold_iterable_of_traced_data when there are multiple radio shows
+        # TODO: Update FoldTracedData to handle NA and NC correctly under multiple radio shows
+        for td in folded_data:
+            for plan in DatasetSpecification.RQA_CODING_PLANS:
+                if td.get(plan.raw_field, "") != "":
+                    td.append_data({f"{plan.analysis_file_key}{Codes.TRUE_MISSING}": Codes.MATRIX_0},
+                                   Metadata(user, Metadata.get_call_location(), TimeUtils.utc_now_as_iso_string()))
+
+                contains_non_nc_key = False
+                for key in matrix_keys:
+                    if key.startswith(plan.analysis_file_key) and not key.endswith(Codes.NOT_CODED) \
+                            and td.get(key) == Codes.MATRIX_1:
+                        contains_non_nc_key = True
+                if not contains_non_nc_key:
+                    td.append_data({f"{plan.analysis_file_key}{Codes.NOT_CODED}": Codes.MATRIX_1},
+                                   Metadata(user, Metadata.get_call_location(), TimeUtils.utc_now_as_iso_string()))
 
         # Process consent
         ConsentUtils.set_stopped(user, data, consent_withdrawn_key)

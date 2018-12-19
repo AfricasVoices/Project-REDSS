@@ -6,7 +6,7 @@ from project_redss.lib.redss_schemes import CodeSchemes
 
 class CodingPlan(object):
     def __init__(self, raw_field, coded_field, coda_filename, cleaner=None, code_scheme=None, time_field=None,
-                 run_id_field=None, icr_filename=None, analysis_file_key=None):
+                 run_id_field=None, icr_filename=None, analysis_file_key=None, id_field=None):
         self.raw_field = raw_field
         self.coded_field = coded_field
         self.coda_filename = coda_filename
@@ -16,7 +16,10 @@ class CodingPlan(object):
         self.time_field = time_field
         self.run_id_field = run_id_field
         self.analysis_file_key = analysis_file_key
-        self.id_field = "{}_id".format(self.raw_field)
+
+        if id_field is None:
+            id_field = "{}_id".format(self.raw_field)
+        self.id_field = id_field
 
 
 class DatasetSpecification(object):
@@ -76,6 +79,7 @@ class DatasetSpecification(object):
 
     LOCATION_CODING_PLANS = [
         CodingPlan(raw_field="mogadishu_sub_district_raw",
+                   id_field="mogadishu_sub_district_raw_id",
                    coded_field="mogadishu_sub_district_coded",
                    time_field="mogadishu_sub_district_time",
                    coda_filename="location.json",
@@ -84,6 +88,7 @@ class DatasetSpecification(object):
                    code_scheme=CodeSchemes.MOGADISHU_SUB_DISTRICT),
 
         CodingPlan(raw_field="mogadishu_sub_district_raw",
+                   id_field="mogadishu_sub_district_raw_id",
                    coded_field="district_coded",
                    time_field="mogadishu_sub_district_time",
                    coda_filename="location.json",
@@ -92,25 +97,28 @@ class DatasetSpecification(object):
                    code_scheme=CodeSchemes.DISTRICT),
 
         CodingPlan(raw_field="mogadishu_sub_district_raw",
+                   id_field="mogadishu_sub_district_raw_id",
                    coded_field="region_coded",
                    time_field="mogadishu_sub_district_time",
-                   coda_filename="region.json",
+                   coda_filename="location.json",
                    analysis_file_key="region",
                    cleaner=None,
                    code_scheme=CodeSchemes.REGION),
 
         CodingPlan(raw_field="mogadishu_sub_district_raw",
+                   id_field="mogadishu_sub_district_raw_id",
                    coded_field="state_coded",
                    time_field="mogadishu_sub_district_time",
-                   coda_filename="state.json",
+                   coda_filename="location.json",
                    analysis_file_key="state",
                    cleaner=None,
                    code_scheme=CodeSchemes.STATE),
 
         CodingPlan(raw_field="mogadishu_sub_district_raw",
+                   id_field="mogadishu_sub_district_raw_id",
                    coded_field="zone_coded",
                    time_field="mogadishu_sub_district_time",
-                   coda_filename="zone.json",
+                   coda_filename="location.json",
                    analysis_file_key="zone",
                    cleaner=None,
                    code_scheme=CodeSchemes.ZONE),
