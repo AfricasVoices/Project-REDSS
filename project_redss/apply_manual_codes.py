@@ -33,7 +33,7 @@ class ApplyManualCodes(object):
         for plan in DatasetSpecification.RQA_CODING_PLANS:
             rqa_messages = [td for td in data if plan.raw_field in td]
 
-            nr_label = CleaningUtils.make_label(
+            nr_label = CleaningUtils.make_label_from_cleaner_code(
                 plan.code_scheme, plan.code_scheme.get_code_with_control_code(Codes.NOT_REVIEWED),
                 Metadata.get_call_location()
             )
@@ -44,14 +44,29 @@ class ApplyManualCodes(object):
                 if path.exists(coda_input_path):
                     f = open(coda_input_path, "r")
                 TracedDataCoda2IO.import_coda_2_to_traced_data_iterable_multi_coded(
-                    user, rqa_messages, plan.id_field, {plan.coded_field: plan.code_scheme.scheme_id}, nr_label, f)
+                    user, rqa_messages, plan.id_field, {plan.coded_field: {plan.code_scheme}}, nr_label, f)
             finally:
                 if f is not None:
                     f.close()
 
+        # Mark data that is noise as Codes.NOT_CODED
+        for td in data:
+            if td["noise"]:
+                nc_dict = dict()
+                for plan in DatasetSpecification.RQA_CODING_PLANS:
+                    if plan.coded_field in td:
+                        continue
+
+                    nc_label = CleaningUtils.make_label_from_cleaner_code(
+                        plan.code_scheme, plan.code_scheme.get_code_with_control_code(Codes.NOT_CODED),
+                        Metadata.get_call_location()
+                    )
+                    nc_dict[plan.coded_field] = [nc_label.to_dict()]
+                td.append_data(nc_dict, Metadata(user, Metadata.get_call_location(), time.time()))
+
         # Merge manually coded survey files into the cleaned dataset
         for plan in DatasetSpecification.SURVEY_CODING_PLANS:
-            nr_label = CleaningUtils.make_label(
+            nr_label = CleaningUtils.make_label_from_cleaner_code(
                 plan.code_scheme, plan.code_scheme.get_code_with_control_code(Codes.NOT_REVIEWED),
                 Metadata.get_call_location()
             )
@@ -62,7 +77,7 @@ class ApplyManualCodes(object):
                 if path.exists(coda_input_path):
                     f = open(coda_input_path, "r")
                 TracedDataCoda2IO.import_coda_2_to_traced_data_iterable(
-                    user, data, plan.id_field, {plan.coded_field: plan.code_scheme.scheme_id}, nr_label, f)
+                    user, data, plan.id_field, {plan.coded_field: plan.code_scheme}, nr_label, f)
             finally:
                 if f is not None:
                     f.close()
@@ -84,16 +99,14 @@ class ApplyManualCodes(object):
             # If no code was found, then this location is still not reviewed.
             # Synthesise a NOT_REVIEWED code accordingly.
             if location_code is None:
-                location_code = Code()
-                location_code.code_type = "Control"
-                location_code.control_code = Codes.NOT_REVIEWED
+                location_code = Code(None, "Control", None, None, None, None, control_code=Codes.NOT_REVIEWED)
 
             # If a control code was found, set all other location keys to that control code,
             # otherwise convert the provided location to the other locations in the hierarchy.
             if location_code.code_type == "Control":
                 for plan in DatasetSpecification.LOCATION_CODING_PLANS:
                     td.append_data({
-                        plan.coded_field: CleaningUtils.make_label(
+                        plan.coded_field: CleaningUtils.make_label_from_cleaner_code(
                             plan.code_scheme,
                             plan.code_scheme.get_code_with_control_code(location_code.control_code),
                             Metadata.get_call_location()
@@ -103,27 +116,27 @@ class ApplyManualCodes(object):
                 location = location_code.match_values[0]
 
                 td.append_data({
-                    "mogadishu_sub_district_coded": CleaningUtils.make_label(
+                    "mogadishu_sub_district_coded": CleaningUtils.make_label_from_cleaner_code(
                         CodeSchemes.MOGADISHU_SUB_DISTRICT,
                         cls.make_location_code(CodeSchemes.MOGADISHU_SUB_DISTRICT,
                                                SomaliaLocations.mogadishu_sub_district_for_location_code(location)),
                         Metadata.get_call_location()).to_dict(),
-                    "district_coded": CleaningUtils.make_label(
+                    "district_coded": CleaningUtils.make_label_from_cleaner_code(
                         CodeSchemes.DISTRICT,
                         cls.make_location_code(CodeSchemes.DISTRICT,
                                                SomaliaLocations.district_for_location_code(location)),
                         Metadata.get_call_location()).to_dict(),
-                    "region_coded": CleaningUtils.make_label(
+                    "region_coded": CleaningUtils.make_label_from_cleaner_code(
                         CodeSchemes.REGION,
                         cls.make_location_code(CodeSchemes.REGION,
                                                SomaliaLocations.region_for_location_code(location)),
                         Metadata.get_call_location()).to_dict(),
-                    "state": CleaningUtils.make_label(
+                    "state_coded": CleaningUtils.make_label_from_cleaner_code(
                         CodeSchemes.STATE,
                         cls.make_location_code(CodeSchemes.STATE,
                                                SomaliaLocations.state_for_location_code(location)),
                         Metadata.get_call_location()).to_dict(),
-                    "zone": CleaningUtils.make_label(
+                    "zone_coded": CleaningUtils.make_label_from_cleaner_code(
                         CodeSchemes.ZONE,
                         cls.make_location_code(CodeSchemes.ZONE,
                                                SomaliaLocations.zone_for_location_code(location)),

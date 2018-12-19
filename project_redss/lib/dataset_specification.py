@@ -1,13 +1,12 @@
 # Note: This module project-specific and not yet suitable for migration to Core
-from core_data_modules.cleaners import somali
+from core_data_modules.cleaners import somali, Codes
 
-from project_redss.lib.redss_code_translators import *
 from project_redss.lib.redss_schemes import CodeSchemes
 
 
 class CodingPlan(object):
     def __init__(self, raw_field, coded_field, coda_filename, cleaner=None, code_scheme=None, time_field=None,
-                 run_id_field=None, icr_filename=None):
+                 run_id_field=None, icr_filename=None, analysis_file_key=None):
         self.raw_field = raw_field
         self.coded_field = coded_field
         self.coda_filename = coda_filename
@@ -16,11 +15,12 @@ class CodingPlan(object):
         self.code_scheme = code_scheme
         self.time_field = time_field
         self.run_id_field = run_id_field
+        self.analysis_file_key = analysis_file_key
         self.id_field = "{}_id".format(self.raw_field)
 
 
 class DatasetSpecification(object):
-    DEV_MODE = True
+    DEV_MODE = False
 
     RQA_CODING_PLANS = [
         CodingPlan(raw_field="rqa_s01e01_raw",
@@ -29,6 +29,7 @@ class DatasetSpecification(object):
                    coda_filename="s01e01.json",
                    icr_filename="s01e01.csv",
                    run_id_field="rqa_s01e01_run_id",
+                   analysis_file_key="rqa_s01e01_",
                    cleaner=None,
                    code_scheme=CodeSchemes.S01E01),
 
@@ -38,6 +39,7 @@ class DatasetSpecification(object):
                    coda_filename="s01e02.json",
                    icr_filename="s01e02.csv",
                    run_id_field="rqa_s01e02_run_id",
+                   analysis_file_key="rqa_s01e02_",
                    cleaner=None,
                    code_scheme=CodeSchemes.S01E02),
 
@@ -47,6 +49,7 @@ class DatasetSpecification(object):
                    coda_filename="s01e03.json",
                    icr_filename="s01e03.csv",
                    run_id_field="rqa_s01e03_run_id",
+                   analysis_file_key="rqa_s01e03_",
                    cleaner=None,
                    code_scheme=CodeSchemes.S01E03),
 
@@ -56,6 +59,7 @@ class DatasetSpecification(object):
                    coda_filename="s01e04.json",
                    icr_filename="s01e04.csv",
                    run_id_field="rqa_s01e04_run_id",
+                   analysis_file_key="rqa_s01e04_",
                    cleaner=None,
                    code_scheme=CodeSchemes.S01E04)
     ]
@@ -64,7 +68,7 @@ class DatasetSpecification(object):
     def redss_clean_age(text):
         age = somali.DemographicCleaner.clean_age(text)
         if type(age) == int and 10 <= age < 100:
-            return str(text)
+            return str(age)
             # TODO: Once the cleaners are updated to not return Codes.NOT_CODED, this should be updated to still return
             #       NC in the case where age is an int but is out of range
         else:
@@ -74,14 +78,16 @@ class DatasetSpecification(object):
         CodingPlan(raw_field="mogadishu_sub_district_raw",
                    coded_field="mogadishu_sub_district_coded",
                    time_field="mogadishu_sub_district_time",
-                   coda_filename="mogadishu_sub_district.json",
+                   coda_filename="location.json",
+                   analysis_file_key="mogadishu_sub_district",
                    cleaner=somali.DemographicCleaner.clean_mogadishu_sub_district,
                    code_scheme=CodeSchemes.MOGADISHU_SUB_DISTRICT),
 
         CodingPlan(raw_field="mogadishu_sub_district_raw",
                    coded_field="district_coded",
                    time_field="mogadishu_sub_district_time",
-                   coda_filename="district.json",
+                   coda_filename="location.json",
+                   analysis_file_key="district",
                    cleaner=somali.DemographicCleaner.clean_somalia_district,
                    code_scheme=CodeSchemes.DISTRICT),
 
@@ -89,6 +95,7 @@ class DatasetSpecification(object):
                    coded_field="region_coded",
                    time_field="mogadishu_sub_district_time",
                    coda_filename="region.json",
+                   analysis_file_key="region",
                    cleaner=None,
                    code_scheme=CodeSchemes.REGION),
 
@@ -96,6 +103,7 @@ class DatasetSpecification(object):
                    coded_field="state_coded",
                    time_field="mogadishu_sub_district_time",
                    coda_filename="state.json",
+                   analysis_file_key="state",
                    cleaner=None,
                    code_scheme=CodeSchemes.STATE),
 
@@ -103,6 +111,7 @@ class DatasetSpecification(object):
                    coded_field="zone_coded",
                    time_field="mogadishu_sub_district_time",
                    coda_filename="zone.json",
+                   analysis_file_key="zone",
                    cleaner=None,
                    code_scheme=CodeSchemes.ZONE),
     ]
@@ -112,6 +121,7 @@ class DatasetSpecification(object):
                    coded_field="gender_coded",
                    time_field="gender_time",
                    coda_filename="gender.json",
+                   analysis_file_key="gender",
                    cleaner=somali.DemographicCleaner.clean_gender,
                    code_scheme=CodeSchemes.GENDER)
     ]
@@ -121,6 +131,7 @@ class DatasetSpecification(object):
                    coded_field="age_coded",
                    time_field="age_time",
                    coda_filename="age.json",
+                   analysis_file_key="age",
                    cleaner=lambda text: DatasetSpecification.redss_clean_age(text),
                    code_scheme=CodeSchemes.AGE),
 
@@ -128,6 +139,7 @@ class DatasetSpecification(object):
                    coded_field="idp_camp_coded",
                    time_field="idp_camp_time",
                    coda_filename="idp_camp.json",
+                   analysis_file_key="idp_camp",
                    cleaner=somali.DemographicCleaner.clean_yes_no,
                    code_scheme=CodeSchemes.IDP_CAMP),
 
@@ -135,6 +147,7 @@ class DatasetSpecification(object):
                    coded_field="recently_displaced_coded",
                    time_field="recently_displaced_time",
                    coda_filename="recently_displaced.json",
+                   analysis_file_key="recently_displaced",
                    cleaner=somali.DemographicCleaner.clean_yes_no,
                    code_scheme=CodeSchemes.RECENTLY_DISPLACED),
 
@@ -142,6 +155,7 @@ class DatasetSpecification(object):
                    coded_field="hh_language_coded",
                    time_field="hh_language_time",
                    coda_filename="hh_language.json",
+                   analysis_file_key="hh_language",
                    cleaner=None,
                    code_scheme=CodeSchemes.HH_LANGUAGE)
     ])

@@ -54,7 +54,10 @@ if __name__ == "__main__":
                         help="Analysis dataset where messages are the unit for analysis (i.e. one message per row)")
     parser.add_argument("csv_by_individual_output_path", metavar="csv-by-individual-output-path",
                         help="Analysis dataset where respondents are the unit for analysis (i.e. one respondent "
-                             "per row, with all their messages joined into a single cell).")
+                             "per row, with all their messages joined into a single cell)")
+    parser.add_argument("production_csv_output_path", metavar="production-csv-output-path",
+                        help="Path to a CSV file to write raw message and demographic responses to, for use in "
+                             "radio show production")
 
     args = parser.parse_args()
     user = args.user
@@ -73,6 +76,7 @@ if __name__ == "__main__":
     coded_dir_path = args.coded_dir_path
     csv_by_message_output_path = args.csv_by_message_output_path
     csv_by_individual_output_path = args.csv_by_individual_output_path
+    production_csv_output_path = args.production_csv_output_path
 
     message_paths = [s01e01_input_path, s01e02_input_path, s01e03_input_path, s01e04_input_path]
 
@@ -113,8 +117,9 @@ if __name__ == "__main__":
     print("Applying Manual Codes from Coda...")
     data = ApplyManualCodes.apply_manual_codes(user, data, prev_coded_dir_path)
 
-    # print("Generating Analysis CSVs...")
-    # data = AnalysisFile.generate(user, data, csv_by_message_output_path, csv_by_individual_output_path)
+    print("Generating Analysis CSVs...")
+    data = AnalysisFile.generate(
+        user, data, csv_by_message_output_path, csv_by_individual_output_path, production_csv_output_path)
 
     # Write json output
     print("Writing TracedData to file...")

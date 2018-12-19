@@ -21,7 +21,7 @@ class AutoCodeShowMessages(object):
 
     SENT_ON_KEY = "sent_on"
     NOISE_KEY = "noise"
-    PROJECT_START_DATE = isoparse("2010-01-01T00+03:00")  # TODO: Set when known
+    PROJECT_START_DATE = isoparse("2018-12-02T00+03:00")
     PROJECT_END_DATE = isoparse("2030-01-01T00+03:00")  # TODO: Set when known
     ICR_MESSAGES_COUNT = 200
     ICR_SEED = 0
@@ -51,7 +51,7 @@ class AutoCodeShowMessages(object):
             missing_dict = dict()
             for plan in DatasetSpecification.RQA_CODING_PLANS:
                 if plan.raw_field not in td:
-                    na_label = CleaningUtils.make_label(
+                    na_label = CleaningUtils.make_label_from_cleaner_code(
                         plan.code_scheme, plan.code_scheme.get_code_with_control_code(Codes.TRUE_MISSING),
                         Metadata.get_call_location()
                     )

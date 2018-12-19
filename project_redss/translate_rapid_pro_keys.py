@@ -6,6 +6,8 @@ from core_data_modules.traced_data import Metadata
 class TranslateRapidProKeys(object):
     RAPID_PRO_KEY_MAP = [
         # List of (new_key, old_key)
+        ("uid", "avf_phone_id"),
+
         ("rqa_s01e01_raw", "Rqa_S01E01 (Value) - csap_s01e01_activation"),
         ("rqa_s01e02_raw", "Rqa_S01E02 (Value) - csap_s01e02_activation"),
         ("rqa_s01e03_raw", "Rqa_S01E04 (Value) - csap_s01e03_activation"),
