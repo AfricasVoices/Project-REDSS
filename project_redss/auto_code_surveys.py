@@ -9,7 +9,7 @@ from core_data_modules.traced_data.io import TracedDataCodaIO, TracedDataCoda2IO
 from core_data_modules.util import IOUtils
 
 from project_redss.lib import Channels
-from project_redss.lib.dataset_specification import DatasetSpecification
+from project_redss.lib.pipeline_configuration import PipelineConfiguration
 from project_redss.lib.redss_schemes import CodeSchemes
 
 
@@ -21,7 +21,7 @@ class AutoCodeSurveys(object):
         # Label missing data
         for td in data:
             missing_dict = dict()
-            for plan in DatasetSpecification.SURVEY_CODING_PLANS:
+            for plan in PipelineConfiguration.SURVEY_CODING_PLANS:
                 if td.get(plan.raw_field, "") == "":
                     na_label = CleaningUtils.make_label_from_cleaner_code(
                         plan.code_scheme, plan.code_scheme.get_code_with_control_code(Codes.TRUE_MISSING),
@@ -31,7 +31,7 @@ class AutoCodeSurveys(object):
             td.append_data(missing_dict, Metadata(user, Metadata.get_call_location(), time.time()))
 
         # Auto-code remaining data
-        for plan in DatasetSpecification.SURVEY_CODING_PLANS:
+        for plan in PipelineConfiguration.SURVEY_CODING_PLANS:
             if plan.cleaner is not None:
                 CleaningUtils.apply_cleaner_to_traced_data_iterable(user, data, plan.raw_field, plan.coded_field,
                                                                     plan.cleaner, plan.code_scheme)
@@ -70,7 +70,7 @@ class AutoCodeSurveys(object):
 
         # Output single-scheme answers to coda for manual verification + coding
         IOUtils.ensure_dirs_exist(coda_output_dir)
-        for plan in DatasetSpecification.SURVEY_CODING_PLANS:
+        for plan in PipelineConfiguration.SURVEY_CODING_PLANS:
             if plan.raw_field == "mogadishu_sub_district_raw":
                 continue
             

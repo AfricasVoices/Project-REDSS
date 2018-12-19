@@ -8,7 +8,7 @@ from core_data_modules.traced_data.util import FoldTracedData
 from core_data_modules.util import TimeUtils
 
 from project_redss.lib import AnalysisKeys, MessageFilters
-from project_redss.lib.dataset_specification import DatasetSpecification
+from project_redss.lib.pipeline_configuration import PipelineConfiguration
 from project_redss.lib.redss_schemes import CodeSchemes
 
 
@@ -91,7 +91,7 @@ class AnalysisFile(object):
 
         # Set the list of raw/coded keys which
         demog_keys = []
-        for plan in DatasetSpecification.SURVEY_CODING_PLANS:
+        for plan in PipelineConfiguration.SURVEY_CODING_PLANS:
             if plan.analysis_file_key not in demog_keys:
                 demog_keys.append(plan.analysis_file_key)
             if plan.raw_field not in demog_keys:
@@ -100,7 +100,7 @@ class AnalysisFile(object):
         for td in data:
             td.append_data(
                 {plan.analysis_file_key: plan.code_scheme.get_code_with_id(td[plan.coded_field]["CodeID"]).string_value
-                 for plan in DatasetSpecification.SURVEY_CODING_PLANS},
+                 for plan in PipelineConfiguration.SURVEY_CODING_PLANS},
                 Metadata(user, Metadata.get_call_location(), time.time())
             )
 
@@ -120,7 +120,7 @@ class AnalysisFile(object):
         # Translate keys to final values for analysis
         matrix_keys = []
 
-        for plan in DatasetSpecification.RQA_CODING_PLANS:
+        for plan in PipelineConfiguration.RQA_CODING_PLANS:
             show_matrix_keys = set()
             for code in plan.code_scheme.codes:
                 show_matrix_keys.add(f"{plan.analysis_file_key}{code.string_value}")
@@ -164,11 +164,11 @@ class AnalysisFile(object):
 
         # Set consent withdrawn based on presence of data coded as "stop"
         ConsentUtils.determine_consent_withdrawn(
-            user, data, DatasetSpecification.SURVEY_CODING_PLANS, consent_withdrawn_key)
+            user, data, PipelineConfiguration.SURVEY_CODING_PLANS, consent_withdrawn_key)
 
         # Set consent withdrawn based on stop codes from radio question answers
         for td in data:
-            for plan in DatasetSpecification.RQA_CODING_PLANS:
+            for plan in PipelineConfiguration.RQA_CODING_PLANS:
                 if td[f"{plan.analysis_file_key}{Codes.STOP}"] == Codes.MATRIX_1:
                     td.append_data({consent_withdrawn_key: Codes.TRUE},
                                    Metadata(user, Metadata.get_call_location(), time.time()))
@@ -187,7 +187,7 @@ class AnalysisFile(object):
         # FoldTracedData.fold_iterable_of_traced_data when there are multiple radio shows
         # TODO: Update FoldTracedData to handle NA and NC correctly under multiple radio shows
         for td in folded_data:
-            for plan in DatasetSpecification.RQA_CODING_PLANS:
+            for plan in PipelineConfiguration.RQA_CODING_PLANS:
                 if td.get(plan.raw_field, "") != "":
                     td.append_data({f"{plan.analysis_file_key}{Codes.TRUE_MISSING}": Codes.MATRIX_0},
                                    Metadata(user, Metadata.get_call_location(), TimeUtils.utc_now_as_iso_string()))

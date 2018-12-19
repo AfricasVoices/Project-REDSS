@@ -22,7 +22,7 @@ class CodingPlan(object):
         self.id_field = id_field
 
 
-class DatasetSpecification(object):
+class PipelineConfiguration(object):
     DEV_MODE = False
 
     RQA_CODING_PLANS = [
@@ -140,7 +140,7 @@ class DatasetSpecification(object):
                    time_field="age_time",
                    coda_filename="age.json",
                    analysis_file_key="age",
-                   cleaner=lambda text: DatasetSpecification.redss_clean_age(text),
+                   cleaner=lambda text: PipelineConfiguration.redss_clean_age(text),
                    code_scheme=CodeSchemes.AGE),
 
         CodingPlan(raw_field="idp_camp_raw",

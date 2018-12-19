@@ -15,7 +15,7 @@ from core_data_modules.util import IOUtils
 from dateutil.parser import isoparse
 
 from project_redss.lib import MessageFilters
-from project_redss.lib.dataset_specification import DatasetSpecification
+from project_redss.lib.pipeline_configuration import PipelineConfiguration
 from project_redss.lib.redss_schemes import CodeSchemes
 
 
@@ -30,7 +30,7 @@ class ApplyManualCodes(object):
     @classmethod
     def apply_manual_codes(cls, user, data, coda_input_dir):
         # Merge manually coded radio show files into the cleaned dataset
-        for plan in DatasetSpecification.RQA_CODING_PLANS:
+        for plan in PipelineConfiguration.RQA_CODING_PLANS:
             rqa_messages = [td for td in data if plan.raw_field in td]
 
             f = None
@@ -48,7 +48,7 @@ class ApplyManualCodes(object):
         for td in data:
             if td["noise"]:
                 nc_dict = dict()
-                for plan in DatasetSpecification.RQA_CODING_PLANS:
+                for plan in PipelineConfiguration.RQA_CODING_PLANS:
                     if plan.coded_field in td:
                         continue
 
@@ -60,7 +60,7 @@ class ApplyManualCodes(object):
                 td.append_data(nc_dict, Metadata(user, Metadata.get_call_location(), time.time()))
 
         # Merge manually coded survey files into the cleaned dataset
-        for plan in DatasetSpecification.SURVEY_CODING_PLANS:
+        for plan in PipelineConfiguration.SURVEY_CODING_PLANS:
             f = None
             try:
                 coda_input_path = path.join(coda_input_dir, plan.coda_filename)
@@ -79,7 +79,7 @@ class ApplyManualCodes(object):
             # control codes
             location_code = None
 
-            for plan in DatasetSpecification.LOCATION_CODING_PLANS:
+            for plan in PipelineConfiguration.LOCATION_CODING_PLANS:
                 coda_code = plan.code_scheme.get_code_with_id(td[plan.coded_field]["CodeID"])
                 if location_code is not None:
                     if not (coda_code.code_id == location_code.code_id or coda_code.control_code == Codes.NOT_REVIEWED):
@@ -95,7 +95,7 @@ class ApplyManualCodes(object):
             # If a control code was found, set all other location keys to that control code,
             # otherwise convert the provided location to the other locations in the hierarchy.
             if location_code.code_type == "Control":
-                for plan in DatasetSpecification.LOCATION_CODING_PLANS:
+                for plan in PipelineConfiguration.LOCATION_CODING_PLANS:
                     td.append_data({
                         plan.coded_field: CleaningUtils.make_label_from_cleaner_code(
                             plan.code_scheme,

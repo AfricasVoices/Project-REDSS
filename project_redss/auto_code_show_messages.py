@@ -11,12 +11,12 @@ from dateutil.parser import isoparse
 
 from project_redss.lib import ICRTools
 from project_redss.lib import MessageFilters
-from project_redss.lib.dataset_specification import DatasetSpecification
+from project_redss.lib.pipeline_configuration import PipelineConfiguration
 
 
 class AutoCodeShowMessages(object):
     RQA_KEYS = []
-    for plan in DatasetSpecification.RQA_CODING_PLANS:
+    for plan in PipelineConfiguration.RQA_CODING_PLANS:
         RQA_KEYS.append(plan.raw_field)
 
     SENT_ON_KEY = "sent_on"
@@ -29,7 +29,7 @@ class AutoCodeShowMessages(object):
     @classmethod
     def auto_code_show_messages(cls, user, data, icr_output_dir, coda_output_dir):
         # Filter out test messages sent by AVF.
-        if not DatasetSpecification.DEV_MODE:
+        if not PipelineConfiguration.DEV_MODE:
             data = MessageFilters.filter_test_messages(data)
 
         # Filter for runs which don't contain a response to any week's question
@@ -49,7 +49,7 @@ class AutoCodeShowMessages(object):
         # Label missing data
         for td in data:
             missing_dict = dict()
-            for plan in DatasetSpecification.RQA_CODING_PLANS:
+            for plan in PipelineConfiguration.RQA_CODING_PLANS:
                 if plan.raw_field not in td:
                     na_label = CleaningUtils.make_label_from_cleaner_code(
                         plan.code_scheme, plan.code_scheme.get_code_with_control_code(Codes.TRUE_MISSING),
@@ -63,7 +63,7 @@ class AutoCodeShowMessages(object):
 
         # Output messages which aren't noise to Coda
         IOUtils.ensure_dirs_exist(coda_output_dir)
-        for plan in DatasetSpecification.RQA_CODING_PLANS:
+        for plan in PipelineConfiguration.RQA_CODING_PLANS:
             TracedDataCoda2IO.add_message_ids(user, not_noise, plan.raw_field, plan.id_field)
 
             output_path = path.join(coda_output_dir, plan.coda_filename)
@@ -74,7 +74,7 @@ class AutoCodeShowMessages(object):
 
         # Output messages for ICR
         IOUtils.ensure_dirs_exist(icr_output_dir)
-        for plan in DatasetSpecification.RQA_CODING_PLANS:
+        for plan in PipelineConfiguration.RQA_CODING_PLANS:
             rqa_messages = []
             for td in not_noise:
                 # This test works because the only codes which have been applied at this point are TRUE_MISSING.
