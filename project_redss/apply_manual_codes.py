@@ -33,18 +33,13 @@ class ApplyManualCodes(object):
         for plan in DatasetSpecification.RQA_CODING_PLANS:
             rqa_messages = [td for td in data if plan.raw_field in td]
 
-            nr_label = CleaningUtils.make_label_from_cleaner_code(
-                plan.code_scheme, plan.code_scheme.get_code_with_control_code(Codes.NOT_REVIEWED),
-                Metadata.get_call_location()
-            )
-
             f = None
             try:
                 coda_input_path = path.join(coda_input_dir, plan.coda_filename)
                 if path.exists(coda_input_path):
                     f = open(coda_input_path, "r")
                 TracedDataCoda2IO.import_coda_2_to_traced_data_iterable_multi_coded(
-                    user, rqa_messages, plan.id_field, {plan.coded_field: plan.code_scheme}, nr_label, f)
+                    user, rqa_messages, plan.id_field, {plan.coded_field: plan.code_scheme}, f)
             finally:
                 if f is not None:
                     f.close()
