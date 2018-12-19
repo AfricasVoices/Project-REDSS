@@ -20,7 +20,7 @@ SHOWS=(
     "csap_s01e01_activation"
     "csap_s01e02_activation"
     "csap_s01e03_activation"
-    "csap_s01e04_activation"
+#    "csap_s01e04_activation"
 )
 
 SURVEYS=(
