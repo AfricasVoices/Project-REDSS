@@ -34,7 +34,12 @@ class TranslateRapidProKeys(object):
         ("recently_displaced_raw", "Recently_Displaced (Value) - csap_demog"),
         ("recently_displaced_time", "Recently_Displaced (Time) - csap_demog"),
         ("hh_language_raw", "Hh_Language (Value) - csap_demog"),
-        ("hh_language_time", "Hh_Language (Time) - csap_demog")
+        ("hh_language_time", "Hh_Language (Time) - csap_demog"),
+
+        ("repeated_raw", "Repeated (Value) - csap_evaluation"),
+        ("repeated_time", "Repeated (Time) - csap_evaluation"),
+        ("involved_raw", "Involved (Value) - csap_evaluation"),
+        ("involved_time", "Involved (Time) - csap_evaluation")
     ]
 
     @classmethod
