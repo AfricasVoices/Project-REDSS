@@ -27,3 +27,6 @@ class CodeSchemes(object):
     IDP_CAMP = _open_scheme("idp_camp.json")
     RECENTLY_DISPLACED = _open_scheme("recently_displaced.json")
     HH_LANGUAGE = _open_scheme("hh_language.json")
+
+    REPEATED = _open_scheme("repeated.json")
+    INVOLVED = _open_scheme("involved.json")

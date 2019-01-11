@@ -165,5 +165,21 @@ class PipelineConfiguration(object):
                    coda_filename="hh_language.json",
                    analysis_file_key="hh_language",
                    cleaner=None,
-                   code_scheme=CodeSchemes.HH_LANGUAGE)
+                   code_scheme=CodeSchemes.HH_LANGUAGE),
+
+        CodingPlan(raw_field="repeated_raw",
+                   coded_field="repeated_coded",
+                   time_field="repeated_time",
+                   coda_filename="repeated.json",
+                   analysis_file_key="repeated",
+                   cleaner=somali.DemographicCleaner.clean_yes_no,
+                   code_scheme=CodeSchemes.REPEATED),
+
+        CodingPlan(raw_field="involved_raw",
+                   coded_field="involved_coded",
+                   time_field="involved_time",
+                   coda_filename="involved.json",
+                   analysis_file_key="involved",
+                   cleaner=somali.DemographicCleaner.clean_yes_no,
+                   code_scheme=CodeSchemes.INVOLVED)
     ])
