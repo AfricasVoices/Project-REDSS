@@ -11,7 +11,7 @@ class TranslateRapidProKeys(object):
 
         ("rqa_s01e01_raw", "Rqa_S01E01 (Value) - csap_s01e01_activation"),
         ("rqa_s01e02_raw", "Rqa_S01E02 (Value) - csap_s01e02_activation"),
-        # Not setting week 3 key here because it contains a burst of week 2 messages which requires special handling.
+        # Not setting week 3 key here because it contains some week 4 messages which require special handling.
         # That special handling is performed in cls.translate_rapid_pro_keys()
         ("rqa_s01e04_raw", "Rqa_S01E04 (Value) - csap_s01e04_activation"),
 
@@ -46,18 +46,19 @@ class TranslateRapidProKeys(object):
 
     WEEK_3_TIME_KEY = "Rqa_S01E03 (Time) - csap_s01e03_activation"
     WEEK_3_VALUE_KEY = "Rqa_S01E03 (Value) - csap_s01e03_activation"
-    WEEK_2_BURST_START = isoparse("2000-01-01T03:00:00+03:00")  # TODO: Set when burst window known
-    WEEK_2_BURST_END = isoparse("2000-01-01T03:00:00+03:00")  # TODO: Set when burst window known
+    # TODO: This isn't quite doing burst correction anymore, so rename
+    WEEK_4_BURST_START = isoparse("2018-12-23T00:00:00+03:00")
+    WEEK_4_BURST_END = isoparse("2018-12-23T13:34:38+03:00")
 
     @classmethod
     def translate_rapid_pro_keys(cls, user, data):
         for td in data:
             mapped_dict = dict()
 
-            # Fix week 2 messages being received in week 3
+            # Fix week 4 messages being received in week 3
             if cls.WEEK_3_TIME_KEY in td:
-                if cls.WEEK_2_BURST_START <= isoparse(td[cls.WEEK_3_TIME_KEY]) <= cls.WEEK_2_BURST_END:
-                    mapped_dict["rqa_s01e02_raw"] = td[cls.WEEK_3_VALUE_KEY]
+                if cls.WEEK_4_BURST_START <= isoparse(td[cls.WEEK_3_TIME_KEY]) <= cls.WEEK_4_BURST_END:
+                    mapped_dict["rqa_s01e04_raw"] = td[cls.WEEK_3_VALUE_KEY]
                 else:
                     mapped_dict["rqa_s01e03_raw"] = td[cls.WEEK_3_VALUE_KEY]
 
