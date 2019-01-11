@@ -224,6 +224,8 @@ class AnalysisFile(object):
             "idp_camp_raw",
             "recently_displaced_raw",
             "hh_language_raw",
+            "repeated_raw",
+            "involved_raw"
         ]
         not_noise = MessageFilters.filter_noise(data, "noise", lambda x: x)
         with open(production_csv_output_path, "w") as f:
