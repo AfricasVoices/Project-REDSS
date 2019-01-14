@@ -63,9 +63,9 @@ if __name__ == "__main__":
     parser.add_argument("csv_by_message_drive_path", metavar="csv-by-message-drive-path",
                         help="'Path' to a file in the service account's Drive to upload the messages CSV to")
     parser.add_argument("csv_by_individual_drive_path", metavar="csv-by-individual-drive-path",
-                        help="'Path' to a file in the service account's Drive to upload the messages CSV to")
+                        help="'Path' to a file in the service account's Drive to upload the individuals CSV to")
     parser.add_argument("production_csv_drive_path", metavar="production-csv-drive-path",
-                        help="'Path' to a file in the service account's Drive to upload the messages CSV to")
+                        help="'Path' to a file in the service account's Drive to upload the production CSV to")
 
     args = parser.parse_args()
     user = args.user
