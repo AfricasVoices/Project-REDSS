@@ -90,7 +90,7 @@ class Channels(object):
 
             # Set time as NON_LOGICAL if it doesn't fall in range of the **sms ad/radio promo/radio_show**
             if time_range_matches == 0:
-                assert isoparse("2018-12-02T00:00:00+03:00") <= timestamp < isoparse("2018-12-23T24:00:00+03:00"), \
+                assert isoparse("2018-12-02T00:00:00+03:00") <= timestamp < isoparse("2018-12-31T00:00:00+03:00"), \
                     f"Timestamp {td[time_key]} out of range"
                 channel_dict[cls.NON_LOGICAL_KEY] = Codes.TRUE
             else:
