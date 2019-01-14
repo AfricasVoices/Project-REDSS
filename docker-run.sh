@@ -42,16 +42,20 @@ docker build -t "$IMAGE_NAME" .
 CMD="
     gsutil cp $DRIVE_AUTH_FILE /root/.config/drive-service-account-credentials.json && \
 
-    pipenv run python -u redss_pipeline.py $USER /data/phone-number-uuid-table-input.json \
+    pipenv run pyflame -o /program.prof -t python -u redss_pipeline.py $USER /data/phone-number-uuid-table-input.json \
     /data/s01e01-input.json /data/s01e02-input.json /data/s01e03-input.json /data/s01e04-input.json \
     /data/demog-input.json /data/evaluation-input.json /data/prev-coded \
     /data/output.json /data/output-icr /data/coded \
     /data/output-messages.csv /data/output-individuals.csv /data/output-production.csv \
     /root/.config/drive-service-account-credentials.json $MESSAGES_DRIVE_PATH $INDIVIDUALS_DRIVE_PATH $PRODUCTION_DRIVE_PATH
 "
-container="$(docker container create -v=$HOME/.config/gcloud:/root/.config/gcloud -w /app "$IMAGE_NAME" /bin/bash -c "$CMD")"
+# pipenv run python -u -m cProfile -o /program.prof redss_pipeline.py $USER /data/phone-number-uuid-table-input.json \
+container="$(docker container create --cap-add SYS_PTRACE -v=$HOME/.config/gcloud:/root/.config/gcloud -w /app "$IMAGE_NAME" /bin/bash -c "$CMD")"
 
 function finish {
+    echo "closing"
+    docker cp "$container:/program.prof" "program-pyflame.prof"
+
     # Tear down the container when done.
     docker container rm "$container" >/dev/null
 }
@@ -71,6 +75,8 @@ fi
 
 # Run the container
 docker start -a -i "$container"
+
+exit 1
 
 # Copy the output data back out of the container
 mkdir -p "$(dirname "$OUTPUT_JSON")"
