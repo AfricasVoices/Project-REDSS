@@ -13,10 +13,11 @@ RUN export CLOUD_SDK_REPO="cloud-sdk-$(lsb_release -c -s)" && \
     apt-get update && apt-get install -y google-cloud-sdk
 
 # Install pyflame (for statistical profiling)
-RUN apt-get update && apt-get install -y autoconf automake autotools-dev g++ pkg-config python-dev python3-dev libtool make
 WORKDIR /pyflame
-RUN git clone https://github.com/uber/pyflame.git .
-RUN ./autogen.sh && ./configure && make && make install
+RUN apt-get update && apt-get install -y autoconf automake autotools-dev g++ pkg-config python-dev python3-dev libtool make && \
+    git clone https://github.com/uber/pyflame.git . && git checkout "v1.6.7" && \
+    ./autogen.sh && ./configure && make && make install && \
+    rm -rf /pyflame
 
 # Set working directory
 WORKDIR /app
