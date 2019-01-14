@@ -40,14 +40,14 @@ docker build -t "$IMAGE_NAME" .
 
 # Create a container from the image that was just built, making gcloud credentials available via a volume mount.
 CMD="
-    gsutil cp $DRIVE_AUTH_FILE /.config/drive-service-account-credentials.json && \
+    gsutil cp $DRIVE_AUTH_FILE /root/.config/drive-service-account-credentials.json && \
 
     pipenv run python -u redss_pipeline.py $USER /data/phone-number-uuid-table-input.json \
     /data/s01e01-input.json /data/s01e02-input.json /data/s01e03-input.json /data/s01e04-input.json \
     /data/demog-input.json /data/evaluation-input.json /data/prev-coded \
     /data/output.json /data/output-icr /data/coded \
     /data/output-messages.csv /data/output-individuals.csv /data/output-production.csv \
-    /.config/drive-service-account-credentials.json $MESSAGES_DRIVE_PATH $INDIVIDUALS_DRIVE_PATH $PRODUCTION_DRIVE_PATH
+    /root/.config/drive-service-account-credentials.json $MESSAGES_DRIVE_PATH $INDIVIDUALS_DRIVE_PATH $PRODUCTION_DRIVE_PATH
 "
 container="$(docker container create -v=$HOME/.config/gcloud:/root/.config/gcloud -w /app "$IMAGE_NAME" /bin/bash -c "$CMD")"
 
