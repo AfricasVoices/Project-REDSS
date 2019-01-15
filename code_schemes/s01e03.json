@@ -4,6 +4,126 @@
   "Version": "0.0.0.1",
   "Codes": [
     {
+      "CodeID": "code-1b070f06",
+      "CodeType": "Normal",
+      "DisplayText": "government",
+      "NumericValue": 1,
+      "StringValue": "government",
+      "VisibleInCoda": true
+    },
+    {
+      "CodeID": "code-3bd3f093",
+      "CodeType": "Normal",
+      "DisplayText": "ngos",
+      "NumericValue": 2,
+      "StringValue": "ngos",
+      "VisibleInCoda": true
+    },
+    {
+      "CodeID": "code-03f21a4a",
+      "CodeType": "Normal",
+      "DisplayText": "community",
+      "NumericValue": 3,
+      "StringValue": "community",
+      "VisibleInCoda": true
+    },
+    {
+      "CodeID": "code-47bd88dc",
+      "CodeType": "Normal",
+      "DisplayText": "rights are violated",
+      "NumericValue": 4,
+      "StringValue": "rights_are_violated",
+      "VisibleInCoda": true
+    },
+    {
+      "CodeID": "code-c7245b6c",
+      "CodeType": "Normal",
+      "DisplayText": "access to housing",
+      "NumericValue": 5,
+      "StringValue": "access_to_housing",
+      "VisibleInCoda": true
+    },
+    {
+      "CodeID": "code-027c98c1",
+      "CodeType": "Normal",
+      "DisplayText": "access to health care",
+      "NumericValue": 6,
+      "StringValue": "access_to_health_care",
+      "VisibleInCoda": true
+    },
+    {
+      "CodeID": "code-7df5f104",
+      "CodeType": "Normal",
+      "DisplayText": "access to education",
+      "NumericValue": 7,
+      "StringValue": "access_to_education",
+      "VisibleInCoda": true
+    },
+    {
+      "CodeID": "code-c02aff21",
+      "CodeType": "Normal",
+      "DisplayText": "access to job opportunities",
+      "NumericValue": 8,
+      "StringValue": "access_to_job_opportunities",
+      "VisibleInCoda": true
+    },
+    {
+      "CodeID": "code-08350066",
+      "CodeType": "Normal",
+      "DisplayText": "lack of host-idp interaction",
+      "NumericValue": 9,
+      "StringValue": "lack_of_host_idp_interaction",
+      "VisibleInCoda": true
+    },
+    {
+      "CodeID": "code-0d7a4aed",
+      "CodeType": "Normal",
+      "DisplayText": "community feels superior",
+      "NumericValue": 10,
+      "StringValue": "community_feels_superior",
+      "VisibleInCoda": true
+    },
+    {
+      "CodeID": "code-1284e708",
+      "CodeType": "Normal",
+      "DisplayText": "religion",
+      "NumericValue": 11,
+      "StringValue": "religion",
+      "VisibleInCoda": true
+    },
+    {
+      "CodeID": "code-7dabfcb8",
+      "CodeType": "Normal",
+      "DisplayText": "deserve assistance",
+      "NumericValue": 12,
+      "StringValue": "deserve_assistance",
+      "VisibleInCoda": true
+    },
+    {
+      "CodeID": "code-32f447d4",
+      "CodeType": "Normal",
+      "DisplayText": "no displaced people",
+      "NumericValue": 13,
+      "StringValue": "no_displaced_people",
+      "VisibleInCoda": true
+    },
+    {
+      "CodeID": "code-109764e2",
+      "CodeType": "Normal",
+      "DisplayText": "are citizens",
+      "NumericValue": 14,
+      "StringValue": "are_citizens",
+      "VisibleInCoda": true
+    },
+    {
+      "CodeID": "code-2b5b1831",
+      "CodeType": "Normal",
+      "DisplayText": "common identity",
+      "NumericValue": 15,
+      "StringValue": "common_identity",
+      "VisibleInCoda": true
+    },
+    {
       "CodeID": "code-NA-f93d3eb7",
       "CodeType": "Control",
       "ControlCode": "NA",
