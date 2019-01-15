@@ -5,6 +5,7 @@ name = "pypi"
 
 [packages]
 CoreDataModules = {editable = true, ref = "130ab935879e87e094669ed0844c5c566cb4eed9", git = "https://www.github.com/AfricasVoices/CoreDataModules"}
+PipelineInfrastructure = {editable = true, ref = "2390ad8af87edca38d71ea5666a8758a0c4c124f", git = "https://www.github.com/AfricasVoices/PipelineInfrastructure"}
 pytz = "*"
 python-dateutil = "*"
 
