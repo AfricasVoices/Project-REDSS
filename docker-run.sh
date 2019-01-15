@@ -38,7 +38,11 @@ PRODUCTION_DRIVE_PATH=${19}
 # Build an image for this pipeline stage.
 docker build -t "$IMAGE_NAME" .
 
-# Create a container from the image that was just built, making gcloud credentials available via a volume mount.
+# Create a container from the image that was just built.
+# When run, the container will:
+#  - Copy the service account credentials from the gcloud bucket url 'SERVICE_ACCOUNT_CREDENTIALS_URL'.
+#  - Run the pipeline.
+# The gcloud bucket access is authorised via volume mounting (-v in the docker container create command)
 CMD="
     gsutil cp $SERVICE_ACCOUNT_CREDENTIALS_URL /root/.config/drive-service-account-credentials.json && \
 
