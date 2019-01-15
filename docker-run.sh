@@ -53,13 +53,9 @@ CMD="
     /data/output-messages.csv /data/output-individuals.csv /data/output-production.csv \
     /root/.config/drive-service-account-credentials.json $MESSAGES_DRIVE_PATH $INDIVIDUALS_DRIVE_PATH $PRODUCTION_DRIVE_PATH
 "
-# pipenv run python -u -m cProfile -o /program.prof redss_pipeline.py $USER /data/phone-number-uuid-table-input.json \
 container="$(docker container create --cap-add SYS_PTRACE -v=$HOME/.config/gcloud:/root/.config/gcloud -w /app "$IMAGE_NAME" /bin/bash -c "$CMD")"
 
 function finish {
-    echo "closing"
-    docker cp "$container:/program.prof" "program-pyflame.prof"
-
     # Tear down the container when done.
     docker container rm "$container" >/dev/null
 }
@@ -80,8 +76,6 @@ fi
 # Run the container
 docker start -a -i "$container"
 
-exit 1
-
 # Copy the output data back out of the container
 mkdir -p "$(dirname "$OUTPUT_JSON")"
 docker cp "$container:/data/output.json" "$OUTPUT_JSON"
@@ -100,3 +94,5 @@ docker cp "$container:/data/output-individuals.csv" "$OUTPUT_INDIVIDUALS_CSV"
 
 mkdir -p "$(dirname "$OUTPUT_PRODUCTION_CSV")"
 docker cp "$container:/data/output-production.csv" "$OUTPUT_PRODUCTION_CSV"
+
+docker cp "$container:/program.prof" "pyflame-profile.prof"
