@@ -21,8 +21,8 @@ class AutoCodeShowMessages(object):
 
     SENT_ON_KEY = "sent_on"
     NOISE_KEY = "noise"
-    PROJECT_START_DATE = isoparse("2018-12-02T00+03:00")
-    PROJECT_END_DATE = isoparse("2030-01-01T00+03:00")  # TODO: Set when known
+    PROJECT_START_DATE = isoparse("2018-12-02T00:00:00+03:00")
+    PROJECT_END_DATE = isoparse("2018-12-31T00:00:00+03:00")
     ICR_MESSAGES_COUNT = 200
     ICR_SEED = 0
 
