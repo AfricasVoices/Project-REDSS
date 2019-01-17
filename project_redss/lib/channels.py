@@ -15,18 +15,26 @@ class Channels(object):
     S01E03_KEY = "radio_participation_s01e03"
     S01E04_KEY = "radio_participation_s01e04"
 
+    # Time ranges expressed in format (start_of_range_inclusive, end_of_range_exclusive)
     SMS_AD_RANGES = [
         ("2018-12-02T19:25:19+03:00", "2018-12-03T00:00:00+03:00"),  # (not using ...-02T24:... due to an isoparse bug)
-        ("2018-12-09T19:00:30+03:00", "2018-12-03T00:00:00+03:00"),
+        ("2018-12-09T19:00:30+03:00", "2018-12-09T00:00:00+03:00"),
         ("2018-12-16T19:00:55+03:00", "2018-12-17T00:00:00+03:00"),
         ("2018-12-23T19:00:45+03:00", "2018-12-24T00:00:00+03:00")
     ]
 
     RADIO_PROMO_RANGES = [
-        ("2018-12-02T00:00:00+03:00", "2018-12-05T00:00:00+03:00"),
+        ("2018-12-02T00:00:00+03:00", "2018-12-02T19:25:19+03:00"),
+        ("2018-12-03T00:00:00+03:00", "2018-12-05T00:00:00+03:00"),
+
+        ("2018-12-09T00:00:00+03:00", "2018-12-09T19:00:30+03:00"),
         ("2018-12-09T00:00:00+03:00", "2018-12-12T00:00:00+03:00"),
-        ("2018-12-16T00:00:00+03:00", "2018-12-19T00:00:00+03:00"),
-        ("2018-12-23T00:00:00+03:00", "2018-12-26T00:00:00+03:00")
+
+        ("2018-12-16T00:00:00+03:00", "2018-12-16T19:00:55+03:00"),
+        ("2018-12-17T00:00:00+03:00", "2018-12-19T00:00:00+03:00"),
+
+        ("2018-12-23T00:00:00+03:00", "2018-12-23T19:00:45+03:00"),
+        ("2018-12-24T00:00:00+03:00", "2018-12-26T00:00:00+03:00")
     ]
 
     RADIO_SHOW_RANGES = [
@@ -90,10 +98,12 @@ class Channels(object):
 
             # Set time as NON_LOGICAL if it doesn't fall in range of the **sms ad/radio promo/radio_show**
             if time_range_matches == 0:
+                # Assert in range of project
                 assert isoparse("2018-12-02T00:00:00+03:00") <= timestamp < isoparse("2018-12-31T00:00:00+03:00"), \
-                    f"Timestamp {td[time_key]} out of range"
+                    f"Timestamp {td[time_key]} out of range of project"
                 channel_dict[cls.NON_LOGICAL_KEY] = Codes.TRUE
             else:
+                assert time_range_matches == 1, f"Time '{td[time_key]}' matches multiple time ranges"
                 channel_dict[cls.NON_LOGICAL_KEY] = Codes.FALSE
 
             # Set show ranges
@@ -102,7 +112,5 @@ class Channels(object):
                     channel_dict[key] = Codes.TRUE
                 else:
                     channel_dict[key] = Codes.FALSE
-
-            # assert time_range_matches <= 1, f"Time '{td[time_key]}' matches multiple time ranges"
 
             td.append_data(channel_dict, Metadata(user, Metadata.get_call_location(), time.time()))
