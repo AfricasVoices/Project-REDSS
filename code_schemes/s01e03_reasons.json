@@ -1,126 +1,126 @@
 {
   "SchemeID": "Scheme-5b60cc33",
-  "Name": "S01E03",
+  "Name": "S01E03 Reasons",
   "Version": "0.0.0.1",
   "Codes": [
     {
-      "CodeID": "code-1b070f06",
+      "CodeID": "code-352129d8",
       "CodeType": "Normal",
-      "DisplayText": "government",
+      "DisplayText": "discriminating actor: government",
       "NumericValue": 1,
-      "StringValue": "government",
+      "StringValue": "discriminating_actor_government",
       "VisibleInCoda": true
     },
     {
-      "CodeID": "code-3bd3f093",
+      "CodeID": "code-04bc53ff",
       "CodeType": "Normal",
-      "DisplayText": "ngos",
+      "DisplayText": "discriminating actor: ngos",
       "NumericValue": 2,
-      "StringValue": "ngos",
+      "StringValue": "discriminating_actor_ngos",
       "VisibleInCoda": true
     },
     {
-      "CodeID": "code-03f21a4a",
+      "CodeID": "code-89cd0dc6",
       "CodeType": "Normal",
-      "DisplayText": "community",
+      "DisplayText": "discriminating actor: community",
       "NumericValue": 3,
-      "StringValue": "community",
+      "StringValue": "discriminating_actor_community",
       "VisibleInCoda": true
     },
     {
-      "CodeID": "code-47bd88dc",
+      "CodeID": "code-1b80beba",
       "CodeType": "Normal",
-      "DisplayText": "rights are violated",
+      "DisplayText": "axes of discrimination: rights are violated",
       "NumericValue": 4,
-      "StringValue": "rights_are_violated",
+      "StringValue": "axes_of_discrimination_rights_are_violated",
       "VisibleInCoda": true
     },
     {
-      "CodeID": "code-c7245b6c",
+      "CodeID": "code-e6364a7c",
       "CodeType": "Normal",
-      "DisplayText": "access to housing",
+      "DisplayText": "axes of discrimination: access to housing",
       "NumericValue": 5,
-      "StringValue": "access_to_housing",
+      "StringValue": "axes_of_discrimination_access_to_housing",
       "VisibleInCoda": true
     },
     {
-      "CodeID": "code-027c98c1",
+      "CodeID": "code-a64a8dd5",
       "CodeType": "Normal",
-      "DisplayText": "access to health care",
+      "DisplayText": "axes of discrimination: access to health care",
       "NumericValue": 6,
-      "StringValue": "access_to_health_care",
+      "StringValue": "axes_of_discrimination_access_to_health_care",
       "VisibleInCoda": true
     },
     {
-      "CodeID": "code-7df5f104",
+      "CodeID": "code-2396c2fb",
       "CodeType": "Normal",
-      "DisplayText": "access to education",
+      "DisplayText": "axes of discrimination: access to education",
       "NumericValue": 7,
-      "StringValue": "access_to_education",
+      "StringValue": "axes_of_discrimination_access_to_education",
       "VisibleInCoda": true
     },
     {
-      "CodeID": "code-c02aff21",
+      "CodeID": "code-eee451ac",
       "CodeType": "Normal",
-      "DisplayText": "access to job opportunities",
+      "DisplayText": "axes of discrimination: access to job opportunities",
       "NumericValue": 8,
-      "StringValue": "access_to_job_opportunities",
+      "StringValue": "axes_of_discrimination_access_to_job_opportunities",
       "VisibleInCoda": true
     },
     {
-      "CodeID": "code-08350066",
+      "CodeID": "code-ef82c93f",
       "CodeType": "Normal",
-      "DisplayText": "lack of host-idp interaction",
+      "DisplayText": "reasons for discrimination: lack of host-idp interaction",
       "NumericValue": 9,
-      "StringValue": "lack_of_host_idp_interaction",
+      "StringValue": "reasons_for_discrimination_lack_of_host-idp_interaction",
       "VisibleInCoda": true
     },
     {
-      "CodeID": "code-0d7a4aed",
+      "CodeID": "code-8382b2d9",
       "CodeType": "Normal",
-      "DisplayText": "community feels superior",
+      "DisplayText": "reasons for discrimination: community feels superior",
       "NumericValue": 10,
-      "StringValue": "community_feels_superior",
+      "StringValue": "reasons_for_discrimination_community_feels_superior",
       "VisibleInCoda": true
     },
     {
-      "CodeID": "code-1284e708",
+      "CodeID": "code-49e980c2",
       "CodeType": "Normal",
-      "DisplayText": "religion",
+      "DisplayText": "reasons for lack of discrimination: religion",
       "NumericValue": 11,
-      "StringValue": "religion",
+      "StringValue": "reasons_for_lack_of_discrimination_religion",
       "VisibleInCoda": true
     },
     {
-      "CodeID": "code-7dabfcb8",
+      "CodeID": "code-f0491a2c",
       "CodeType": "Normal",
-      "DisplayText": "deserve assistance",
+      "DisplayText": "reasons for lack of discrimination: deserve assistance",
       "NumericValue": 12,
-      "StringValue": "deserve_assistance",
+      "StringValue": "reasons_for_lack_of_discrimination_deserve_assistance",
       "VisibleInCoda": true
     },
     {
-      "CodeID": "code-32f447d4",
+      "CodeID": "code-96411f7d",
       "CodeType": "Normal",
-      "DisplayText": "no displaced people",
+      "DisplayText": "reasons for lack of discrimination: no displaced people",
       "NumericValue": 13,
-      "StringValue": "no_displaced_people",
+      "StringValue": "reasons_for_lack_of_discrimination_no_displaced_people",
       "VisibleInCoda": true
     },
     {
-      "CodeID": "code-109764e2",
+      "CodeID": "code-2abdc971",
       "CodeType": "Normal",
-      "DisplayText": "are citizens",
+      "DisplayText": "reasons for lack of discrimination: are citizens",
       "NumericValue": 14,
-      "StringValue": "are_citizens",
+      "StringValue": "reasons_for_lack_of_discrimination_are_citizens",
       "VisibleInCoda": true
     },
     {
-      "CodeID": "code-2b5b1831",
+      "CodeID": "code-5e688ce8",
       "CodeType": "Normal",
-      "DisplayText": "common identity",
+      "DisplayText": "reasons for lack of discrimination: common identity",
       "NumericValue": 15,
-      "StringValue": "common_identity",
+      "StringValue": "reasons_for_lack_of_discrimination_common_identity",
       "VisibleInCoda": true
     },
     {
