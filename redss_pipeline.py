@@ -128,7 +128,7 @@ if __name__ == "__main__":
     data = AutoCodeSurveys.auto_code_surveys(user, data, phone_number_uuid_table, coded_dir_path)
 
     print("Applying Manual Codes from Coda...")
-    data = ApplyManualCodes.apply_manual_codes(user, data, prev_coded_dir_path)
+    data = ApplyManualCodes.apply_manual_codes(user, data, prev_coded_dir_path, phone_number_uuid_table)
 
     print("Generating Analysis CSVs...")
     data = AnalysisFile.generate(

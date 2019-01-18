@@ -1,4 +1,5 @@
 import io
+import random
 import time
 from io import BytesIO
 from os import path
@@ -28,7 +29,7 @@ class ApplyManualCodes(object):
             return scheme.get_code_with_match_value(clean_value)
 
     @classmethod
-    def apply_manual_codes(cls, user, data, coda_input_dir):
+    def apply_manual_codes(cls, user, data, coda_input_dir, phone_uuid_table):
         # Merge manually coded radio show files into the cleaned dataset
         for plan in PipelineConfiguration.RQA_CODING_PLANS:
             rqa_messages = [td for td in data if plan.raw_field in td]
@@ -133,5 +134,20 @@ class ApplyManualCodes(object):
                                                SomaliaLocations.zone_for_location_code(location)),
                         Metadata.get_call_location()).to_dict()
                 }, Metadata(user, Metadata.get_call_location(), time.time()))
+
+        # For respondents that have 'NC' in sub-district, export their phone numbers in a randomised order
+        nc_district_phone_numbers = set()
+        nc_code_id = CodeSchemes.MOGADISHU_SUB_DISTRICT.get_code_with_control_code(Codes.NOT_CODED).code_id
+        for td in data:
+            if td["mogadishu_sub_district_coded"].get("CodeID") == nc_code_id:
+                nc_district_phone_numbers.add(phone_uuid_table.get_phone(td["uid"]))
+        if len(nc_district_phone_numbers) >= 50:
+            nc_district_phone_numbers = list(nc_district_phone_numbers)
+            random.shuffle(nc_district_phone_numbers)
+            for phone_number in nc_district_phone_numbers:
+                print(phone_number)
+        else:
+            print(f"Refusing to print phone numbers of NC sub-districts because there are < 50 "
+                  f"({len(nc_district_phone_numbers)} total)")
 
         return data
