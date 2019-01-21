@@ -11,6 +11,7 @@ def _open_scheme(filename):
 
 class CodeSchemes(object):
     S01E01 = _open_scheme("s01e01.json")
+    S01E02_INTEGRATE_RETURN = _open_scheme("s01e02_integrate_return.json")
     S01E02_REASONS = _open_scheme("s01e02_reasons.json")
     S01E03_REASONS = _open_scheme("s01e03_reasons.json")
     S01E04 = _open_scheme("s01e04.json")

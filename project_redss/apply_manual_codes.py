@@ -44,6 +44,20 @@ class ApplyManualCodes(object):
                 if f is not None:
                     f.close()
 
+        # Apply integrate/return codes for s01e02
+        f = None
+        try:
+            rqa_messages = [td for td in data if "rqa_s01e02_raw" in td]
+            coda_input_path = path.join(coda_input_dir, "s01e02.json")
+            if path.exists(coda_input_path):
+                f = open(coda_input_path, "r")
+            TracedDataCoda2IO.import_coda_2_to_traced_data_iterable(
+                user, rqa_messages, "rqa_s01e02_raw_id",
+                {"rqa_s01e02_integrate_return_coded": CodeSchemes.S01E02_INTEGRATE_RETURN}, f)
+        finally:
+            if f is not None:
+                f.close()
+
         # Mark data that is noise as Codes.NOT_CODED
         for td in data:
             if td["noise"]:

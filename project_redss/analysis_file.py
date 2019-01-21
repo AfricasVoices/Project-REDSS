@@ -104,6 +104,12 @@ class AnalysisFile(object):
                 Metadata(user, Metadata.get_call_location(), time.time())
             )
 
+            td.append_data({
+                "rqa_s01e02_integrate_return":
+                    CodeSchemes.S01E02_INTEGRATE_RETURN.get_code_with_control_code(
+                        td["rqa_s01e02_integrate_return_coded"])
+            }, Metadata(user, Metadata.get_call_location(), time.time()))
+
         for td in data:
             td.append_data(
                 {"operator": CodeSchemes.OPERATOR.get_code_with_id(td["operator_coded"]["CodeID"]).string_value},
@@ -132,6 +138,10 @@ class AnalysisFile(object):
 
         matrix_keys.sort()
 
+        ambivalent_keys = [
+            "rqa_s01e02_integrate_return"
+        ]
+
         equal_keys = ["uid", "operator"]
         equal_keys.extend(demog_keys)
         equal_keys.extend(evaluation_keys)
@@ -158,6 +168,7 @@ class AnalysisFile(object):
         export_keys = ["uid", "operator"]
         export_keys.extend(bool_keys)
         export_keys.extend(matrix_keys)
+        export_keys.extend(ambivalent_keys)
         export_keys.extend(concat_keys)
         export_keys.extend(demog_keys)
         export_keys.extend(evaluation_keys)
