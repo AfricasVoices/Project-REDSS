@@ -1,6 +1,7 @@
 import time
 
 from core_data_modules.traced_data import Metadata
+from dateutil.parser import isoparse
 
 
 class TranslateRapidProKeys(object):
@@ -10,7 +11,8 @@ class TranslateRapidProKeys(object):
 
         ("rqa_s01e01_raw", "Rqa_S01E01 (Value) - csap_s01e01_activation"),
         ("rqa_s01e02_raw", "Rqa_S01E02 (Value) - csap_s01e02_activation"),
-        ("rqa_s01e03_raw", "Rqa_S01E03 (Value) - csap_s01e03_activation"),
+        # Not setting week 3 key here because it contains some week 4 messages which require special handling.
+        # That special handling is performed in cls.translate_rapid_pro_keys()
         ("rqa_s01e04_raw", "Rqa_S01E04 (Value) - csap_s01e04_activation"),
 
         ("rqa_s01e01_run_id", "Rqa_S01E01 (Run ID) - csap_s01e01_activation"),
@@ -42,13 +44,27 @@ class TranslateRapidProKeys(object):
         ("involved_time", "Involved (Time) - csap_evaluation")
     ]
 
+    WEEK_3_TIME_KEY = "Rqa_S01E03 (Time) - csap_s01e03_activation"
+    WEEK_3_VALUE_KEY = "Rqa_S01E03 (Value) - csap_s01e03_activation"
+    WEEK_4_START = isoparse("2018-12-23T00:00:00+03:00")
+
     @classmethod
     def translate_rapid_pro_keys(cls, user, data):
         for td in data:
             mapped_dict = dict()
+
+            # Redirect any week 4 messages which were in the week 3 flow due to a late flow change-over.
+            if cls.WEEK_3_TIME_KEY in td:
+                if isoparse(td[cls.WEEK_3_TIME_KEY]) > cls.WEEK_4_START:
+                    mapped_dict["rqa_s01e04_raw"] = td[cls.WEEK_3_VALUE_KEY]
+                else:
+                    mapped_dict["rqa_s01e03_raw"] = td[cls.WEEK_3_VALUE_KEY]
+
+            # Translate all other keys
             for new_key, old_key in cls.RAPID_PRO_KEY_MAP:
                 if old_key in td:
                     mapped_dict[new_key] = td[old_key]
+
             td.append_data(mapped_dict, Metadata(user, Metadata.get_call_location(), time.time()))
 
         return data

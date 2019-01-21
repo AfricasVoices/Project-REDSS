@@ -4,6 +4,94 @@
   "Version": "0.0.0.1",
   "Codes": [
     {
+      "CodeID": "code-94c43f5c",
+      "CodeType": "Normal",
+      "DisplayText": "peace and security",
+      "NumericValue": 1,
+      "StringValue": "peace_and_security",
+      "VisibleInCoda": true
+    },
+    {
+      "CodeID": "code-5e1ce974",
+      "CodeType": "Normal",
+      "DisplayText": "good governance",
+      "NumericValue": 2,
+      "StringValue": "good_governance",
+      "VisibleInCoda": true
+    },
+    {
+      "CodeID": "code-3d0b365b",
+      "CodeType": "Normal",
+      "DisplayText": "support justice system",
+      "NumericValue": 3,
+      "StringValue": "support_justice_system",
+      "VisibleInCoda": true
+    },
+    {
+      "CodeID": "code-75b35da3",
+      "CodeType": "Normal",
+      "DisplayText": "set up committee to handle",
+      "NumericValue": 4,
+      "StringValue": "set_up_committee_to_handle",
+      "VisibleInCoda": true
+    },
+    {
+      "CodeID": "code-0639b176",
+      "CodeType": "Normal",
+      "DisplayText": "procure them land",
+      "NumericValue": 5,
+      "StringValue": "procure_them_land",
+      "VisibleInCoda": true
+    },
+    {
+      "CodeID": "code-0145f456",
+      "CodeType": "Normal",
+      "DisplayText": "allow them to stay on current land",
+      "NumericValue": 6,
+      "StringValue": "allow_them_to_stay_on_current_land",
+      "VisibleInCoda": true
+    },
+    {
+      "CodeID": "code-8dee6e7d",
+      "CodeType": "Normal",
+      "DisplayText": "build housing",
+      "NumericValue": 7,
+      "StringValue": "build_housing",
+      "VisibleInCoda": true
+    },
+    {
+      "CodeID": "code-f015af1c",
+      "CodeType": "Normal",
+      "DisplayText": "combat inequality",
+      "NumericValue": 8,
+      "StringValue": "combat_inequality",
+      "VisibleInCoda": true
+    },
+    {
+      "CodeID": "code-19362153",
+      "CodeType": "Normal",
+      "DisplayText": "return and relocation",
+      "NumericValue": 9,
+      "StringValue": "return_and_relocation",
+      "VisibleInCoda": true
+    },
+    {
+      "CodeID": "code-700ae940",
+      "CodeType": "Normal",
+      "DisplayText": "religion",
+      "NumericValue": 10,
+      "StringValue": "religion",
+      "VisibleInCoda": true
+    },
+    {
+      "CodeID": "code-646d5b26",
+      "CodeType": "Normal",
+      "DisplayText": "other",
+      "NumericValue": 11,
+      "StringValue": "other",
+      "VisibleInCoda": true
+    },
+    {
       "CodeID": "code-NA-f93d3eb7",
       "CodeType": "Control",
       "ControlCode": "NA",
