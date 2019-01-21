@@ -1,0 +1,207 @@
+{
+  "SchemeID": "Scheme-4f039174",
+  "Name": "S01E02 Reasons",
+  "Version": "0.0.0.1",
+  "Codes": [
+    {
+      "CodeID": "code-b4175ee3",
+      "CodeType": "Normal",
+      "DisplayText": "same identity",
+      "NumericValue": 1,
+      "StringValue": "same_identity",
+      "VisibleInCoda": true
+    },
+    {
+      "CodeID": "code-38234080",
+      "CodeType": "Normal",
+      "DisplayText": "integration strengthens social cohesion",
+      "NumericValue": 2,
+      "StringValue": "integration_strengthens_social_cohesion",
+      "VisibleInCoda": true
+    },
+    {
+      "CodeID": "code-5f84e4b3",
+      "CodeType": "Normal",
+      "DisplayText": "religion commands it",
+      "NumericValue": 3,
+      "StringValue": "religion_commands_it",
+      "VisibleInCoda": true
+    },
+    {
+      "CodeID": "code-73a5fd8e",
+      "CodeType": "Normal",
+      "DisplayText": "should be given jobs",
+      "NumericValue": 4,
+      "StringValue": "should_be_given_jobs",
+      "VisibleInCoda": true
+    },
+    {
+      "CodeID": "code-4f4855d5",
+      "CodeType": "Normal",
+      "DisplayText": "come from a place of need",
+      "NumericValue": 5,
+      "StringValue": "come_from_a_place_of_need",
+      "VisibleInCoda": true
+    },
+    {
+      "CodeID": "code-b58b2c3d",
+      "CodeType": "Normal",
+      "DisplayText": "they are in need",
+      "NumericValue": 6,
+      "StringValue": "they_are_in_need",
+      "VisibleInCoda": true
+    },
+    {
+      "CodeID": "code-a766422d",
+      "CodeType": "Normal",
+      "DisplayText": "integration facilitates assistance",
+      "NumericValue": 7,
+      "StringValue": "integration_facilitates_assistance",
+      "VisibleInCoda": true
+    },
+    {
+      "CodeID": "code-cc74ac57",
+      "CodeType": "Normal",
+      "DisplayText": "necessary to end displacement",
+      "NumericValue": 8,
+      "StringValue": "necessary_to_end_displacement",
+      "VisibleInCoda": true
+    },
+    {
+      "CodeID": "code-19da0662",
+      "CodeType": "Normal",
+      "DisplayText": "consult with them",
+      "NumericValue": 9,
+      "StringValue": "consult_with_them",
+      "VisibleInCoda": true
+    },
+    {
+      "CodeID": "code-415eb13a",
+      "CodeType": "Normal",
+      "DisplayText": "government to be structured in right way",
+      "NumericValue": 10,
+      "StringValue": "government_to_be_structured_in_right_way",
+      "VisibleInCoda": true
+    },
+    {
+      "CodeID": "code-4a38ce81",
+      "CodeType": "Normal",
+      "DisplayText": "integrate_other",
+      "NumericValue": 11,
+      "StringValue": "integrate_other",
+      "VisibleInCoda": true
+    },
+    {
+      "CodeID": "code-d3c42a95",
+      "CodeType": "Normal",
+      "DisplayText": "remove for social cohesion",
+      "NumericValue": 12,
+      "StringValue": "remove_for_social_cohesion",
+      "VisibleInCoda": true
+    },
+    {
+      "CodeID": "code-1b9b2bda",
+      "CodeType": "Normal",
+      "DisplayText": "they put pressure on basic services",
+      "NumericValue": 13,
+      "StringValue": "they_put_pressure_on_basic_services",
+      "VisibleInCoda": true
+    },
+    {
+      "CodeID": "code-d065c2d0",
+      "CodeType": "Normal",
+      "DisplayText": "needs can be better met in country side",
+      "NumericValue": 14,
+      "StringValue": "needs_can_be_better_met_in_country_side",
+      "VisibleInCoda": true
+    },
+    {
+      "CodeID": "code-506a38cc",
+      "CodeType": "Normal",
+      "DisplayText": "they are farmers/pastoralists",
+      "NumericValue": 15,
+      "StringValue": "they_are_farmers_pastoralists",
+      "VisibleInCoda": true
+    },
+    {
+      "CodeID": "code-84d53ee4",
+      "CodeType": "Normal",
+      "DisplayText": "can contaminate with disease",
+      "NumericValue": 16,
+      "StringValue": "can_contaminate_with_disease",
+      "VisibleInCoda": true
+    },
+    {
+      "CodeID": "code-17eef36e",
+      "CodeType": "Normal",
+      "DisplayText": "return_other",
+      "NumericValue": 17,
+      "StringValue": "return_other",
+      "VisibleInCoda": true
+    },
+    {
+      "CodeID": "code-NA-f93d3eb7",
+      "CodeType": "Control",
+      "ControlCode": "NA",
+      "DisplayText": "NA (missing)",
+      "NumericValue": -10,
+      "StringValue": "NA",
+      "VisibleInCoda": false
+    },
+    {
+      "CodeID": "code-NS-2c11b7c9",
+      "CodeType": "Control",
+      "ControlCode": "NS",
+      "DisplayText": "NS (skip)",
+      "NumericValue": -20,
+      "StringValue": "NS",
+      "VisibleInCoda": false
+    },
+    {
+      "CodeID": "code-NC-42f1d983",
+      "CodeType": "Control",
+      "ControlCode": "NC",
+      "DisplayText": "NC (not coded)",
+      "NumericValue": -30,
+      "StringValue": "NC",
+      "VisibleInCoda": true
+    },
+    {
+      "CodeID": "code-NR-5e3eee23",
+      "CodeType": "Control",
+      "ControlCode": "NR",
+      "DisplayText": "NR (not reviewed)",
+      "NumericValue": -40,
+      "StringValue": "NR",
+      "VisibleInCoda": false
+    },
+    {
+      "CodeID": "code-NIC-99631cb8",
+      "CodeType": "Control",
+      "ControlCode": "NIC",
+      "DisplayText": "NIC (not internally consistent)",
+      "NumericValue": -50,
+      "StringValue": "NIC",
+      "VisibleInCoda": false
+    },
+    {
+      "CodeID": "code-STOP-08b832a8",
+      "CodeType": "Control",
+      "ControlCode": "STOP",
+      "DisplayText": "STOP",
+      "NumericValue": -90,
+      "StringValue": "STOP",
+      "VisibleInCoda": true
+    },
+    {
+      "CodeID": "code-WS-adb25603b7af",
+      "CodeType": "Control",
+      "ControlCode": "WS",
+      "DisplayText": "WS (wrong scheme)",
+      "NumericValue": -100,
+      "StringValue": "WS",
+      "VisibleInCoda": true
+    }
+  ]
+}
+

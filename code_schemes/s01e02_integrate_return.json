@@ -1,8 +1,32 @@
 {
-  "SchemeID": "Scheme-4f039174",
-  "Name": "S01E02",
+  "SchemeID": "Scheme-3205c427",
+  "Name": "S01E02 Integrate/Return",
   "Version": "0.0.0.1",
   "Codes": [
+    {
+      "CodeID": "code-7b2e4d4b",
+      "CodeType": "Normal",
+      "DisplayText": "integrate",
+      "NumericValue": 1,
+      "StringValue": "integrate",
+      "VisibleInCoda": true
+    },
+    {
+      "CodeID": "code-4350fe6a",
+      "CodeType": "Normal",
+      "DisplayText": "return",
+      "NumericValue": 2,
+      "StringValue": "return",
+      "VisibleInCoda": true
+    },
+    {
+      "CodeID": "code-cc669a0a",
+      "CodeType": "Normal",
+      "DisplayText": "ambivalent",
+      "NumericValue": 3,
+      "StringValue": "ambivalent",
+      "VisibleInCoda": true
+    },
     {
       "CodeID": "code-NA-f93d3eb7",
       "CodeType": "Control",
