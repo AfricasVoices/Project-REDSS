@@ -184,7 +184,12 @@ class AnalysisFile(object):
                     td.append_data({consent_withdrawn_key: Codes.TRUE},
                                    Metadata(user, Metadata.get_call_location(), time.time()))
 
-        # TODO: Handle consent for the binaries
+        # Set consent for the binary questions
+        for td in data:
+            if td["rqa_s01e02_integrate_return_coded"]["CodeID"] == \
+                    CodeSchemes.S01E02_INTEGRATE_RETURN.get_code_with_control_code(Codes.STOP).code_id:
+                td.append_data({consent_withdrawn_key: Codes.TRUE},
+                               Metadata(user, Metadata.get_call_location(), time.time()))
 
         # Fold data to have one respondent per row
         to_be_folded = []
