@@ -1,20 +1,13 @@
-import io
 import time
-from io import BytesIO
 from os import path
 
-import pytz
-from core_data_modules.cleaners import CharacterCleaner, Codes
+from core_data_modules.cleaners import Codes
 from core_data_modules.cleaners.cleaning_utils import CleaningUtils
-from core_data_modules.cleaners.codes import SomaliaCodes
 from core_data_modules.cleaners.location_tools import SomaliaLocations
 from core_data_modules.data_models import Code
 from core_data_modules.traced_data import Metadata
-from core_data_modules.traced_data.io import TracedDataCodaIO, TracedDataTheInterfaceIO, TracedDataCoda2IO
-from core_data_modules.util import IOUtils
-from dateutil.parser import isoparse
+from core_data_modules.traced_data.io import TracedDataCoda2IO
 
-from project_redss.lib import MessageFilters
 from project_redss.lib.pipeline_configuration import PipelineConfiguration
 from project_redss.lib.redss_schemes import CodeSchemes
 
@@ -63,14 +56,19 @@ class ApplyManualCodes(object):
             if td["noise"]:
                 nc_dict = dict()
                 for plan in PipelineConfiguration.RQA_CODING_PLANS:
-                    if plan.coded_field in td:
-                        continue
-
+                    if plan.coded_field not in td:
+                        nc_label = CleaningUtils.make_label_from_cleaner_code(
+                            plan.code_scheme, plan.code_scheme.get_code_with_control_code(Codes.NOT_CODED),
+                            Metadata.get_call_location()
+                        )
+                        nc_dict[plan.coded_field] = [nc_label.to_dict()]
+                if "rqa_s01e02_coded" not in td:
                     nc_label = CleaningUtils.make_label_from_cleaner_code(
-                        plan.code_scheme, plan.code_scheme.get_code_with_control_code(Codes.NOT_CODED),
+                        CodeSchemes.S01E02_INTEGRATE_RETURN,
+                        CodeSchemes.S01E02_INTEGRATE_RETURN.get_code_with_control_code(Codes.NOT_CODED),
                         Metadata.get_call_location()
                     )
-                    nc_dict[plan.coded_field] = [nc_label.to_dict()]
+                    nc_dict["rqa_s01e02_integrate_return_coded"] = nc_label.to_dict()
                 td.append_data(nc_dict, Metadata(user, Metadata.get_call_location(), time.time()))
 
         # Merge manually coded survey files into the cleaned dataset

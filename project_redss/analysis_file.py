@@ -106,8 +106,8 @@ class AnalysisFile(object):
 
             td.append_data({
                 "rqa_s01e02_integrate_return":
-                    CodeSchemes.S01E02_INTEGRATE_RETURN.get_code_with_control_code(
-                        td["rqa_s01e02_integrate_return_coded"])
+                    CodeSchemes.S01E02_INTEGRATE_RETURN.get_code_with_id(
+                        td["rqa_s01e02_integrate_return_coded"]["CodeID"]).string_value
             }, Metadata(user, Metadata.get_call_location(), time.time()))
 
         for td in data:
@@ -184,6 +184,8 @@ class AnalysisFile(object):
                     td.append_data({consent_withdrawn_key: Codes.TRUE},
                                    Metadata(user, Metadata.get_call_location(), time.time()))
 
+        # TODO: Handle consent for the binaries
+
         # Fold data to have one respondent per row
         to_be_folded = []
         for td in data:
@@ -191,7 +193,8 @@ class AnalysisFile(object):
 
         folded_data = FoldTracedData.fold_iterable_of_traced_data(
             user, data, fold_id_fn=lambda td: td["uid"],
-            equal_keys=equal_keys, concat_keys=concat_keys, matrix_keys=matrix_keys, bool_keys=bool_keys
+            equal_keys=equal_keys, concat_keys=concat_keys, matrix_keys=matrix_keys, bool_keys=bool_keys,
+            ambivalent_keys=ambivalent_keys
         )
 
         # Fix-up _NA and _NC keys, which are currently being set incorrectly by
