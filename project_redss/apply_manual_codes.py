@@ -51,6 +51,20 @@ class ApplyManualCodes(object):
             if f is not None:
                 f.close()
 
+        # Apply yes/no codes for s01e0
+        f = None
+        try:
+            rqa_messages = [td for td in data if "rqa_s01e03_raw" in td]
+            coda_input_path = path.join(coda_input_dir, "s01e03.json")
+            if path.exists(coda_input_path):
+                f = open(coda_input_path, "r")
+            TracedDataCoda2IO.import_coda_2_to_traced_data_iterable(
+                user, rqa_messages, "rqa_s01e03_raw_id",
+                {"rqa_s01e03_yes_no_amb_coded": CodeSchemes.S01E03_YES_NO_AMB}, f)
+        finally:
+            if f is not None:
+                f.close()
+
         # Mark data that is noise as Codes.NOT_CODED
         for td in data:
             if td["noise"]:
@@ -69,6 +83,13 @@ class ApplyManualCodes(object):
                         Metadata.get_call_location()
                     )
                     nc_dict["rqa_s01e02_integrate_return_coded"] = nc_label.to_dict()
+                if "rqa_s01e03_coded" not in td:
+                    nc_label = CleaningUtils.make_label_from_cleaner_code(
+                        CodeSchemes.S01E03_YES_NO_AMB,
+                        CodeSchemes.S01E03_YES_NO_AMB.get_code_with_control_code(Codes.NOT_CODED),
+                        Metadata.get_call_location()
+                    )
+                    nc_dict["rqa_s01e03_yes_no_amb_coded"] = nc_label.to_dict()
                 td.append_data(nc_dict, Metadata(user, Metadata.get_call_location(), time.time()))
 
         # Merge manually coded survey files into the cleaned dataset

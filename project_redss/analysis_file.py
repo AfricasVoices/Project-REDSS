@@ -110,6 +110,12 @@ class AnalysisFile(object):
                         td["rqa_s01e02_integrate_return_coded"]["CodeID"]).string_value
             }, Metadata(user, Metadata.get_call_location(), time.time()))
 
+            td.append_data({
+                "rqa_s01e03_yes_no":
+                    CodeSchemes.S01E02_INTEGRATE_RETURN.get_code_with_id(
+                        td["rqa_s01e02_yes_no_amb_coded"]["CodeID"]).string_value
+            }, Metadata(user, Metadata.get_call_location(), time.time()))
+
         for td in data:
             td.append_data(
                 {"operator": CodeSchemes.OPERATOR.get_code_with_id(td["operator_coded"]["CodeID"]).string_value},
@@ -139,7 +145,8 @@ class AnalysisFile(object):
         matrix_keys.sort()
 
         ambivalent_keys = [
-            "rqa_s01e02_integrate_return"
+            "rqa_s01e02_integrate_return",
+            "rqa_s01e03_yes_no"
         ]
 
         equal_keys = ["uid", "operator"]
@@ -188,6 +195,11 @@ class AnalysisFile(object):
         for td in data:
             if td["rqa_s01e02_integrate_return_coded"]["CodeID"] == \
                     CodeSchemes.S01E02_INTEGRATE_RETURN.get_code_with_control_code(Codes.STOP).code_id:
+                td.append_data({consent_withdrawn_key: Codes.TRUE},
+                               Metadata(user, Metadata.get_call_location(), time.time()))
+
+            if td["rqa_s01e03_yes_no_coded"]["CodeID"] == \
+                    CodeSchemes.S01E03_YES_NO_AMB.get_code_with_control_code(Codes.STOP).code_id:
                 td.append_data({consent_withdrawn_key: Codes.TRUE},
                                Metadata(user, Metadata.get_call_location(), time.time()))
 
