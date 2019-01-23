@@ -23,6 +23,6 @@ cd ..
     "$DATA_ROOT/Raw Data/csap_demog.json" "$DATA_ROOT/Raw Data/csap_evaluation.json" "$DATA_ROOT/Coded Coda Files/" \
     "$DATA_ROOT/Outputs/traced_data.json" \
     "$DATA_ROOT/Outputs/ICR/" "$DATA_ROOT/Outputs/Coda Files/" \
-    "$DATA_ROOT/Outputs/csap_msg.csv" "$DATA_ROOT/Outputs/csap_ind.csv" \
+    "$DATA_ROOT/Outputs/csap_mes.csv" "$DATA_ROOT/Outputs/csap_ind.csv" \
     "$DATA_ROOT/Outputs/csap_prod.csv" \
     "$DRIVE_AUTH" "$DRIVE_UPLOAD_DIR/csap_mes.csv" "$DRIVE_UPLOAD_DIR/csap_ind.csv" "$DRIVE_UPLOAD_DIR/csap_prod.csv"
