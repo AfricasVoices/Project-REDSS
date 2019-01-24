@@ -32,3 +32,5 @@ class CodeSchemes(object):
 
     REPEATED = _open_scheme("repeated.json")
     INVOLVED = _open_scheme("involved.json")
+
+    WS_CORRECT_DATASET = _open_scheme("ws_correct_dataset.json")

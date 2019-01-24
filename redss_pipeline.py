@@ -119,7 +119,7 @@ if __name__ == "__main__":
     data = CombineRawDatasets.combine_raw_datasets(user, messages_datasets, [demographics, evaluation])
 
     print("Translating Rapid Pro Keys...")
-    data = TranslateRapidProKeys.translate_rapid_pro_keys(user, data)
+    data = TranslateRapidProKeys.translate_rapid_pro_keys(user, data, prev_coded_dir_path)
 
     print("Auto Coding Messages...")
     data = AutoCodeShowMessages.auto_code_show_messages(user, data, icr_output_dir, coded_dir_path)
