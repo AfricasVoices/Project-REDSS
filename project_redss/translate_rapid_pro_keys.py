@@ -79,6 +79,16 @@ class TranslateRapidProKeys(object):
 
     @classmethod
     def translate_rapid_pro_keys(cls, user, data, coda_input_dir):
+        """
+        Uses the cls.RAPID_PRO_KEY_MAP to rename the keys exported by Rapid Pro to keys which are easier to work
+        with in the pipeline. 
+        
+        Also performs several project-specific redirects of radio show question messages which went into the wrong
+        activation flow when running the project. These redirects are described in the comments below. These
+        redirects are performed here so that the rest of the pipeline can be given a dataset where it looked like
+        nothing went wrong, which means operational corrections shouldn't be needed so much elsewhere.
+        """
+        
         # Build a map of raw week 3 messages to wrong scheme data
         message_to_s01e02_dict = cls.build_message_to_s01e02_dict(user, data, coda_input_dir)
         
