@@ -102,6 +102,13 @@ class TranslateRapidProKeys(object):
                 if old_key in td:
                     mapped_dict[new_key] = td[old_key]
 
+            if cls.WEEK_3_TIME_KEY in td and message_to_s01e02_dict.get(td[cls.WEEK_3_VALUE_KEY], False):
+                # Fake the timestamp of redirected week 3 messages to make it look like they arrived on the day
+                # before the incorrect sms ad was sent, i.e. the last day of week 2.
+                # This is super yucky, but works because (a) timestamps are never exported, and (b) this date
+                # is being set to non_logical anyway in channels.py.
+                mapped_dict["sent_on"] = "2018-12-15T00:00:00+03:00"
+
             td.append_data(mapped_dict, Metadata(user, Metadata.get_call_location(), time.time()))
 
         return data
