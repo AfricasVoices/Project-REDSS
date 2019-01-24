@@ -65,7 +65,10 @@
       "DisplayText": "s01e02",
       "StringValue": "s01e02",
       "NumericValue": 8,
-      "VisibleInCoda": true
+      "VisibleInCoda": true,
+      "MatchValues": [
+        "s01e02"
+      ]
     },
     {
       "CodeID": "code-e8621530",
@@ -82,6 +85,15 @@
       "StringValue": "s01e04",
       "NumericValue": 10,
       "VisibleInCoda": true
+    },
+    {
+      "CodeID": "code-NR-5e3eee23",
+      "CodeType": "Control",
+      "ControlCode": "NR",
+      "DisplayText": "NR (not reviewed)",
+      "NumericValue": -40,
+      "StringValue": "NR",
+      "VisibleInCoda": false
     }
   ]
 }
