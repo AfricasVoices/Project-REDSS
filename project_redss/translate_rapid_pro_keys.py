@@ -98,7 +98,6 @@ class TranslateRapidProKeys(object):
             if cls.WEEK_3_TIME_KEY in td:
                 # Redirect any week 3 messages coded as s01e02 in the WS - Correct Dataset scheme to week 2
                 if message_to_s01e02_dict.get(td[cls.WEEK_3_VALUE_KEY], False):
-                    print(f"redirected '{td[cls.WEEK_3_VALUE_KEY]}'")
                     mapped_dict["rqa_s01e02_raw"] = td[cls.WEEK_3_VALUE_KEY]
                 # Redirect any week 4 messages which were in the week 3 flow due to a late flow change-over.
                 elif isoparse(td[cls.WEEK_3_TIME_KEY]) > cls.WEEK_4_START:
@@ -112,11 +111,9 @@ class TranslateRapidProKeys(object):
                 if isoparse(cls.THURSDAY_BURST_START) <= isoparse(td[cls.WEEK_4_TIME_KEY]) < isoparse(cls.THURSDAY_BURST_END):
                     mapped_dict["rqa_s01e02_raw"] = td[cls.WEEK_4_VALUE_KEY]
                     mapped_dict["sent_on"] = cls.THURSDAY_CORRECTION_TIME
-                    print(f"Thursday, {td[cls.WEEK_4_VALUE_KEY]}")
                 elif isoparse(cls.FRIDAY_BURST_START) <= isoparse(td[cls.WEEK_4_TIME_KEY]) < isoparse(cls.FRIDAY_BURST_END):
                     mapped_dict["rqa_s01e02_raw"] = td[cls.WEEK_4_VALUE_KEY]
                     mapped_dict["sent_on"] = cls.FRIDAY_CORRECTION_TIME
-                    print(f"Friday, {td[cls.WEEK_4_VALUE_KEY]}")
                 else:
                     mapped_dict["rqa_s01e04_raw"] = td[cls.WEEK_4_VALUE_KEY]
                     mapped_dict["sent_on"] = td[cls.WEEK_4_TIME_KEY]
