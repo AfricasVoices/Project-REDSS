@@ -1,20 +1,19 @@
 import argparse
-import time
+import os
 
-from core_data_modules.traced_data import Metadata
 from core_data_modules.traced_data.io import TracedDataJsonIO
 from core_data_modules.util import IOUtils, PhoneNumberUuidTable
+from storage.google_drive import drive_client_wrapper
 
 from project_redss import AnalysisFile
 from project_redss import ApplyManualCodes
 from project_redss import AutoCodeShowMessages
 from project_redss import AutoCodeSurveys
 from project_redss import CombineRawDatasets
-from project_redss.lib import AnalysisKeys
 from project_redss.translate_rapid_pro_keys import TranslateRapidProKeys
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description="Runs the post-fetch phase of the REDSS pipeline")
+    parser = argparse.ArgumentParser(description="Runs the post-fetch phase of the ReDSS pipeline")
 
     parser.add_argument("user", help="User launching this program")
 
@@ -57,7 +56,16 @@ if __name__ == "__main__":
                              "per row, with all their messages joined into a single cell)")
     parser.add_argument("production_csv_output_path", metavar="production-csv-output-path",
                         help="Path to a CSV file to write raw message and demographic responses to, for use in "
-                             "radio show production")
+                             "radio show production"),
+
+    parser.add_argument("drive_credentials_path", metavar="drive-credentials-path",
+                        help="Path to a G Suite service account JSON file"),
+    parser.add_argument("csv_by_message_drive_path", metavar="csv-by-message-drive-path",
+                        help="'Path' to a file in the service account's Drive to upload the messages CSV to")
+    parser.add_argument("csv_by_individual_drive_path", metavar="csv-by-individual-drive-path",
+                        help="'Path' to a file in the service account's Drive to upload the individuals CSV to")
+    parser.add_argument("production_csv_drive_path", metavar="production-csv-drive-path",
+                        help="'Path' to a file in the service account's Drive to upload the production CSV to")
 
     args = parser.parse_args()
     user = args.user
@@ -77,6 +85,11 @@ if __name__ == "__main__":
     csv_by_message_output_path = args.csv_by_message_output_path
     csv_by_individual_output_path = args.csv_by_individual_output_path
     production_csv_output_path = args.production_csv_output_path
+
+    drive_credentials_path = args.drive_credentials_path
+    csv_by_message_drive_path = args.csv_by_message_drive_path
+    csv_by_individual_drive_path = args.csv_by_individual_drive_path
+    production_csv_drive_path = args.production_csv_drive_path
 
     message_paths = [s01e01_input_path, s01e02_input_path, s01e03_input_path, s01e04_input_path]
 
@@ -106,7 +119,7 @@ if __name__ == "__main__":
     data = CombineRawDatasets.combine_raw_datasets(user, messages_datasets, [demographics, evaluation])
 
     print("Translating Rapid Pro Keys...")
-    data = TranslateRapidProKeys.translate_rapid_pro_keys(user, data)
+    data = TranslateRapidProKeys.translate_rapid_pro_keys(user, data, prev_coded_dir_path)
 
     print("Auto Coding Messages...")
     data = AutoCodeShowMessages.auto_code_show_messages(user, data, icr_output_dir, coded_dir_path)
@@ -121,8 +134,30 @@ if __name__ == "__main__":
     data = AnalysisFile.generate(
         user, data, csv_by_message_output_path, csv_by_individual_output_path, production_csv_output_path)
 
-    # Write json output
     print("Writing TracedData to file...")
     IOUtils.ensure_dirs_exist_for_file(json_output_path)
     with open(json_output_path, "w") as f:
         TracedDataJsonIO.export_traced_data_iterable_to_json(data, f, pretty_print=True)
+
+    print("Uploading CSVs to Google Drive...")
+    drive_client_wrapper.init_client(drive_credentials_path)
+
+    csv_by_message_drive_dir = os.path.dirname(csv_by_message_drive_path)
+    csv_by_message_drive_file_name = os.path.basename(csv_by_message_drive_path)
+    drive_client_wrapper.update_or_create(csv_by_message_output_path, csv_by_message_drive_dir,
+                                          target_file_name=csv_by_message_drive_file_name,
+                                          target_folder_is_shared_with_me=True)
+
+    csv_by_individual_drive_dir = os.path.dirname(csv_by_individual_drive_path)
+    csv_by_individual_drive_file_name = os.path.basename(csv_by_individual_drive_path)
+    drive_client_wrapper.update_or_create(csv_by_individual_output_path, csv_by_individual_drive_dir,
+                                          target_file_name=csv_by_individual_drive_file_name,
+                                          target_folder_is_shared_with_me=True)
+
+    production_csv_drive_dir = os.path.dirname(production_csv_drive_path)
+    production_csv_drive_file_name = os.path.basename(production_csv_drive_path)
+    drive_client_wrapper.update_or_create(production_csv_output_path, production_csv_drive_dir,
+                                          target_file_name=production_csv_drive_file_name,
+                                          target_folder_is_shared_with_me=True)
+
+    print("Python script complete")
