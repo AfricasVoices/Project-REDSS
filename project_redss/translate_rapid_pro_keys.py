@@ -15,9 +15,8 @@ class TranslateRapidProKeys(object):
 
         ("rqa_s01e01_raw", "Rqa_S01E01 (Value) - csap_s01e01_activation"),
         ("rqa_s01e02_raw", "Rqa_S01E02 (Value) - csap_s01e02_activation"),
-        # Not setting week 3 key here because it contains some week 4 messages which require special handling.
-        # That special handling is performed in cls.translate_rapid_pro_keys()
-        ("rqa_s01e04_raw", "Rqa_S01E04 (Value) - csap_s01e04_activation"),
+        # Not setting weeks 3 or 4 key here because they contain some messages from the other weeks.
+        # Special handling is performed in cls.translate_rapid_pro_keys()
 
         ("rqa_s01e01_run_id", "Rqa_S01E01 (Run ID) - csap_s01e01_activation"),
         ("rqa_s01e02_run_id", "Rqa_S01E02 (Run ID) - csap_s01e02_activation"),
@@ -27,7 +26,6 @@ class TranslateRapidProKeys(object):
         ("sent_on", "Rqa_S01E01 (Time) - csap_s01e01_activation"),
         ("sent_on", "Rqa_S01E02 (Time) - csap_s01e02_activation"),
         ("sent_on", "Rqa_S01E03 (Time) - csap_s01e03_activation"),
-        ("sent_on", "Rqa_S01E04 (Time) - csap_s01e04_activation"),
 
         ("gender_raw", "Gender (Value) - csap_demog"),
         ("gender_time", "Gender (Time) - csap_demog"),
@@ -51,6 +49,17 @@ class TranslateRapidProKeys(object):
     WEEK_3_TIME_KEY = "Rqa_S01E03 (Time) - csap_s01e03_activation"
     WEEK_3_VALUE_KEY = "Rqa_S01E03 (Value) - csap_s01e03_activation"
     WEEK_4_START = isoparse("2018-12-23T00:00:00+03:00")
+
+    WEEK_4_TIME_KEY = "Rqa_S01E04 (Time) - csap_s01e04_activation"
+    WEEK_4_VALUE_KEY = "Rqa_S01E04 (Value) - csap_s01e04_activation"
+
+    THURSDAY_BURST_START = "2019-01-17T12:03:11+03:00"
+    THURSDAY_BURST_END = "2019-01-17T12:24:42+03:00"
+    THURSDAY_CORRECTION_TIME = "2018-12-13T00:00:00+03:00"
+
+    FRIDAY_BURST_START = "2019-01-12T09:45:12+03:00"
+    FRIDAY_BURST_END = "2019-01-12T09:51:57+03:00"
+    FRIDAY_CORRECTION_TIME = "2018-12-14T00:00:00+03:00"
 
     @classmethod
     def build_message_to_s01e02_dict(cls, user, data, coda_input_dir):
@@ -99,13 +108,25 @@ class TranslateRapidProKeys(object):
             if cls.WEEK_3_TIME_KEY in td:
                 # Redirect any week 3 messages coded as s01e02 in the WS - Correct Dataset scheme to week 2
                 if message_to_s01e02_dict.get(td[cls.WEEK_3_VALUE_KEY], False):
-                    print(f"redirected '{td[cls.WEEK_3_VALUE_KEY]}'")
                     mapped_dict["rqa_s01e02_raw"] = td[cls.WEEK_3_VALUE_KEY]
                 # Redirect any week 4 messages which were in the week 3 flow due to a late flow change-over.
                 elif isoparse(td[cls.WEEK_3_TIME_KEY]) > cls.WEEK_4_START:
                     mapped_dict["rqa_s01e04_raw"] = td[cls.WEEK_3_VALUE_KEY]
                 else:
                     mapped_dict["rqa_s01e03_raw"] = td[cls.WEEK_3_VALUE_KEY]
+
+            # Redirect any week 2 messages which were in the week 4 flow, due to undelivered messages being delivered
+            # in two bursts after the end of the radio shows.
+            if cls.WEEK_4_TIME_KEY in td:
+                if isoparse(cls.THURSDAY_BURST_START) <= isoparse(td[cls.WEEK_4_TIME_KEY]) < isoparse(cls.THURSDAY_BURST_END):
+                    mapped_dict["rqa_s01e02_raw"] = td[cls.WEEK_4_VALUE_KEY]
+                    mapped_dict["sent_on"] = cls.THURSDAY_CORRECTION_TIME
+                elif isoparse(cls.FRIDAY_BURST_START) <= isoparse(td[cls.WEEK_4_TIME_KEY]) < isoparse(cls.FRIDAY_BURST_END):
+                    mapped_dict["rqa_s01e02_raw"] = td[cls.WEEK_4_VALUE_KEY]
+                    mapped_dict["sent_on"] = cls.FRIDAY_CORRECTION_TIME
+                else:
+                    mapped_dict["rqa_s01e04_raw"] = td[cls.WEEK_4_VALUE_KEY]
+                    mapped_dict["sent_on"] = td[cls.WEEK_4_TIME_KEY]
 
             # Translate all other keys
             for new_key, old_key in cls.RAPID_PRO_KEY_MAP:
