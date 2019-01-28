@@ -65,9 +65,6 @@ class AutoCodeSurveys(object):
                 )
             td.append_data({"operator_coded": label.to_dict()}, Metadata(user, Metadata.get_call_location(), time.time()))
 
-        # Label each message with channel keys
-        Channels.set_channel_keys(user, data, cls.SENT_ON_KEY)
-
         # Output single-scheme answers to coda for manual verification + coding
         IOUtils.ensure_dirs_exist(coda_output_dir)
         for plan in PipelineConfiguration.SURVEY_CODING_PLANS:

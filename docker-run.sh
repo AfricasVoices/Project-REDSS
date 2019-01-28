@@ -44,14 +44,14 @@ docker build -t "$IMAGE_NAME" .
 #  - Run the pipeline.
 # The gcloud bucket access is authorised via volume mounting (-v in the docker container create command)
 CMD="
-    gsutil cp $SERVICE_ACCOUNT_CREDENTIALS_URL /root/.config/drive-service-account-credentials.json && \
+    gsutil cp \"$SERVICE_ACCOUNT_CREDENTIALS_URL\" /root/.config/drive-service-account-credentials.json && \
 
-    pipenv run pyflame -o /program.prof -t python -u redss_pipeline.py $USER /data/phone-number-uuid-table-input.json \
+    pipenv run pyflame -o /program.prof -t python -u redss_pipeline.py \"$USER\" /data/phone-number-uuid-table-input.json \
     /data/s01e01-input.json /data/s01e02-input.json /data/s01e03-input.json /data/s01e04-input.json \
     /data/demog-input.json /data/evaluation-input.json /data/prev-coded \
     /data/output.json /data/output-icr /data/coded \
     /data/output-messages.csv /data/output-individuals.csv /data/output-production.csv \
-    /root/.config/drive-service-account-credentials.json $MESSAGES_DRIVE_PATH $INDIVIDUALS_DRIVE_PATH $PRODUCTION_DRIVE_PATH
+    /root/.config/drive-service-account-credentials.json \"$MESSAGES_DRIVE_PATH\" \"$INDIVIDUALS_DRIVE_PATH\" \"$PRODUCTION_DRIVE_PATH\"
 "
 container="$(docker container create --cap-add SYS_PTRACE -v=$HOME/.config/gcloud:/root/.config/gcloud -w /app "$IMAGE_NAME" /bin/bash -c "$CMD")"
 

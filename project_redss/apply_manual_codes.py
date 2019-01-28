@@ -1,20 +1,13 @@
-import io
 import time
-from io import BytesIO
 from os import path
 
-import pytz
-from core_data_modules.cleaners import CharacterCleaner, Codes
+from core_data_modules.cleaners import Codes
 from core_data_modules.cleaners.cleaning_utils import CleaningUtils
-from core_data_modules.cleaners.codes import SomaliaCodes
 from core_data_modules.cleaners.location_tools import SomaliaLocations
 from core_data_modules.data_models import Code
 from core_data_modules.traced_data import Metadata
-from core_data_modules.traced_data.io import TracedDataCodaIO, TracedDataTheInterfaceIO, TracedDataCoda2IO
-from core_data_modules.util import IOUtils
-from dateutil.parser import isoparse
+from core_data_modules.traced_data.io import TracedDataCoda2IO
 
-from project_redss.lib import MessageFilters
 from project_redss.lib.pipeline_configuration import PipelineConfiguration
 from project_redss.lib.redss_schemes import CodeSchemes
 
@@ -44,19 +37,59 @@ class ApplyManualCodes(object):
                 if f is not None:
                     f.close()
 
+        # Apply integrate/return codes for s01e02
+        f = None
+        try:
+            rqa_messages = [td for td in data if "rqa_s01e02_raw" in td]
+            coda_input_path = path.join(coda_input_dir, "s01e02.json")
+            if path.exists(coda_input_path):
+                f = open(coda_input_path, "r")
+            TracedDataCoda2IO.import_coda_2_to_traced_data_iterable(
+                user, rqa_messages, "rqa_s01e02_raw_id",
+                {"rqa_s01e02_integrate_return_coded": CodeSchemes.S01E02_INTEGRATE_RETURN}, f)
+        finally:
+            if f is not None:
+                f.close()
+
+        # Apply yes/no codes for s01e0
+        f = None
+        try:
+            rqa_messages = [td for td in data if "rqa_s01e03_raw" in td]
+            coda_input_path = path.join(coda_input_dir, "s01e03.json")
+            if path.exists(coda_input_path):
+                f = open(coda_input_path, "r")
+            TracedDataCoda2IO.import_coda_2_to_traced_data_iterable(
+                user, rqa_messages, "rqa_s01e03_raw_id",
+                {"rqa_s01e03_yes_no_amb_coded": CodeSchemes.S01E03_YES_NO_AMB}, f)
+        finally:
+            if f is not None:
+                f.close()
+
         # Mark data that is noise as Codes.NOT_CODED
         for td in data:
             if td["noise"]:
                 nc_dict = dict()
                 for plan in PipelineConfiguration.RQA_CODING_PLANS:
-                    if plan.coded_field in td:
-                        continue
-
+                    if plan.coded_field not in td:
+                        nc_label = CleaningUtils.make_label_from_cleaner_code(
+                            plan.code_scheme, plan.code_scheme.get_code_with_control_code(Codes.NOT_CODED),
+                            Metadata.get_call_location()
+                        )
+                        nc_dict[plan.coded_field] = [nc_label.to_dict()]
+                if "rqa_s01e02_coded" not in td:
                     nc_label = CleaningUtils.make_label_from_cleaner_code(
-                        plan.code_scheme, plan.code_scheme.get_code_with_control_code(Codes.NOT_CODED),
+                        CodeSchemes.S01E02_INTEGRATE_RETURN,
+                        CodeSchemes.S01E02_INTEGRATE_RETURN.get_code_with_control_code(Codes.NOT_CODED),
                         Metadata.get_call_location()
                     )
-                    nc_dict[plan.coded_field] = [nc_label.to_dict()]
+                    nc_dict["rqa_s01e02_integrate_return_coded"] = nc_label.to_dict()
+                if "rqa_s01e03_coded" not in td:
+                    nc_label = CleaningUtils.make_label_from_cleaner_code(
+                        CodeSchemes.S01E03_YES_NO_AMB,
+                        CodeSchemes.S01E03_YES_NO_AMB.get_code_with_control_code(Codes.NOT_CODED),
+                        Metadata.get_call_location()
+                    )
+                    nc_dict["rqa_s01e03_yes_no_amb_coded"] = nc_label.to_dict()
                 td.append_data(nc_dict, Metadata(user, Metadata.get_call_location(), time.time()))
 
         # Merge manually coded survey files into the cleaned dataset

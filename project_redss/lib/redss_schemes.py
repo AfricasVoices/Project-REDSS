@@ -11,8 +11,10 @@ def _open_scheme(filename):
 
 class CodeSchemes(object):
     S01E01 = _open_scheme("s01e01.json")
-    S01E02 = _open_scheme("s01e02.json")
-    S01E03 = _open_scheme("s01e03.json")
+    S01E02_INTEGRATE_RETURN = _open_scheme("s01e02_integrate_return.json")
+    S01E02_REASONS = _open_scheme("s01e02_reasons.json")
+    S01E03_YES_NO_AMB = _open_scheme("s01e03_yes_no_amb.json")
+    S01E03_REASONS = _open_scheme("s01e03_reasons.json")
     S01E04 = _open_scheme("s01e04.json")
 
     OPERATOR = _open_scheme("operator.json")
@@ -30,3 +32,5 @@ class CodeSchemes(object):
 
     REPEATED = _open_scheme("repeated.json")
     INVOLVED = _open_scheme("involved.json")
+
+    WS_CORRECT_DATASET = _open_scheme("ws_correct_dataset.json")

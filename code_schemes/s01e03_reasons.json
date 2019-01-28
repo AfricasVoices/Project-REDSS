@@ -1,0 +1,191 @@
+{
+  "SchemeID": "Scheme-5b60cc33",
+  "Name": "S01E03 Reasons",
+  "Version": "0.0.0.1",
+  "Codes": [
+    {
+      "CodeID": "code-352129d8",
+      "CodeType": "Normal",
+      "DisplayText": "discriminating actor: government",
+      "NumericValue": 1,
+      "StringValue": "discriminating_actor_government",
+      "VisibleInCoda": true
+    },
+    {
+      "CodeID": "code-04bc53ff",
+      "CodeType": "Normal",
+      "DisplayText": "discriminating actor: ngos",
+      "NumericValue": 2,
+      "StringValue": "discriminating_actor_ngos",
+      "VisibleInCoda": true
+    },
+    {
+      "CodeID": "code-89cd0dc6",
+      "CodeType": "Normal",
+      "DisplayText": "discriminating actor: community",
+      "NumericValue": 3,
+      "StringValue": "discriminating_actor_community",
+      "VisibleInCoda": true
+    },
+    {
+      "CodeID": "code-1b80beba",
+      "CodeType": "Normal",
+      "DisplayText": "axes of discrimination: rights are violated",
+      "NumericValue": 4,
+      "StringValue": "axes_of_discrimination_rights_are_violated",
+      "VisibleInCoda": true
+    },
+    {
+      "CodeID": "code-e6364a7c",
+      "CodeType": "Normal",
+      "DisplayText": "axes of discrimination: access to housing",
+      "NumericValue": 5,
+      "StringValue": "axes_of_discrimination_access_to_housing",
+      "VisibleInCoda": true
+    },
+    {
+      "CodeID": "code-a64a8dd5",
+      "CodeType": "Normal",
+      "DisplayText": "axes of discrimination: access to health care",
+      "NumericValue": 6,
+      "StringValue": "axes_of_discrimination_access_to_health_care",
+      "VisibleInCoda": true
+    },
+    {
+      "CodeID": "code-2396c2fb",
+      "CodeType": "Normal",
+      "DisplayText": "axes of discrimination: access to education",
+      "NumericValue": 7,
+      "StringValue": "axes_of_discrimination_access_to_education",
+      "VisibleInCoda": true
+    },
+    {
+      "CodeID": "code-eee451ac",
+      "CodeType": "Normal",
+      "DisplayText": "axes of discrimination: access to job opportunities",
+      "NumericValue": 8,
+      "StringValue": "axes_of_discrimination_access_to_job_opportunities",
+      "VisibleInCoda": true
+    },
+    {
+      "CodeID": "code-ef82c93f",
+      "CodeType": "Normal",
+      "DisplayText": "reasons for discrimination: lack of host-idp interaction",
+      "NumericValue": 9,
+      "StringValue": "reasons_for_discrimination_lack_of_host-idp_interaction",
+      "VisibleInCoda": true
+    },
+    {
+      "CodeID": "code-8382b2d9",
+      "CodeType": "Normal",
+      "DisplayText": "reasons for discrimination: community feels superior",
+      "NumericValue": 10,
+      "StringValue": "reasons_for_discrimination_community_feels_superior",
+      "VisibleInCoda": true
+    },
+    {
+      "CodeID": "code-49e980c2",
+      "CodeType": "Normal",
+      "DisplayText": "reasons for lack of discrimination: religion",
+      "NumericValue": 11,
+      "StringValue": "reasons_for_lack_of_discrimination_religion",
+      "VisibleInCoda": true
+    },
+    {
+      "CodeID": "code-f0491a2c",
+      "CodeType": "Normal",
+      "DisplayText": "reasons for lack of discrimination: deserve assistance",
+      "NumericValue": 12,
+      "StringValue": "reasons_for_lack_of_discrimination_deserve_assistance",
+      "VisibleInCoda": true
+    },
+    {
+      "CodeID": "code-96411f7d",
+      "CodeType": "Normal",
+      "DisplayText": "reasons for lack of discrimination: no displaced people",
+      "NumericValue": 13,
+      "StringValue": "reasons_for_lack_of_discrimination_no_displaced_people",
+      "VisibleInCoda": true
+    },
+    {
+      "CodeID": "code-2abdc971",
+      "CodeType": "Normal",
+      "DisplayText": "reasons for lack of discrimination: are citizens",
+      "NumericValue": 14,
+      "StringValue": "reasons_for_lack_of_discrimination_are_citizens",
+      "VisibleInCoda": true
+    },
+    {
+      "CodeID": "code-5e688ce8",
+      "CodeType": "Normal",
+      "DisplayText": "reasons for lack of discrimination: common identity",
+      "NumericValue": 15,
+      "StringValue": "reasons_for_lack_of_discrimination_common_identity",
+      "VisibleInCoda": true
+    },
+    {
+      "CodeID": "code-NA-f93d3eb7",
+      "CodeType": "Control",
+      "ControlCode": "NA",
+      "DisplayText": "NA (missing)",
+      "NumericValue": -10,
+      "StringValue": "NA",
+      "VisibleInCoda": false
+    },
+    {
+      "CodeID": "code-NS-2c11b7c9",
+      "CodeType": "Control",
+      "ControlCode": "NS",
+      "DisplayText": "NS (skip)",
+      "NumericValue": -20,
+      "StringValue": "NS",
+      "VisibleInCoda": false
+    },
+    {
+      "CodeID": "code-NC-42f1d983",
+      "CodeType": "Control",
+      "ControlCode": "NC",
+      "DisplayText": "NC (not coded)",
+      "NumericValue": -30,
+      "StringValue": "NC",
+      "VisibleInCoda": true
+    },
+    {
+      "CodeID": "code-NR-5e3eee23",
+      "CodeType": "Control",
+      "ControlCode": "NR",
+      "DisplayText": "NR (not reviewed)",
+      "NumericValue": -40,
+      "StringValue": "NR",
+      "VisibleInCoda": false
+    },
+    {
+      "CodeID": "code-NIC-99631cb8",
+      "CodeType": "Control",
+      "ControlCode": "NIC",
+      "DisplayText": "NIC (not internally consistent)",
+      "NumericValue": -50,
+      "StringValue": "NIC",
+      "VisibleInCoda": false
+    },
+    {
+      "CodeID": "code-STOP-08b832a8",
+      "CodeType": "Control",
+      "ControlCode": "STOP",
+      "DisplayText": "STOP",
+      "NumericValue": -90,
+      "StringValue": "STOP",
+      "VisibleInCoda": true
+    },
+    {
+      "CodeID": "code-WS-adb25603b7af",
+      "CodeType": "Control",
+      "ControlCode": "WS",
+      "DisplayText": "WS (wrong scheme)",
+      "NumericValue": -100,
+      "StringValue": "WS",
+      "VisibleInCoda": true
+    }
+  ]
+}
+

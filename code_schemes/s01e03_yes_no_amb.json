@@ -1,8 +1,32 @@
 {
-  "SchemeID": "Scheme-4f039174",
-  "Name": "S01E02",
+  "SchemeID": "Scheme-1161eddc",
+  "Name": "S01E03 Yes/No/Amb",
   "Version": "0.0.0.1",
   "Codes": [
+    {
+      "CodeID": "code-be86bca5",
+      "CodeType": "Normal",
+      "DisplayText": "yes",
+      "NumericValue": 1,
+      "StringValue": "yes",
+      "VisibleInCoda": true
+    },
+    {
+      "CodeID": "code-c209a282",
+      "CodeType": "Normal",
+      "DisplayText": "no",
+      "NumericValue": 2,
+      "StringValue": "no",
+      "VisibleInCoda": true
+    },
+    {
+      "CodeID": "code-61a373a0",
+      "CodeType": "Normal",
+      "DisplayText": "ambivalent",
+      "NumericValue": 3,
+      "StringValue": "ambivalent",
+      "VisibleInCoda": true
+    },
     {
       "CodeID": "code-NA-f93d3eb7",
       "CodeType": "Control",

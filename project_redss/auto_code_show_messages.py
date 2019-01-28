@@ -9,9 +9,10 @@ from core_data_modules.traced_data.io import TracedDataCSVIO, TracedDataCoda2IO
 from core_data_modules.util import IOUtils
 from dateutil.parser import isoparse
 
-from project_redss.lib import ICRTools
+from project_redss.lib import ICRTools, Channels
 from project_redss.lib import MessageFilters
 from project_redss.lib.pipeline_configuration import PipelineConfiguration
+from project_redss.lib.redss_schemes import CodeSchemes
 
 
 class AutoCodeShowMessages(object):
@@ -21,8 +22,8 @@ class AutoCodeShowMessages(object):
 
     SENT_ON_KEY = "sent_on"
     NOISE_KEY = "noise"
-    PROJECT_START_DATE = isoparse("2018-12-02T00+03:00")
-    PROJECT_END_DATE = isoparse("2030-01-01T00+03:00")  # TODO: Set when known
+    PROJECT_START_DATE = isoparse("2018-12-02T00:00:00+03:00")
+    PROJECT_END_DATE = isoparse("2018-12-31T00:00:00+03:00")
     ICR_MESSAGES_COUNT = 200
     ICR_SEED = 0
 
@@ -56,7 +57,24 @@ class AutoCodeShowMessages(object):
                         Metadata.get_call_location()
                     )
                     missing_dict[plan.coded_field] = [na_label.to_dict()]
+            if "rqa_s01e02_raw" not in td:
+                na_label = CleaningUtils.make_label_from_cleaner_code(
+                    CodeSchemes.S01E02_INTEGRATE_RETURN,
+                    CodeSchemes.S01E02_INTEGRATE_RETURN.get_code_with_control_code(Codes.TRUE_MISSING),
+                    Metadata.get_call_location()
+                )
+                missing_dict["rqa_s01e02_integrate_return_coded"] = na_label.to_dict()
+            if "rqa_s01e03_raw" not in td:
+                na_label = CleaningUtils.make_label_from_cleaner_code(
+                    CodeSchemes.S01E03_YES_NO_AMB,
+                    CodeSchemes.S01E03_YES_NO_AMB.get_code_with_control_code(Codes.TRUE_MISSING),
+                    Metadata.get_call_location()
+                )
+                missing_dict["rqa_s01e03_yes_no_amb_coded"] = na_label.to_dict()
             td.append_data(missing_dict, Metadata(user, Metadata.get_call_location(), time.time()))
+
+        # Label each message with channel keys
+        Channels.set_channel_keys(user, data, cls.SENT_ON_KEY)
 
         # Filter for messages which aren't noise (in order to export to Coda and export for ICR)
         not_noise = MessageFilters.filter_noise(data, cls.NOISE_KEY, lambda x: x)
