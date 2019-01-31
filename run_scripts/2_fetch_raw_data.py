@@ -52,7 +52,8 @@ if __name__ == "__main__":
     # Fetch the Rapid Pro Token from the Google Cloud URL and load it into memory
     temp_dir = tempfile.mkdtemp()
     rapid_pro_token_local_file_url = f"{temp_dir}/rapid_pro_token.txt"
-    subprocess.call(["gsutil", "cp", rapid_pro_token_file_url, rapid_pro_token_local_file_url])
+    exit_code = subprocess.call(["gsutil", "cp", rapid_pro_token_file_url, rapid_pro_token_local_file_url])
+    assert exit_code == 0
     with open(rapid_pro_token_local_file_url) as f:
         rapid_pro_token = f.read().strip()
 
