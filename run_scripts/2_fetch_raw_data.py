@@ -5,7 +5,8 @@ import subprocess
 import tempfile
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description="Fetches all the raw data for this project from Rapid Pro")
+    parser = argparse.ArgumentParser(description="Fetches all the raw data for this project from Rapid Pro. "
+                                                 "This script must be run from its parent directory.")
 
     parser.add_argument("user", help="Identifier of the user launching this program")
     parser.add_argument("pipeline_configuration_file_path", metavar="pipeline-configuration-file",
