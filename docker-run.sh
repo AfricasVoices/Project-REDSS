@@ -4,9 +4,26 @@ set -e
 
 IMAGE_NAME=redss-csap
 
+while [[ $# -gt 0 ]]; do
+    case "$1" in
+        --profile-cpu)
+            PROFILE_CPU=true
+            CPU_PROFILE_OUTPUT_PATH="$2"
+            shift 2;;
+        --)
+            shift
+            break;;
+        *)
+            break;;
+    esac
+done
+
+
 # Check that the correct number of arguments were provided.
-if [ $# -ne 19 ]; then
-    echo "Usage: ./docker-run.sh <user> <phone-number-uuid-table-path>
+if [[ $# -ne 19 ]]; then
+    echo "Usage: ./docker-run.sh
+    [--profile-cpu <profile-output-path>]
+    <user> <phone-number-uuid-table-path>
     <s01e01-input-path> <s01e02-input-path> <s01e03-input-path> <s01e04-input-path>
     <demog-input-path> <evaluation-input-path> <prev-coded-dir> <json-output-path>
     <icr-output-dir> <coded-output-dir> <messages-output-csv> <individuals-output-csv> <production-output-csv>
@@ -36,24 +53,28 @@ INDIVIDUALS_DRIVE_PATH=${18}
 PRODUCTION_DRIVE_PATH=${19}
 
 # Build an image for this pipeline stage.
-docker build -t "$IMAGE_NAME" .
+docker build --build-arg INSTALL_CPU_PROFILER="$PROFILE_CPU" -t "$IMAGE_NAME" .
 
 # Create a container from the image that was just built.
 # When run, the container will:
 #  - Copy the service account credentials from the gcloud bucket url 'SERVICE_ACCOUNT_CREDENTIALS_URL'.
 #  - Run the pipeline.
 # The gcloud bucket access is authorised via volume mounting (-v in the docker container create command)
+if [[ "$PROFILE_CPU" = "true" ]]; then
+    PROFILE_CPU_CMD="pyflame -o /cpu.prof -t"
+    SYS_PTRACE_CAPABILITY="--cap-add SYS_PTRACE"
+fi
 CMD="
     gsutil cp \"$SERVICE_ACCOUNT_CREDENTIALS_URL\" /root/.config/drive-service-account-credentials.json && \
 
-    pipenv run pyflame -o /program.prof -t python -u redss_pipeline.py \"$USER\" /data/phone-number-uuid-table-input.json \
+    pipenv run $PROFILE_CPU_CMD python -u redss_pipeline.py \"$USER\" /data/phone-number-uuid-table-input.json \
     /data/s01e01-input.json /data/s01e02-input.json /data/s01e03-input.json /data/s01e04-input.json \
     /data/demog-input.json /data/evaluation-input.json /data/prev-coded \
     /data/output.json /data/output-icr /data/coded \
     /data/output-messages.csv /data/output-individuals.csv /data/output-production.csv \
     /root/.config/drive-service-account-credentials.json \"$MESSAGES_DRIVE_PATH\" \"$INDIVIDUALS_DRIVE_PATH\" \"$PRODUCTION_DRIVE_PATH\"
 "
-container="$(docker container create --cap-add SYS_PTRACE -v=$HOME/.config/gcloud:/root/.config/gcloud -w /app "$IMAGE_NAME" /bin/bash -c "$CMD")"
+container="$(docker container create ${SYS_PTRACE_CAPABILITY} -v=$HOME/.config/gcloud:/root/.config/gcloud -w /app "$IMAGE_NAME" /bin/bash -c "$CMD")"
 
 function finish {
     # Tear down the container when done.
@@ -69,7 +90,7 @@ docker cp "$INPUT_S01E03" "$container:/data/s01e03-input.json"
 docker cp "$INPUT_S01E04" "$container:/data/s01e04-input.json"
 docker cp "$INPUT_DEMOG" "$container:/data/demog-input.json"
 docker cp "$INPUT_EVALUATION" "$container:/data/evaluation-input.json"
-if [ -d "$PREV_CODED_DIR" ]; then
+if [[ -d "$PREV_CODED_DIR" ]]; then
     docker cp "$PREV_CODED_DIR" "$container:/data/prev-coded"
 fi
 
@@ -95,4 +116,7 @@ docker cp "$container:/data/output-individuals.csv" "$OUTPUT_INDIVIDUALS_CSV"
 mkdir -p "$(dirname "$OUTPUT_PRODUCTION_CSV")"
 docker cp "$container:/data/output-production.csv" "$OUTPUT_PRODUCTION_CSV"
 
-docker cp "$container:/program.prof" "pyflame-profile.prof"
+if [[ -z "$PROFILE_CPU" ]]; then
+    mkdir -p "$(dirname "$CPU_PROFILE_OUTPUT_PATH")"
+    docker cp "$container:/cpu.prof" "$CPU_PROFILE_OUTPUT_PATH"
+fi
