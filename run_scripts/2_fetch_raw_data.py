@@ -48,13 +48,13 @@ if __name__ == "__main__":
 
     # Download/checkout the appropriate version of RapidProTools
     exit_code = subprocess.call(["./checkout_rapid_pro_tools.sh", rapid_pro_tools_dir])
-    assert exit_code == 0
+    assert exit_code == 0, f"./checkout_rapid_pro_tools.sh failed with exit_code {exit_code}"
 
     # Fetch the Rapid Pro Token from the Google Cloud URL and load it into memory
     temp_dir = tempfile.mkdtemp()
     rapid_pro_token_local_file_url = f"{temp_dir}/rapid_pro_token.txt"
     exit_code = subprocess.call(["gsutil", "cp", rapid_pro_token_file_url, rapid_pro_token_local_file_url])
-    assert exit_code == 0
+    assert exit_code == 0, f"gsutil failed with exit_code {exit_code}"
     with open(rapid_pro_token_local_file_url) as f:
         rapid_pro_token = f.read().strip()
 
@@ -75,7 +75,7 @@ if __name__ == "__main__":
             output_file_path
         ], cwd=f"{rapid_pro_tools_dir}/fetch_runs")
 
-        assert exit_code == 0
+        assert exit_code == 0, f"{rapid_pro_tools_dir}/fetch_runs/fetch_runs.py failed with exit_code {exit_code}"
 
     # Download all the runs for each of the surveys
     for survey in SURVEYS:
@@ -94,4 +94,4 @@ if __name__ == "__main__":
             output_file_path
         ], cwd=f"{rapid_pro_tools_dir}/fetch_runs")
 
-        assert exit_code == 0
+        assert exit_code == 0, f"{rapid_pro_tools_dir}/fetch_runs/fetch_runs.py failed with exit_code {exit_code}"
