@@ -20,7 +20,7 @@ if __name__ == "__main__":
     user = args.user
     pipeline_configuration_file_path = args.pipeline_configuration_file_path
     rapid_pro_tools_dir = args.rapid_pro_tools_dir
-    root_data_dir = args.root_data_dir
+    root_data_dir = os.path.abspath(args.root_data_dir)
 
     uuid_table_path = f"{root_data_dir}/UUIDs/phone_uuids.json"
 
