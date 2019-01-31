@@ -59,7 +59,8 @@ if __name__ == "__main__":
 
     # Download all the runs for each of the radio shows
     for show in SHOWS:
-        print(f"Exporting show {show}")
+        output_file_path = f"{root_data_dir}/Raw Data/{show}.json"
+        print(f"Exporting show '{show}' to '{output_file_path}'...")
 
         exit_code = subprocess.call([
             "./docker-run.sh",
@@ -70,14 +71,15 @@ if __name__ == "__main__":
             user,
             "all",
             uuid_table_path,
-            f"{root_data_dir}/Raw Data/{show}.json"
+            output_file_path
         ], cwd=f"{rapid_pro_tools_dir}/fetch_runs")
 
         assert exit_code == 0
 
     # Download all the runs for each of the surveys
     for survey in SURVEYS:
-        print(f"Exporting survey {survey}")
+        output_file_path = f"{root_data_dir}/Raw Data/{survey}.json"
+        print(f"Exporting survey '{survey}' to '{output_file_path}'...")
 
         exit_code = subprocess.call([
             "./docker-run.sh",
@@ -88,7 +90,7 @@ if __name__ == "__main__":
             user,
             "latest-only",
             uuid_table_path,
-            f"{root_data_dir}/Raw Data/{survey}.json"
+            output_file_path
         ], cwd=f"{rapid_pro_tools_dir}/fetch_runs")
 
         assert exit_code == 0
