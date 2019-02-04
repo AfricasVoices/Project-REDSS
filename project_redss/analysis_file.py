@@ -90,12 +90,12 @@ class AnalysisFile(object):
                            Metadata(user, Metadata.get_call_location(), time.time()))
 
         # Set the list of raw/coded keys which
-        demog_keys = []
+        survey_keys = []
         for plan in PipelineConfiguration.SURVEY_CODING_PLANS:
-            if plan.analysis_file_key not in demog_keys:
-                demog_keys.append(plan.analysis_file_key)
-            if plan.raw_field not in demog_keys:
-                demog_keys.append(plan.raw_field)
+            if plan.analysis_file_key not in survey_keys:
+                survey_keys.append(plan.analysis_file_key)
+            if plan.raw_field not in survey_keys:
+                survey_keys.append(plan.raw_field)
 
         for td in data:
             td.append_data(
@@ -122,13 +122,6 @@ class AnalysisFile(object):
                 Metadata(user, Metadata.get_call_location(), time.time())
             )
 
-        evaluation_keys = [
-            # "repeated",
-            # "repeated_raw",
-            # "involved",
-            # "involved_raw"
-        ]
-
         # Translate keys to final values for analysis
         matrix_keys = []
 
@@ -150,8 +143,7 @@ class AnalysisFile(object):
         ]
 
         equal_keys = ["uid", "operator"]
-        equal_keys.extend(demog_keys)
-        equal_keys.extend(evaluation_keys)
+        equal_keys.extend(survey_keys)
         concat_keys = [
             "rqa_s01e01_raw",
             "rqa_s01e02_raw",
@@ -177,8 +169,7 @@ class AnalysisFile(object):
         export_keys.extend(matrix_keys)
         export_keys.extend(ambivalent_keys)
         export_keys.extend(concat_keys)
-        export_keys.extend(demog_keys)
-        export_keys.extend(evaluation_keys)
+        export_keys.extend(survey_keys)
 
         # Set consent withdrawn based on presence of data coded as "stop"
         ConsentUtils.determine_consent_withdrawn(
