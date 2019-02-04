@@ -1,0 +1,4 @@
+{
+  "RapidProBaseURL": "https://textit.in",
+  "RapidProTokenFileURL": "gs://avf-credentials/csap-text-it-token.txt"
+}
