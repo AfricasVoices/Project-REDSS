@@ -4,13 +4,32 @@ set -e
 
 IMAGE_NAME=redss-csap
 
+while [[ $# -gt 0 ]]; do
+    case "$1" in
+        --drive-upload)
+            DRIVE_UPLOAD=true
+
+            SERVICE_ACCOUNT_CREDENTIALS_URL=$2
+            MESSAGES_DRIVE_PATH=$3
+            INDIVIDUALS_DRIVE_PATH=$4
+            PRODUCTION_DRIVE_PATH=$5
+            shift 5;;
+        --)
+            shift
+            break;;
+        *)
+            break;;
+    esac
+done
+
 # Check that the correct number of arguments were provided.
-if [ $# -ne 19 ]; then
-    echo "Usage: ./docker-run.sh <user> <phone-number-uuid-table-path>
+if [[ $# -ne 15 ]]; then
+    echo "Usage: ./docker-run.sh
+    [--drive-upload <drive-auth-file> <messages-drive-path> <individuals-drive-path> <production-drive-path>]
+    <user> <phone-number-uuid-table-path>
     <s01e01-input-path> <s01e02-input-path> <s01e03-input-path> <s01e04-input-path>
     <demog-input-path> <evaluation-input-path> <prev-coded-dir> <json-output-path>
-    <icr-output-dir> <coded-output-dir> <messages-output-csv> <individuals-output-csv> <production-output-csv>
-    <drive-auth-file> <messages-drive-path> <individuals-drive-path> <production-drive-path>"
+    <icr-output-dir> <coded-output-dir> <messages-output-csv> <individuals-output-csv> <production-output-csv>"
     exit
 fi
 
@@ -30,24 +49,24 @@ OUTPUT_CODED_DIR=${12}
 OUTPUT_MESSAGES_CSV=${13}
 OUTPUT_INDIVIDUALS_CSV=${14}
 OUTPUT_PRODUCTION_CSV=${15}
-SERVICE_ACCOUNT_CREDENTIALS_URL=${16}
-MESSAGES_DRIVE_PATH=${17}
-INDIVIDUALS_DRIVE_PATH=${18}
-PRODUCTION_DRIVE_PATH=${19}
 
 # Build an image for this pipeline stage.
 docker build -t "$IMAGE_NAME" .
 
 # Create a container from the image that was just built.
 # When run, the container will:
-#  - Copy the service account credentials from the gcloud bucket url 'SERVICE_ACCOUNT_CREDENTIALS_URL'.
+#  - Copy the service account credentials from the google cloud storage url 'SERVICE_ACCOUNT_CREDENTIALS_URL',
+#    if the --drive-upload flag has been set.
+#    The google cloud storage access is authorised via volume mounting (-v in the docker container create command).
 #  - Run the pipeline.
-# The gcloud bucket access is authorised via volume mounting (-v in the docker container create command)
+if [[ "$DRIVE_UPLOAD" = true ]]; then
+    GSUTIL_CP_CMD="gsutil cp \"$SERVICE_ACCOUNT_CREDENTIALS_URL\" /root/.config/drive-service-account-credentials.json &&"
+    DRIVE_UPLOAD_ARG="--drive-upload /root/.config/drive-service-account-credentials.json \"$MESSAGES_DRIVE_PATH\" \"$INDIVIDUALS_DRIVE_PATH\" \"$PRODUCTION_DRIVE_PATH\""
+fi
 CMD="
-    gsutil cp \"$SERVICE_ACCOUNT_CREDENTIALS_URL\" /root/.config/drive-service-account-credentials.json && \
+    $GSUTIL_CP_CMD \
 
-    pipenv run python -u redss_pipeline.py \
-    --drive-upload /root/.config/drive-service-account-credentials.json \"$MESSAGES_DRIVE_PATH\" \"$INDIVIDUALS_DRIVE_PATH\" \"$PRODUCTION_DRIVE_PATH\" \
+    pipenv run python -u redss_pipeline.py $DRIVE_UPLOAD_ARG \
     \"$USER\" /data/phone-number-uuid-table-input.json \
     /data/s01e01-input.json /data/s01e02-input.json /data/s01e03-input.json /data/s01e04-input.json \
     /data/demog-input.json /data/evaluation-input.json /data/prev-coded \

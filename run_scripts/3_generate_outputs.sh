@@ -17,12 +17,14 @@ mkdir -p "$DATA_ROOT/Coded Coda Files"
 mkdir -p "$DATA_ROOT/Outputs"
 
 cd ..
-./docker-run.sh "$USER" "$DATA_ROOT/UUIDs/phone_uuids.json" \
+./docker-run.sh \
+    --drive-upload "$DRIVE_SERVICE_ACCOUNT_CREDENTIALS_URL" "$DRIVE_UPLOAD_DIR/csap_mes.csv" \
+                   "$DRIVE_UPLOAD_DIR/csap_ind.csv" "$DRIVE_UPLOAD_DIR/csap_prod.csv" \
+    "$USER" "$DATA_ROOT/UUIDs/phone_uuids.json" \
     "$DATA_ROOT/Raw Data/csap_s01e01_activation.json" "$DATA_ROOT/Raw Data/csap_s01e02_activation.json" \
     "$DATA_ROOT/Raw Data/csap_s01e03_activation.json" "$DATA_ROOT/Raw Data/csap_s01e04_activation.json" \
     "$DATA_ROOT/Raw Data/csap_demog.json" "$DATA_ROOT/Raw Data/csap_evaluation.json" "$DATA_ROOT/Coded Coda Files/" \
     "$DATA_ROOT/Outputs/traced_data.json" \
     "$DATA_ROOT/Outputs/ICR/" "$DATA_ROOT/Outputs/Coda Files/" \
     "$DATA_ROOT/Outputs/csap_mes.csv" "$DATA_ROOT/Outputs/csap_ind.csv" \
-    "$DATA_ROOT/Outputs/csap_prod.csv" \
-    "$DRIVE_SERVICE_ACCOUNT_CREDENTIALS_URL" "$DRIVE_UPLOAD_DIR/csap_mes.csv" "$DRIVE_UPLOAD_DIR/csap_ind.csv" "$DRIVE_UPLOAD_DIR/csap_prod.csv"
+    "$DATA_ROOT/Outputs/csap_prod.csv"
