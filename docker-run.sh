@@ -9,7 +9,7 @@ while [[ $# -gt 0 ]]; do
         --drive-upload)
             DRIVE_UPLOAD=true
 
-            SERVICE_ACCOUNT_CREDENTIALS_URL=$2
+            DRIVE_SERVICE_ACCOUNT_CREDENTIALS_URL=$2
             MESSAGES_DRIVE_PATH=$3
             INDIVIDUALS_DRIVE_PATH=$4
             PRODUCTION_DRIVE_PATH=$5
@@ -60,7 +60,7 @@ docker build -t "$IMAGE_NAME" .
 #    The google cloud storage access is authorised via volume mounting (-v in the docker container create command).
 #  - Run the pipeline.
 if [[ "$DRIVE_UPLOAD" = true ]]; then
-    GSUTIL_CP_CMD="gsutil cp \"$SERVICE_ACCOUNT_CREDENTIALS_URL\" /root/.config/drive-service-account-credentials.json &&"
+    GSUTIL_CP_CMD="gsutil cp \"$DRIVE_SERVICE_ACCOUNT_CREDENTIALS_URL\" /root/.config/drive-service-account-credentials.json &&"
     DRIVE_UPLOAD_ARG="--drive-upload /root/.config/drive-service-account-credentials.json \"$MESSAGES_DRIVE_PATH\" \"$INDIVIDUALS_DRIVE_PATH\" \"$PRODUCTION_DRIVE_PATH\""
 fi
 CMD="
