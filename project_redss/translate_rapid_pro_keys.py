@@ -126,6 +126,7 @@ class TranslateRapidProKeys(object):
                 if message_to_s01e02_dict.get(td["rqa_message"], False):
                     mapped_dict["show_id"] = 2
                     mapped_dict["sent_on"] = "2018-12-15T00:00:00+03:00"
+
                 # Redirect any week 4 messages which were in the week 3 flow due to a late flow change-over.
                 elif isoparse(td[cls.WEEK_3_TIME_KEY]) > isoparse(cls.WEEK_4_START):
                     mapped_dict["show_id"] = 4
