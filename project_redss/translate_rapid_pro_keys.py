@@ -58,7 +58,7 @@ class TranslateRapidProKeys(object):
 
     WEEK_3_TIME_KEY = "Rqa_S01E03 (Time) - csap_s01e03_activation"
     WEEK_3_VALUE_KEY = "Rqa_S01E03 (Value) - csap_s01e03_activation"
-    WEEK_4_START = isoparse("2018-12-23T00:00:00+03:00")  # TODO: All other dates are strings, this should be too
+    WEEK_4_START = "2018-12-23T00:00:00+03:00"
 
     WEEK_4_TIME_KEY = "Rqa_S01E04 (Time) - csap_s01e04_activation"
     WEEK_4_VALUE_KEY = "Rqa_S01E04 (Value) - csap_s01e04_activation"
@@ -122,7 +122,7 @@ class TranslateRapidProKeys(object):
                 if message_to_s01e02_dict.get(td["rqa_message"], False):
                     mapped_dict["show_id"] = 2
                 # Redirect any week 4 messages which were in the week 3 flow due to a late flow change-over.
-                elif isoparse(td[cls.WEEK_3_TIME_KEY]) > cls.WEEK_4_START:
+                elif isoparse(td[cls.WEEK_3_TIME_KEY]) > isoparse(cls.WEEK_4_START):
                     mapped_dict["show_id"] = 4
 
             # Redirect any week 2 messages which were in the week 4 flow, due to undelivered messages being delivered
