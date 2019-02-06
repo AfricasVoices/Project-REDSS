@@ -49,6 +49,13 @@ class TranslateRapidProKeys(object):
         "Rqa_S01E04 (Value) - csap_s01e04_activation": 4
     }
 
+    RAW_ID_MAP = {
+        1: "rqa_s01e01_raw",
+        2: "rqa_s01e02_raw",
+        3: "rqa_s01e03_raw",
+        4: "rqa_s01e04_raw"
+    }
+
     WEEK_3_TIME_KEY = "Rqa_S01E03 (Time) - csap_s01e03_activation"
     WEEK_3_VALUE_KEY = "Rqa_S01E03 (Value) - csap_s01e03_activation"
     WEEK_4_START = isoparse("2018-12-23T00:00:00+03:00")  # TODO: All other dates are strings, this should be too
@@ -150,22 +157,18 @@ class TranslateRapidProKeys(object):
             td.append_data(remapped, Metadata(user, Metadata.get_call_location(), TimeUtils.utc_now_as_iso_string()))
 
     @classmethod
-    def translate_rapid_pro_keys(cls, user, data, coda_input_dir):
-        cls.set_show_ids(user, data, cls.SHOW_ID_MAP)
-        cls.remap_radio_show_weeks(user, data, coda_input_dir)
-        cls.remap_key_names(user, data, cls.RAPID_PRO_KEY_MAP)
-
-        raw_id_map = {
-            1: "rqa_s01e01_raw",
-            2: "rqa_s01e02_raw",
-            3: "rqa_s01e03_raw",
-            4: "rqa_s01e04_raw"
-        }
-
+    def set_rqa_raw_keys_from_show_ids(cls, user, data, raw_id_map):
         for td in data:
             for show_id, message_key in raw_id_map.items():
                 if "rqa_message" in td and td.get("show_id") == show_id:
                     td.append_data({message_key: td["rqa_message"]},
                                    Metadata(user, Metadata.get_call_location(), TimeUtils.utc_now_as_iso_string()))
+
+    @classmethod
+    def translate_rapid_pro_keys(cls, user, data, coda_input_dir):
+        cls.set_show_ids(user, data, cls.SHOW_ID_MAP)
+        cls.remap_radio_show_weeks(user, data, coda_input_dir)
+        cls.remap_key_names(user, data, cls.RAPID_PRO_KEY_MAP)
+        cls.set_rqa_raw_keys_from_show_ids(user, data, cls.RAW_ID_MAP)
 
         return data
