@@ -119,8 +119,13 @@ class TranslateRapidProKeys(object):
 
             if cls.WEEK_3_TIME_KEY in td:
                 # Redirect any week 3 messages coded as s01e02 in the WS - Correct Dataset scheme to week 2
+                # Also, fake the timestamp of redirected week 3 messages to make it look like they arrived on the day
+                # before the incorrect sms ad was sent, i.e. the last day of week 2.
+                # This is super yucky, but works because (a) timestamps are never exported, and (b) this date
+                # is being set to non_logical anyway in channels.py.
                 if message_to_s01e02_dict.get(td["rqa_message"], False):
                     mapped_dict["show_id"] = 2
+                    mapped_dict["sent_on"] = "2018-12-15T00:00:00+03:00"
                 # Redirect any week 4 messages which were in the week 3 flow due to a late flow change-over.
                 elif isoparse(td[cls.WEEK_3_TIME_KEY]) > isoparse(cls.WEEK_4_START):
                     mapped_dict["show_id"] = 4
@@ -134,14 +139,6 @@ class TranslateRapidProKeys(object):
                 elif isoparse(cls.FRIDAY_BURST_START) <= isoparse(td[cls.WEEK_4_TIME_KEY]) < isoparse(cls.FRIDAY_BURST_END):
                     mapped_dict["show_id"] = 2
                     mapped_dict["sent_on"] = cls.FRIDAY_CORRECTION_TIME
-
-            # Fake the timestamp of redirected week 3 messages to make it look like they arrived on the day
-            # before the incorrect sms ad was sent, i.e. the last day of week 2.
-            # This is super yucky, but works because (a) timestamps are never exported, and (b) this date
-            # is being set to non_logical anyway in channels.py.
-            if cls.WEEK_3_TIME_KEY in td:
-                if message_to_s01e02_dict.get(td["rqa_message"], False):
-                    mapped_dict["sent_on"] = "2018-12-15T00:00:00+03:00"
 
             td.append_data(mapped_dict, Metadata(user, Metadata.get_call_location(), TimeUtils.utc_now_as_iso_string()))
 
