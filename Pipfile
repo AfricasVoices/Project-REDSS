@@ -4,10 +4,11 @@ verify_ssl = true
 name = "pypi"
 
 [packages]
-CoreDataModules = {editable = true, ref = "5e888b586b36316492e2af5d66b4b956a3baf9db", git = "https://www.github.com/AfricasVoices/CoreDataModules"}
+CoreDataModules = {editable = true, ref = "2cec29c3941c9e27ffbd4e7066cff54295331599", git = "https://www.github.com/AfricasVoices/CoreDataModules"}
 PipelineInfrastructure = {editable = true, ref = "2390ad8af87edca38d71ea5666a8758a0c4c124f", git = "https://www.github.com/AfricasVoices/PipelineInfrastructure"}
 pytz = "*"
 python-dateutil = "*"
+google-cloud-storage = "*"
 
 [dev-packages]
 
