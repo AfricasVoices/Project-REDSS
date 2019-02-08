@@ -64,6 +64,7 @@ class AutoCodeShowMessages(object):
                             Metadata.get_call_location()
                         )
                         missing_dict[plan.binary_coded_field] = na_label.to_dict()
+
             td.append_data(missing_dict, Metadata(user, Metadata.get_call_location(), time.time()))
 
         # Label each message with channel keys

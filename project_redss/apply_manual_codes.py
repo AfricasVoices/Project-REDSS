@@ -49,25 +49,20 @@ class ApplyManualCodes(object):
                 nc_dict = dict()
                 for plan in PipelineConfiguration.RQA_CODING_PLANS:
                     if plan.coded_field not in td:
-                        nc_label = CleaningUtils.make_label_from_cleaner_code(
-                            plan.code_scheme, plan.code_scheme.get_code_with_control_code(Codes.NOT_CODED),
-                            Metadata.get_call_location()
-                        )
-                        nc_dict[plan.coded_field] = [nc_label.to_dict()]
-                if "rqa_s01e02_coded" not in td:
-                    nc_label = CleaningUtils.make_label_from_cleaner_code(
-                        CodeSchemes.S01E02_INTEGRATE_RETURN,
-                        CodeSchemes.S01E02_INTEGRATE_RETURN.get_code_with_control_code(Codes.NOT_CODED),
-                        Metadata.get_call_location()
-                    )
-                    nc_dict["rqa_s01e02_integrate_return_coded"] = nc_label.to_dict()
-                if "rqa_s01e03_coded" not in td:
-                    nc_label = CleaningUtils.make_label_from_cleaner_code(
-                        CodeSchemes.S01E03_YES_NO_AMB,
-                        CodeSchemes.S01E03_YES_NO_AMB.get_code_with_control_code(Codes.NOT_CODED),
-                        Metadata.get_call_location()
-                    )
-                    nc_dict["rqa_s01e03_yes_no_amb_coded"] = nc_label.to_dict()
+                        if plan.code_scheme is not None:
+                            nc_label = CleaningUtils.make_label_from_cleaner_code(
+                                plan.code_scheme, plan.code_scheme.get_code_with_control_code(Codes.NOT_CODED),
+                                Metadata.get_call_location()
+                            )
+                            nc_dict[plan.coded_field] = [nc_label.to_dict()]
+
+                        if plan.binary_code_scheme is not None:
+                            nc_label = CleaningUtils.make_label_from_cleaner_code(
+                                plan.binary_code_scheme, plan.binary_code_scheme.get_code_with_control_code(Codes.NOT_CODED),
+                                Metadata.get_call_location()
+                            )
+                            nc_dict[plan.binary_coded_field] = nc_label.to_dict()
+
                 td.append_data(nc_dict, Metadata(user, Metadata.get_call_location(), time.time()))
 
         # Merge manually coded survey files into the cleaned dataset
