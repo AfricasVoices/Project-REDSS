@@ -75,16 +75,8 @@ class ApplyManualCodes(object):
                     reasons_label_present = len(td[plan.coded_field]) > 1 or td[plan.coded_field][0]["CodeID"] != \
                                            plan.code_scheme.get_code_with_control_code(Codes.NOT_REVIEWED).code_id
 
-                    # print(td["uid"], plan.raw_field, binary_code_present, reasons_code_present,
-                    #       len(td[plan.coded_field]), td[plan.coded_field][0], plan.code_scheme.get_code_with_control_code(Codes.NOT_REVIEWED).code_id,
-                    #       td[plan.coded_field][0] != \
-                    #       plan.code_scheme.get_code_with_control_code(Codes.NOT_REVIEWED)
-                    #       )
-
                     if binary_label_present and not reasons_label_present:
                         if plan.binary_code_scheme.get_code_with_id(td[plan.binary_coded_field]["CodeID"]).code_type == "Control":
-                            print(td[plan.binary_coded_field])
-
                             binary_label = td[plan.binary_coded_field]
                             control_code = plan.binary_code_scheme.get_code_with_id(binary_label["CodeID"]).control_code
                             reasons_code = plan.code_scheme.get_code_with_control_code(control_code)
@@ -107,11 +99,6 @@ class ApplyManualCodes(object):
                                 {plan.coded_field: [nc_label.to_dict()]},
                                 Metadata(user, Metadata.get_call_location(), TimeUtils.utc_now_as_iso_string())
                             )
-
-                            # td.append_data(
-                            #     {plan.coded_field: [plan.code_scheme.get_code_with_control_code(Codes.NOT_CODED).to_dict()]},
-                            #     Metadata(user, Metadata.get_call_location(), TimeUtils.utc_now_as_iso_string())
-                            # )
 
         # Merge manually coded survey files into the cleaned dataset
         for plan in PipelineConfiguration.SURVEY_CODING_PLANS:
