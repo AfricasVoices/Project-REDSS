@@ -6,7 +6,8 @@ from project_redss.lib.redss_schemes import CodeSchemes
 
 class CodingPlan(object):
     def __init__(self, raw_field, coded_field, coda_filename, cleaner=None, code_scheme=None, time_field=None,
-                 run_id_field=None, icr_filename=None, analysis_file_key=None, id_field=None):
+                 run_id_field=None, icr_filename=None, analysis_file_key=None, id_field=None,
+                 binary_code_scheme=None, binary_coded_field=None, binary_analysis_file_key=None):
         self.raw_field = raw_field
         self.coded_field = coded_field
         self.coda_filename = coda_filename
@@ -16,6 +17,9 @@ class CodingPlan(object):
         self.time_field = time_field
         self.run_id_field = run_id_field
         self.analysis_file_key = analysis_file_key
+        self.binary_scheme = binary_code_scheme
+        self.binary_coded_field = binary_coded_field
+        self.binary_analysis_file_key = binary_analysis_file_key
 
         if id_field is None:
             id_field = "{}_id".format(self.raw_field)
