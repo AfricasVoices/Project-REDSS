@@ -49,12 +49,11 @@ class ApplyManualCodes(object):
                 nc_dict = dict()
                 for plan in PipelineConfiguration.RQA_CODING_PLANS:
                     if plan.coded_field not in td:
-                        if plan.code_scheme is not None:
-                            nc_label = CleaningUtils.make_label_from_cleaner_code(
-                                plan.code_scheme, plan.code_scheme.get_code_with_control_code(Codes.NOT_CODED),
-                                Metadata.get_call_location()
-                            )
-                            nc_dict[plan.coded_field] = [nc_label.to_dict()]
+                        nc_label = CleaningUtils.make_label_from_cleaner_code(
+                            plan.code_scheme, plan.code_scheme.get_code_with_control_code(Codes.NOT_CODED),
+                            Metadata.get_call_location()
+                        )
+                        nc_dict[plan.coded_field] = [nc_label.to_dict()]
 
                         if plan.binary_code_scheme is not None:
                             nc_label = CleaningUtils.make_label_from_cleaner_code(

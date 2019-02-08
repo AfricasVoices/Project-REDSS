@@ -51,12 +51,11 @@ class AutoCodeShowMessages(object):
             missing_dict = dict()
             for plan in PipelineConfiguration.RQA_CODING_PLANS:
                 if plan.raw_field not in td:
-                    if plan.code_scheme is not None:
-                        na_label = CleaningUtils.make_label_from_cleaner_code(
-                            plan.code_scheme, plan.code_scheme.get_code_with_control_code(Codes.TRUE_MISSING),
-                            Metadata.get_call_location()
-                        )
-                        missing_dict[plan.coded_field] = [na_label.to_dict()]
+                    na_label = CleaningUtils.make_label_from_cleaner_code(
+                        plan.code_scheme, plan.code_scheme.get_code_with_control_code(Codes.TRUE_MISSING),
+                        Metadata.get_call_location()
+                    )
+                    missing_dict[plan.coded_field] = [na_label.to_dict()]
 
                     if plan.binary_code_scheme is not None:
                         na_label = CleaningUtils.make_label_from_cleaner_code(
