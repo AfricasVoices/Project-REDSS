@@ -33,20 +33,15 @@ class ApplyManualCodes(object):
                     f = open(coda_input_path, "r")
                 TracedDataCoda2IO.import_coda_2_to_traced_data_iterable_multi_coded(
                     user, rqa_messages, plan.id_field, {plan.coded_field: plan.code_scheme}, f)
+
+                if plan.binary_code_scheme is not None:
+                    if f is not None:
+                        f.seek(0)
+                    TracedDataCoda2IO.import_coda_2_to_traced_data_iterable(
+                        user, rqa_messages, plan.id_field, {plan.binary_coded_field: plan.binary_code_scheme}, f)
             finally:
                 if f is not None:
                     f.close()
-
-            if plan.binary_code_scheme is not None:
-                f = None
-                try:
-                    if path.exists(coda_input_path):
-                        f = open(coda_input_path, "r")
-                    TracedDataCoda2IO.import_coda_2_to_traced_data_iterable(
-                        user, rqa_messages, plan.id_field, {plan.binary_coded_field: plan.binary_code_scheme}, f)
-                finally:
-                    if f is not None:
-                        f.close()
 
         # Mark data that is noise as Codes.NOT_CODED
         for td in data:
