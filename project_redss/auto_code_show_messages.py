@@ -58,9 +58,9 @@ class AutoCodeShowMessages(object):
                         )
                         missing_dict[plan.coded_field] = [na_label.to_dict()]
 
-                    if plan.binary_scheme is not None:
+                    if plan.binary_code_scheme is not None:
                         na_label = CleaningUtils.make_label_from_cleaner_code(
-                            plan.binary_scheme, plan.binary_scheme.get_code_with_control_code(Codes.TRUE_MISSING),
+                            plan.binary_code_scheme, plan.binary_code_scheme.get_code_with_control_code(Codes.TRUE_MISSING),
                             Metadata.get_call_location()
                         )
                         missing_dict[plan.binary_coded_field] = na_label.to_dict()

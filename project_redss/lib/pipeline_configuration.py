@@ -17,7 +17,7 @@ class CodingPlan(object):
         self.time_field = time_field
         self.run_id_field = run_id_field
         self.analysis_file_key = analysis_file_key
-        self.binary_scheme = binary_code_scheme
+        self.binary_code_scheme = binary_code_scheme
         self.binary_coded_field = binary_coded_field
         self.binary_analysis_file_key = binary_analysis_file_key
 
