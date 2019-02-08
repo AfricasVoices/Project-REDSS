@@ -48,7 +48,10 @@ class PipelineConfiguration(object):
                    run_id_field="rqa_s01e02_run_id",
                    analysis_file_key="rqa_s01e02_",
                    cleaner=None,
-                   code_scheme=CodeSchemes.S01E02_REASONS),
+                   code_scheme=CodeSchemes.S01E02_REASONS,
+                   binary_code_scheme=CodeSchemes.S01E02_INTEGRATE_RETURN,
+                   binary_coded_field="rqa_s01e02_integrate_return_coded",
+                   binary_analysis_file_key="rqa_01_e02_integrate_return"),
 
         CodingPlan(raw_field="rqa_s01e03_raw",
                    coded_field="rqa_s01e03_coded",
@@ -58,7 +61,10 @@ class PipelineConfiguration(object):
                    run_id_field="rqa_s01e03_run_id",
                    analysis_file_key="rqa_s01e03_",
                    cleaner=None,
-                   code_scheme=CodeSchemes.S01E03_REASONS),
+                   code_scheme=CodeSchemes.S01E03_REASONS,
+                   binary_code_scheme=CodeSchemes.S01E03_YES_NO_AMB,
+                   binary_coded_field="rqa_s01e03_yes_no_amb_coded",
+                   binary_analysis_file_key="rqa_01_e03_yes_no"),
 
         CodingPlan(raw_field="rqa_s01e04_raw",
                    coded_field="rqa_s01e04_coded",
