@@ -65,7 +65,12 @@ class ApplyManualCodes(object):
 
                 td.append_data(nc_dict, Metadata(user, Metadata.get_call_location(), time.time()))
 
-        # RQA Binary/Reasons control code synchronisation
+        # Synchronise the control codes between the binary and reasons schemes:
+        # Some RQA datasets have a binary scheme, which is always labelled, and a reasons scheme, which is only labelled
+        # if there is an additional reason given. Importing those two schemes separately above caused the labels in
+        # each scheme to go out of sync with each other, e.g. reasons can be NR when the binary *was* reviewed.
+        # This block updates the reasons scheme in cases where only a binary label was set, by assigning the
+        # label 'NC' if the binary label was set to a normal code, otherwise to be the same control code as the binary.
         for plan in PipelineConfiguration.RQA_CODING_PLANS:
             rqa_messages = [td for td in data if plan.raw_field in td]
             if plan.binary_code_scheme is not None:
