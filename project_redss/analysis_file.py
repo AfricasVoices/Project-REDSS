@@ -125,8 +125,8 @@ class AnalysisFile(object):
         matrix_keys = []
 
         for plan in PipelineConfiguration.RQA_CODING_PLANS:
-            # TODO: If this was a list, codes would come out in the order they're in in the schemes.
-            #       Clarify which is preferable before the next project.
+            # TODO: If this was a list, codes would come out in the order they're in in the schemes, rather than
+            #       needing to be sorted alphabetically. Clarify which is preferable before the next project.
             show_matrix_keys = set()
             for code in plan.code_scheme.codes:
                 show_matrix_keys.add(f"{plan.analysis_file_key}{code.string_value}")
@@ -138,10 +138,9 @@ class AnalysisFile(object):
 
         matrix_keys.sort()
 
-        ambivalent_keys = [
-            "rqa_s01e02_integrate_return",
-            "rqa_s01e03_yes_no"
-        ]
+        ambivalent_keys = [plan.binary_analysis_file_key
+                           for plan in PipelineConfiguration.RQA_CODING_PLANS
+                           if plan.binary_analysis_file_key is not None]
 
         equal_keys = ["uid", "operator"]
         equal_keys.extend(survey_keys)
