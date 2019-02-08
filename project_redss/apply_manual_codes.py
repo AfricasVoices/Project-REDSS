@@ -7,6 +7,7 @@ from core_data_modules.cleaners.location_tools import SomaliaLocations
 from core_data_modules.data_models import Code
 from core_data_modules.traced_data import Metadata
 from core_data_modules.traced_data.io import TracedDataCodaV2IO
+from core_data_modules.util import TimeUtils
 
 from project_redss.lib.pipeline_configuration import PipelineConfiguration
 from project_redss.lib.redss_schemes import CodeSchemes
@@ -63,6 +64,54 @@ class ApplyManualCodes(object):
                             nc_dict[plan.binary_coded_field] = nc_label.to_dict()
 
                 td.append_data(nc_dict, Metadata(user, Metadata.get_call_location(), time.time()))
+
+        # RQA Binary/Reasons control code synchronisation
+        for plan in PipelineConfiguration.RQA_CODING_PLANS:
+            rqa_messages = [td for td in data if plan.raw_field in td]
+            if plan.binary_code_scheme is not None:
+                for td in rqa_messages:
+                    binary_label_present = td[plan.binary_coded_field] != \
+                                          plan.binary_code_scheme.get_code_with_control_code(Codes.NOT_REVIEWED)
+                    reasons_label_present = len(td[plan.coded_field]) > 1 or td[plan.coded_field][0]["CodeID"] != \
+                                           plan.code_scheme.get_code_with_control_code(Codes.NOT_REVIEWED).code_id
+
+                    # print(td["uid"], plan.raw_field, binary_code_present, reasons_code_present,
+                    #       len(td[plan.coded_field]), td[plan.coded_field][0], plan.code_scheme.get_code_with_control_code(Codes.NOT_REVIEWED).code_id,
+                    #       td[plan.coded_field][0] != \
+                    #       plan.code_scheme.get_code_with_control_code(Codes.NOT_REVIEWED)
+                    #       )
+
+                    if binary_label_present and not reasons_label_present:
+                        if plan.binary_code_scheme.get_code_with_id(td[plan.binary_coded_field]["CodeID"]).code_type == "Control":
+                            print(td[plan.binary_coded_field])
+
+                            binary_label = td[plan.binary_coded_field]
+                            control_code = plan.binary_code_scheme.get_code_with_id(binary_label["CodeID"]).control_code
+                            reasons_code = plan.code_scheme.get_code_with_control_code(control_code)
+                            reasons_label = CleaningUtils.make_label_from_cleaner_code(
+                                plan.code_scheme, reasons_code,
+                                Metadata.get_call_location(), origin_name="Pipeline Code Synchronisation")
+
+                            td.append_data(
+                                {plan.coded_field: [reasons_label.to_dict()]},
+                                Metadata(user, Metadata.get_call_location(), TimeUtils.utc_now_as_iso_string())
+                            )
+                        else:
+                            assert plan.binary_code_scheme.get_code_with_id(td[plan.binary_coded_field]["CodeID"]).code_type == "Normal", plan.binary_code_scheme.get_code_with_id(td[plan.binary_coded_field]["CodeID"]).code_type
+
+                            nc_label = CleaningUtils.make_label_from_cleaner_code(
+                                plan.code_scheme, plan.code_scheme.get_code_with_control_code(Codes.NOT_CODED),
+                                Metadata.get_call_location()
+                            )
+                            td.append_data(
+                                {plan.coded_field: [nc_label.to_dict()]},
+                                Metadata(user, Metadata.get_call_location(), TimeUtils.utc_now_as_iso_string())
+                            )
+
+                            # td.append_data(
+                            #     {plan.coded_field: [plan.code_scheme.get_code_with_control_code(Codes.NOT_CODED).to_dict()]},
+                            #     Metadata(user, Metadata.get_call_location(), TimeUtils.utc_now_as_iso_string())
+                            # )
 
         # Merge manually coded survey files into the cleaned dataset
         for plan in PipelineConfiguration.SURVEY_CODING_PLANS:
