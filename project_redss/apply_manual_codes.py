@@ -37,7 +37,7 @@ class ApplyManualCodes(object):
                 if plan.binary_code_scheme is not None:
                     if f is not None:
                         f.seek(0)
-                    TracedDataCoda2IO.import_coda_2_to_traced_data_iterable(
+                    TracedDataCodaV2IO.import_coda_2_to_traced_data_iterable(
                         user, rqa_messages, plan.id_field, {plan.binary_coded_field: plan.binary_code_scheme}, f)
             finally:
                 if f is not None:
