@@ -97,6 +97,7 @@ class AnalysisFile(object):
             if plan.raw_field not in survey_keys:
                 survey_keys.append(plan.raw_field)
 
+        # Convert survey codes to their string values
         for td in data:
             td.append_data(
                 {plan.analysis_file_key: plan.code_scheme.get_code_with_id(td[plan.coded_field]["CodeID"]).string_value
@@ -104,28 +105,28 @@ class AnalysisFile(object):
                 Metadata(user, Metadata.get_call_location(), time.time())
             )
 
-            td.append_data({
-                "rqa_s01e02_integrate_return":
-                    CodeSchemes.S01E02_INTEGRATE_RETURN.get_code_with_id(
-                        td["rqa_s01e02_integrate_return_coded"]["CodeID"]).string_value
-            }, Metadata(user, Metadata.get_call_location(), time.time()))
-
-            td.append_data({
-                "rqa_s01e03_yes_no":
-                    CodeSchemes.S01E03_YES_NO_AMB.get_code_with_id(
-                        td["rqa_s01e03_yes_no_amb_coded"]["CodeID"]).string_value
-            }, Metadata(user, Metadata.get_call_location(), time.time()))
-
+        # Convert the operator code to its string value
         for td in data:
             td.append_data(
                 {"operator": CodeSchemes.OPERATOR.get_code_with_id(td["operator_coded"]["CodeID"]).string_value},
                 Metadata(user, Metadata.get_call_location(), time.time())
             )
 
-        # Translate keys to final values for analysis
+        # Convert RQA binary codes to their string values
+        for td in data:
+            td.append_data(
+                {plan.binary_analysis_file_key:
+                 plan.binary_code_scheme.get_code_with_id(td[plan.binary_coded_field]["CodeID"]).string_value
+                 for plan in PipelineConfiguration.RQA_CODING_PLANS if plan.binary_code_scheme is not None},
+                Metadata(user, Metadata.get_call_location(), time.time())
+            )
+
+        # Translate the RQA reason codes to matrix values
         matrix_keys = []
 
         for plan in PipelineConfiguration.RQA_CODING_PLANS:
+            # TODO: If this was a list, codes would come out in the order they're in in the schemes, rather than
+            #       needing to be sorted alphabetically. Clarify which is preferable before the next project.
             show_matrix_keys = set()
             for code in plan.code_scheme.codes:
                 show_matrix_keys.add(f"{plan.analysis_file_key}{code.string_value}")
@@ -137,19 +138,13 @@ class AnalysisFile(object):
 
         matrix_keys.sort()
 
-        binary_keys = [
-            "rqa_s01e02_integrate_return",
-            "rqa_s01e03_yes_no"
-        ]
+        binary_keys = [plan.binary_analysis_file_key
+                       for plan in PipelineConfiguration.RQA_CODING_PLANS
+                       if plan.binary_analysis_file_key is not None]
 
         equal_keys = ["uid", "operator"]
         equal_keys.extend(survey_keys)
-        concat_keys = [
-            "rqa_s01e01_raw",
-            "rqa_s01e02_raw",
-            "rqa_s01e03_raw",
-            "rqa_s01e04_raw"
-        ]
+        concat_keys = [plan.raw_field for plan in PipelineConfiguration.RQA_CODING_PLANS]
         bool_keys = [
             consent_withdrawn_key,
 
@@ -182,17 +177,11 @@ class AnalysisFile(object):
                     td.append_data({consent_withdrawn_key: Codes.TRUE},
                                    Metadata(user, Metadata.get_call_location(), time.time()))
 
-        # Set consent for the binary questions
-        for td in data:
-            if td["rqa_s01e02_integrate_return_coded"]["CodeID"] == \
-                    CodeSchemes.S01E02_INTEGRATE_RETURN.get_code_with_control_code(Codes.STOP).code_id:
-                td.append_data({consent_withdrawn_key: Codes.TRUE},
-                               Metadata(user, Metadata.get_call_location(), time.time()))
-
-            if td["rqa_s01e03_yes_no_amb_coded"]["CodeID"] == \
-                    CodeSchemes.S01E03_YES_NO_AMB.get_code_with_control_code(Codes.STOP).code_id:
-                td.append_data({consent_withdrawn_key: Codes.TRUE},
-                               Metadata(user, Metadata.get_call_location(), time.time()))
+                if plan.binary_code_scheme is not None:
+                    if td[plan.binary_coded_field]["CodeID"] == \
+                            plan.binary_code_scheme.get_code_with_control_code(Codes.STOP).code_id:
+                        td.append_data({consent_withdrawn_key: Codes.TRUE},
+                                       Metadata(user, Metadata.get_call_location(), time.time()))
 
         # Fold data to have one respondent per row
         to_be_folded = []
