@@ -70,16 +70,20 @@ class ApplyManualCodes(object):
             rqa_messages = [td for td in data if plan.raw_field in td]
             if plan.binary_code_scheme is not None:
                 for td in rqa_messages:
-                    binary_label_present = td[plan.binary_coded_field] != \
-                                          plan.binary_code_scheme.get_code_with_control_code(Codes.NOT_REVIEWED)
+                    binary_label = td[plan.binary_coded_field]
+                    binary_code = plan.binary_code_scheme.get_code_with_id(binary_label["CodeID"])
+
+                    binary_label_present = binary_label["CodeID"] != \
+                                           plan.binary_code_scheme.get_code_with_control_code(Codes.NOT_REVIEWED).code_id
+
                     reasons_label_present = len(td[plan.coded_field]) > 1 or td[plan.coded_field][0]["CodeID"] != \
                                            plan.code_scheme.get_code_with_control_code(Codes.NOT_REVIEWED).code_id
 
                     if binary_label_present and not reasons_label_present:
-                        if plan.binary_code_scheme.get_code_with_id(td[plan.binary_coded_field]["CodeID"]).code_type == "Control":
-                            binary_label = td[plan.binary_coded_field]
-                            control_code = plan.binary_code_scheme.get_code_with_id(binary_label["CodeID"]).control_code
+                        if binary_code.code_type == "Control":
+                            control_code = binary_code.control_code
                             reasons_code = plan.code_scheme.get_code_with_control_code(control_code)
+
                             reasons_label = CleaningUtils.make_label_from_cleaner_code(
                                 plan.code_scheme, reasons_code,
                                 Metadata.get_call_location(), origin_name="Pipeline Code Synchronisation")
@@ -89,11 +93,11 @@ class ApplyManualCodes(object):
                                 Metadata(user, Metadata.get_call_location(), TimeUtils.utc_now_as_iso_string())
                             )
                         else:
-                            assert plan.binary_code_scheme.get_code_with_id(td[plan.binary_coded_field]["CodeID"]).code_type == "Normal", plan.binary_code_scheme.get_code_with_id(td[plan.binary_coded_field]["CodeID"]).code_type
+                            assert binary_code.code_type == "Normal"
 
                             nc_label = CleaningUtils.make_label_from_cleaner_code(
                                 plan.code_scheme, plan.code_scheme.get_code_with_control_code(Codes.NOT_CODED),
-                                Metadata.get_call_location()
+                                Metadata.get_call_location(), origin_name="Pipeline Code Synchronisation"
                             )
                             td.append_data(
                                 {plan.coded_field: [nc_label.to_dict()]},
