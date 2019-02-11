@@ -5,7 +5,7 @@ from os import path
 from core_data_modules.cleaners import somali, Codes
 from core_data_modules.cleaners.cleaning_utils import CleaningUtils
 from core_data_modules.traced_data import Metadata
-from core_data_modules.traced_data.io import TracedDataCSVIO, TracedDataCoda2IO
+from core_data_modules.traced_data.io import TracedDataCSVIO, TracedDataCodaV2IO
 from core_data_modules.util import IOUtils
 from dateutil.parser import isoparse
 
@@ -82,11 +82,11 @@ class AutoCodeShowMessages(object):
         # Output messages which aren't noise to Coda
         IOUtils.ensure_dirs_exist(coda_output_dir)
         for plan in PipelineConfiguration.RQA_CODING_PLANS:
-            TracedDataCoda2IO.add_message_ids(user, not_noise, plan.raw_field, plan.id_field)
+            TracedDataCodaV2IO.compute_message_ids(user, not_noise, plan.raw_field, plan.id_field)
 
             output_path = path.join(coda_output_dir, plan.coda_filename)
             with open(output_path, "w") as f:
-                TracedDataCoda2IO.export_traced_data_iterable_to_coda_2(
+                TracedDataCodaV2IO.export_traced_data_iterable_to_coda_2(
                     not_noise, plan.raw_field, cls.SENT_ON_KEY, plan.id_field, {}, f
                 )
 

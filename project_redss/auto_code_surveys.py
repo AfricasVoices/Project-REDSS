@@ -1,14 +1,12 @@
-import os
 import time
 from os import path
 
 from core_data_modules.cleaners import Codes, PhoneCleaner
 from core_data_modules.cleaners.cleaning_utils import CleaningUtils
 from core_data_modules.traced_data import Metadata
-from core_data_modules.traced_data.io import TracedDataCodaIO, TracedDataCoda2IO
+from core_data_modules.traced_data.io import TracedDataCodaV2IO
 from core_data_modules.util import IOUtils
 
-from project_redss.lib import Channels
 from project_redss.lib.pipeline_configuration import PipelineConfiguration
 from project_redss.lib.redss_schemes import CodeSchemes
 
@@ -71,19 +69,19 @@ class AutoCodeSurveys(object):
             if plan.raw_field == "mogadishu_sub_district_raw":
                 continue
             
-            TracedDataCoda2IO.add_message_ids(user, data, plan.raw_field, plan.id_field)
+            TracedDataCodaV2IO.compute_message_ids(user, data, plan.raw_field, plan.id_field)
 
             coda_output_path = path.join(coda_output_dir, plan.coda_filename)
             with open(coda_output_path, "w") as f:
-                TracedDataCoda2IO.export_traced_data_iterable_to_coda_2(
+                TracedDataCodaV2IO.export_traced_data_iterable_to_coda_2(
                     data, plan.raw_field, plan.time_field, plan.id_field, {plan.coded_field: plan.code_scheme}, f
                 )
 
         # Output location scheme to coda for manual verification + coding
         output_path = path.join(coda_output_dir, "location.json")
-        TracedDataCoda2IO.add_message_ids(user, data, "mogadishu_sub_district_raw", "mogadishu_sub_district_raw_id")
+        TracedDataCodaV2IO.compute_message_ids(user, data, "mogadishu_sub_district_raw", "mogadishu_sub_district_raw_id")
         with open(output_path, "w") as f:
-            TracedDataCoda2IO.export_traced_data_iterable_to_coda_2(
+            TracedDataCodaV2IO.export_traced_data_iterable_to_coda_2(
                 data, "mogadishu_sub_district_raw", "mogadishu_sub_district_time", "mogadishu_sub_district_raw_id",
                 {"mogadishu_sub_district_coded": CodeSchemes.MOGADISHU_SUB_DISTRICT,
                  "district_coded": CodeSchemes.DISTRICT,

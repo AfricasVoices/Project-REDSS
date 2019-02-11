@@ -6,7 +6,7 @@ from core_data_modules.cleaners.cleaning_utils import CleaningUtils
 from core_data_modules.cleaners.location_tools import SomaliaLocations
 from core_data_modules.data_models import Code
 from core_data_modules.traced_data import Metadata
-from core_data_modules.traced_data.io import TracedDataCoda2IO
+from core_data_modules.traced_data.io import TracedDataCodaV2IO
 
 from project_redss.lib.pipeline_configuration import PipelineConfiguration
 from project_redss.lib.redss_schemes import CodeSchemes
@@ -31,7 +31,7 @@ class ApplyManualCodes(object):
                 coda_input_path = path.join(coda_input_dir, plan.coda_filename)
                 if path.exists(coda_input_path):
                     f = open(coda_input_path, "r")
-                TracedDataCoda2IO.import_coda_2_to_traced_data_iterable_multi_coded(
+                TracedDataCodaV2IO.import_coda_2_to_traced_data_iterable_multi_coded(
                     user, rqa_messages, plan.id_field, {plan.coded_field: plan.code_scheme}, f)
             finally:
                 if f is not None:
@@ -44,7 +44,7 @@ class ApplyManualCodes(object):
             coda_input_path = path.join(coda_input_dir, "s01e02.json")
             if path.exists(coda_input_path):
                 f = open(coda_input_path, "r")
-            TracedDataCoda2IO.import_coda_2_to_traced_data_iterable(
+            TracedDataCodaV2IO.import_coda_2_to_traced_data_iterable(
                 user, rqa_messages, "rqa_s01e02_raw_id",
                 {"rqa_s01e02_integrate_return_coded": CodeSchemes.S01E02_INTEGRATE_RETURN}, f)
         finally:
@@ -58,7 +58,7 @@ class ApplyManualCodes(object):
             coda_input_path = path.join(coda_input_dir, "s01e03.json")
             if path.exists(coda_input_path):
                 f = open(coda_input_path, "r")
-            TracedDataCoda2IO.import_coda_2_to_traced_data_iterable(
+            TracedDataCodaV2IO.import_coda_2_to_traced_data_iterable(
                 user, rqa_messages, "rqa_s01e03_raw_id",
                 {"rqa_s01e03_yes_no_amb_coded": CodeSchemes.S01E03_YES_NO_AMB}, f)
         finally:
@@ -99,7 +99,7 @@ class ApplyManualCodes(object):
                 coda_input_path = path.join(coda_input_dir, plan.coda_filename)
                 if path.exists(coda_input_path):
                     f = open(coda_input_path, "r")
-                TracedDataCoda2IO.import_coda_2_to_traced_data_iterable(
+                TracedDataCodaV2IO.import_coda_2_to_traced_data_iterable(
                     user, data, plan.id_field, {plan.coded_field: plan.code_scheme}, f)
             finally:
                 if f is not None:
