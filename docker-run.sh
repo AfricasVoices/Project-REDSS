@@ -66,8 +66,8 @@ docker build --build-arg INSTALL_CPU_PROFILER="$PROFILE_CPU" -t "$IMAGE_NAME" .
 #    The google cloud storage access is authorised via volume mounting (-v in the docker container create command).
 #  - Run the pipeline.
 # The gcloud bucket access is authorised via volume mounting (-v in the docker container create command)
-if [[ "$PROFILE_CPU" = "true" ]]; then
-    PROFILE_CPU_CMD="pyflame -o /cpu.prof -t"
+if [[ "$PROFILE_CPU" = true ]]; then
+    PROFILE_CPU_CMD="pyflame -o /data/cpu.prof -t"
     SYS_PTRACE_CAPABILITY="--cap-add SYS_PTRACE"
 fi
 if [[ "$DRIVE_UPLOAD" = true ]]; then
@@ -126,7 +126,7 @@ docker cp "$container:/data/output-individuals.csv" "$OUTPUT_INDIVIDUALS_CSV"
 mkdir -p "$(dirname "$OUTPUT_PRODUCTION_CSV")"
 docker cp "$container:/data/output-production.csv" "$OUTPUT_PRODUCTION_CSV"
 
-if [[ -z "$PROFILE_CPU" ]]; then
+if [[ "$PROFILE_CPU" = true ]]; then
     mkdir -p "$(dirname "$CPU_PROFILE_OUTPUT_PATH")"
-    docker cp "$container:/cpu.prof" "$CPU_PROFILE_OUTPUT_PATH"
+    docker cp "$container:/data/cpu.prof" "$CPU_PROFILE_OUTPUT_PATH"
 fi
