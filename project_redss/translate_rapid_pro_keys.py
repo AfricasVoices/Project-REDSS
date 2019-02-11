@@ -1,8 +1,8 @@
 from os import path
 
 from core_data_modules.traced_data import Metadata
-from core_data_modules.traced_data.io import TracedDataCoda2IO
 from core_data_modules.util import TimeUtils
+from core_data_modules.traced_data.io import TracedDataCodaV2IO
 from dateutil.parser import isoparse
 
 from project_redss.lib.redss_schemes import CodeSchemes
@@ -81,10 +81,10 @@ class TranslateRapidProKeys(object):
         # Apply the week 3 codes from Coda.
         message_id_key = "radio_show_3_message_id"
         coded_ws_key = "radio_show_3_ws"
-        TracedDataCoda2IO.add_message_ids(user, data, cls.WEEK_3_VALUE_KEY, message_id_key)
+        TracedDataCodaV2IO.compute_message_ids(user, data, cls.WEEK_3_VALUE_KEY, message_id_key)
         coda_input_path = path.join(coda_input_dir, "s01e03.json")
         with open(coda_input_path) as f:
-            TracedDataCoda2IO.import_coda_2_to_traced_data_iterable(
+            TracedDataCodaV2IO.import_coda_2_to_traced_data_iterable(
                 user, data, message_id_key, {coded_ws_key: CodeSchemes.WS_CORRECT_DATASET}, f)
 
         # Parse the loaded codes into a look-up table of raw message string -> is ws boolean.

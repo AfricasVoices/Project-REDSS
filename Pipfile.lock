@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "75eae014596355beffee5b7e739cc81617261440a5f3f896b5253777c8824a2b"
+            "sha256": "df217a60b7cab481f4f7a1422a18c7d176e4f166df7a08cb4ad7a4b9afd35295"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -46,7 +46,7 @@
         "coredatamodules": {
             "editable": true,
             "git": "https://www.github.com/AfricasVoices/CoreDataModules",
-            "ref": "36e011fea22431ec1222c7cf325f949b4b48acd7"
+            "ref": "3cd0a0ca7583c28bfe404ca22b3d4db5dad6435f"
         },
         "deprecation": {
             "hashes": [
@@ -110,11 +110,11 @@
         },
         "google-cloud-storage": {
             "hashes": [
-                "sha256:0abd8ed57f041e4d85490054acd9af647eb7ffedece27433ba23a5c8391c00b3",
-                "sha256:f8884619fed4c77234c7293939be5a696869f61a5dc2ca47193cff630cee179f"
+                "sha256:a3115c22a71e2f172fade72c7b7b797a071f3ac9b66043191fc84c214ba0c671",
+                "sha256:aef243b533144c11c9ff750565c43dffe5445debb143697002edb6205f64a437"
             ],
             "index": "pypi",
-            "version": "==1.13.2"
+            "version": "==1.14.0"
         },
         "google-resumable-media": {
             "hashes": [
@@ -267,11 +267,11 @@
         },
         "python-dateutil": {
             "hashes": [
-                "sha256:063df5763652e21de43de7d9e00ccf239f953a832941e37be541614732cdfc93",
-                "sha256:88f9287c0174266bb0d8cedd395cfba9c58e87e5ad86b2ce58859bc11be3cf02"
+                "sha256:7e6584c74aeed623791615e26efd690f29817a27c73085b78e4bad02493df2fb",
+                "sha256:c89805f6f4d64db21ed966fda138f8a5ed7a4fdbc1a8ee329ce1b74e3c74da9e"
             ],
             "index": "pypi",
-            "version": "==2.7.5"
+            "version": "==2.8.0"
         },
         "pytz": {
             "hashes": [
