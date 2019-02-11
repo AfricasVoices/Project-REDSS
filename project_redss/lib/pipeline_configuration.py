@@ -6,7 +6,8 @@ from project_redss.lib.redss_schemes import CodeSchemes
 
 class CodingPlan(object):
     def __init__(self, raw_field, coded_field, coda_filename, cleaner=None, code_scheme=None, time_field=None,
-                 run_id_field=None, icr_filename=None, analysis_file_key=None, id_field=None):
+                 run_id_field=None, icr_filename=None, analysis_file_key=None, id_field=None,
+                 binary_code_scheme=None, binary_coded_field=None, binary_analysis_file_key=None):
         self.raw_field = raw_field
         self.coded_field = coded_field
         self.coda_filename = coda_filename
@@ -16,6 +17,9 @@ class CodingPlan(object):
         self.time_field = time_field
         self.run_id_field = run_id_field
         self.analysis_file_key = analysis_file_key
+        self.binary_code_scheme = binary_code_scheme
+        self.binary_coded_field = binary_coded_field
+        self.binary_analysis_file_key = binary_analysis_file_key
 
         if id_field is None:
             id_field = "{}_id".format(self.raw_field)
@@ -44,7 +48,10 @@ class PipelineConfiguration(object):
                    run_id_field="rqa_s01e02_run_id",
                    analysis_file_key="rqa_s01e02_",
                    cleaner=None,
-                   code_scheme=CodeSchemes.S01E02_REASONS),
+                   code_scheme=CodeSchemes.S01E02_REASONS,
+                   binary_code_scheme=CodeSchemes.S01E02_INTEGRATE_RETURN,
+                   binary_coded_field="rqa_s01e02_integrate_return_coded",
+                   binary_analysis_file_key="rqa_s01e02_integrate_return"),
 
         CodingPlan(raw_field="rqa_s01e03_raw",
                    coded_field="rqa_s01e03_coded",
@@ -54,7 +61,10 @@ class PipelineConfiguration(object):
                    run_id_field="rqa_s01e03_run_id",
                    analysis_file_key="rqa_s01e03_",
                    cleaner=None,
-                   code_scheme=CodeSchemes.S01E03_REASONS),
+                   code_scheme=CodeSchemes.S01E03_REASONS,
+                   binary_code_scheme=CodeSchemes.S01E03_YES_NO_AMB,
+                   binary_coded_field="rqa_s01e03_yes_no_amb_coded",
+                   binary_analysis_file_key="rqa_s01e03_yes_no"),
 
         CodingPlan(raw_field="rqa_s01e04_raw",
                    coded_field="rqa_s01e04_coded",
