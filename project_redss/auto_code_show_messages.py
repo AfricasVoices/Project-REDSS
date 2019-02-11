@@ -5,14 +5,13 @@ from os import path
 from core_data_modules.cleaners import somali, Codes
 from core_data_modules.cleaners.cleaning_utils import CleaningUtils
 from core_data_modules.traced_data import Metadata
-from core_data_modules.traced_data.io import TracedDataCSVIO, TracedDataCoda2IO
+from core_data_modules.traced_data.io import TracedDataCSVIO, TracedDataCodaV2IO
 from core_data_modules.util import IOUtils
 from dateutil.parser import isoparse
 
 from project_redss.lib import ICRTools, Channels
 from project_redss.lib import MessageFilters
 from project_redss.lib.pipeline_configuration import PipelineConfiguration
-from project_redss.lib.redss_schemes import CodeSchemes
 
 
 class AutoCodeShowMessages(object):
@@ -57,20 +56,14 @@ class AutoCodeShowMessages(object):
                         Metadata.get_call_location()
                     )
                     missing_dict[plan.coded_field] = [na_label.to_dict()]
-            if "rqa_s01e02_raw" not in td:
-                na_label = CleaningUtils.make_label_from_cleaner_code(
-                    CodeSchemes.S01E02_INTEGRATE_RETURN,
-                    CodeSchemes.S01E02_INTEGRATE_RETURN.get_code_with_control_code(Codes.TRUE_MISSING),
-                    Metadata.get_call_location()
-                )
-                missing_dict["rqa_s01e02_integrate_return_coded"] = na_label.to_dict()
-            if "rqa_s01e03_raw" not in td:
-                na_label = CleaningUtils.make_label_from_cleaner_code(
-                    CodeSchemes.S01E03_YES_NO_AMB,
-                    CodeSchemes.S01E03_YES_NO_AMB.get_code_with_control_code(Codes.TRUE_MISSING),
-                    Metadata.get_call_location()
-                )
-                missing_dict["rqa_s01e03_yes_no_amb_coded"] = na_label.to_dict()
+
+                    if plan.binary_code_scheme is not None:
+                        na_label = CleaningUtils.make_label_from_cleaner_code(
+                            plan.binary_code_scheme, plan.binary_code_scheme.get_code_with_control_code(Codes.TRUE_MISSING),
+                            Metadata.get_call_location()
+                        )
+                        missing_dict[plan.binary_coded_field] = na_label.to_dict()
+
             td.append_data(missing_dict, Metadata(user, Metadata.get_call_location(), time.time()))
 
         # Label each message with channel keys
@@ -82,11 +75,11 @@ class AutoCodeShowMessages(object):
         # Output messages which aren't noise to Coda
         IOUtils.ensure_dirs_exist(coda_output_dir)
         for plan in PipelineConfiguration.RQA_CODING_PLANS:
-            TracedDataCoda2IO.add_message_ids(user, not_noise, plan.raw_field, plan.id_field)
+            TracedDataCodaV2IO.compute_message_ids(user, not_noise, plan.raw_field, plan.id_field)
 
             output_path = path.join(coda_output_dir, plan.coda_filename)
             with open(output_path, "w") as f:
-                TracedDataCoda2IO.export_traced_data_iterable_to_coda_2(
+                TracedDataCodaV2IO.export_traced_data_iterable_to_coda_2(
                     not_noise, plan.raw_field, cls.SENT_ON_KEY, plan.id_field, {}, f
                 )
 

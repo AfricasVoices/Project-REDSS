@@ -56,25 +56,38 @@ where:
    Raw data will be saved to TracedData JSON files in `<data-root>/Raw Data`. 
 
 ### 3. Generate Outputs
-Finally, process the raw data to produce outputs for The Interface, ICR, Coda, and messages/individuals CSVs for 
-final analysis, by running the following command in the `run_scripts` directory.
+Finally, process the raw data to produce outputs for The Interface, ICR, Coda, and messages/individuals/production
+CSVs for final analysis, by running the following command in the `run_scripts` directory.
 
 ```
-$ ./3_generate_outputs.sh <user> <data-root>
+$ ./3_generate_outputs.sh [--drive-upload <drive-service-account-credentials-url> <drive-upload-dir>] <user> <data-root>
 ```
 
 where:
+ - `--drive-upload` is an optional flag for uploading the messages, individuals, and production CSVs to Drive.
+   If this flag set, pass the arguments:
+  - `drive-service-account-credentials-url`, a gs URL to the private credentials file of a Google Drive service account.
+    This service account will be used to upload outputted data for analysis to a directory on Google Drive.
+  - `drive-upload-dir`, the path to a directory in Google Drive to upload the messages, individuals, and production 
+    CSVs to. Before files can be uploaded to a directory, the directory must be shared with the service account's 
+    email address (which can be found in the `client_email` field of the service account's credentials file).
  - `user` is the identifier of the person running the script, for use in the TracedData Metadata 
-   e.g. `user@africasvoices.org`
+   e.g. `user@africasvoices.org`.
  - `data-root` is an absolute path to the directory in which all pipeline data should be stored.
    Updated Coda files containing new data to be coded will be saved in `<data-root>/Raw Data`.
    All other output files will be saved in `<data-root>/Outputs`.
    
-After the first run, the generated Coda files may be loaded into Coda and labelled. 
-If this is done, the manually-labelled Coda files must be made available to the pipeline before re-running, otherwise
-the new Coda files will require the same messages to be labelled again. 
-To make the labelled Coda files available to the pipeline, append `_coded` to the original file name
-(e.g. `District.csv` would become `District_coded.csv`), and save to `<data-root>/Coded Coda Files`.
+As well as uploading the messages, individuals, and production CSVs to Drive, this stage outputs the following to
+`<data-root>/Outputs`:
+ - Local copies of the messages, individuals, and production CSVs (`csap_mes.csv`, `csap_ind.csv`, `csap_prod.csv`)
+ - A serialized export of the list of TracedData objects representing all the data that was exported for analysis 
+   (`traced_data.json`)
+ - For each week of radio shows, a random sample of 200 messages that weren't classified as noise, for use in ICR (`ICR/`)
+ - Coda V2 messages files for each dataset (`Coda Files/<dataset>.json`). To upload these datasets to Coda, use the 
+   `set.py` or `add.py` tools in the [Coda V2](https://github.com/AfricasVoices/CodaV2/tree/master/data_tools) repository.
+ 
+To make coded data available to the pipeline, use the `get.py` script in `CodaV2/data_tools` to export coded messages
+to `<data-root>/Coded Coda Files/<dataset>.json`
 
 
 ## Development
