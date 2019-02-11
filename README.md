@@ -60,20 +60,22 @@ Finally, process the raw data to produce outputs for The Interface, ICR, Coda, a
 CSVs for final analysis, by running the following command in the `run_scripts` directory.
 
 ```
-$ ./3_generate_outputs.sh <user> <data-root> <drive-service-account-credentials-url> <drive-upload-dir>
+$ ./3_generate_outputs.sh [--drive-upload <drive-service-account-credentials-url> <drive-upload-dir>] <user> <data-root>
 ```
 
 where:
+ - `--drive-upload` is an optional flag for uploading the messages, individuals, and production CSVs to Drive.
+   If this flag set, pass the arguments:
+  - `drive-service-account-credentials-url`, a gs URL to the private credentials file of a Google Drive service account.
+    This service account will be used to upload outputted data for analysis to a directory on Google Drive.
+  - `drive-upload-dir`, the path to a directory in Google Drive to upload the messages, individuals, and production 
+    CSVs to. Before files can be uploaded to a directory, the directory must be shared with the service account's 
+    email address (which can be found in the `client_email` field of the service account's credentials file).
  - `user` is the identifier of the person running the script, for use in the TracedData Metadata 
    e.g. `user@africasvoices.org`.
  - `data-root` is an absolute path to the directory in which all pipeline data should be stored.
    Updated Coda files containing new data to be coded will be saved in `<data-root>/Raw Data`.
    All other output files will be saved in `<data-root>/Outputs`.
- - `drive-service-account-credentials-url` is a gs URL to the private credentials file of a Google Drive service account.
-   This service account will be used to upload outputted data for analysis to a directory on Google Drive.
- - `drive-upload-dir` is the path to a directory in Google Drive to upload the messages, individuals, and production 
-   CSVs to. Before files can be uploaded to a directory, the directory must be shared with the service account's 
-   email address (which can be found in the `client_email` field of the service account's credentials file).
    
 As well as uploading the messages, individuals, and production CSVs to Drive, this stage outputs the following to
 `<data-root>/Outputs`:
