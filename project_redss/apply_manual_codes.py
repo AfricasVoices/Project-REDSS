@@ -6,7 +6,7 @@ from core_data_modules.cleaners.cleaning_utils import CleaningUtils
 from core_data_modules.cleaners.location_tools import SomaliaLocations
 from core_data_modules.data_models import Code
 from core_data_modules.traced_data import Metadata
-from core_data_modules.traced_data.io import TracedDataCoda2IO
+from core_data_modules.traced_data.io import TracedDataCodaV2IO
 
 from project_redss.lib.pipeline_configuration import PipelineConfiguration
 from project_redss.lib.redss_schemes import CodeSchemes
@@ -31,13 +31,13 @@ class ApplyManualCodes(object):
             try:
                 if path.exists(coda_input_path):
                     f = open(coda_input_path, "r")
-                TracedDataCoda2IO.import_coda_2_to_traced_data_iterable_multi_coded(
+                TracedDataCodaV2IO.import_coda_2_to_traced_data_iterable_multi_coded(
                     user, rqa_messages, plan.id_field, {plan.coded_field: plan.code_scheme}, f)
 
                 if plan.binary_code_scheme is not None:
                     if f is not None:
                         f.seek(0)
-                    TracedDataCoda2IO.import_coda_2_to_traced_data_iterable(
+                    TracedDataCodaV2IO.import_coda_2_to_traced_data_iterable(
                         user, rqa_messages, plan.id_field, {plan.binary_coded_field: plan.binary_code_scheme}, f)
             finally:
                 if f is not None:
@@ -71,7 +71,7 @@ class ApplyManualCodes(object):
                 coda_input_path = path.join(coda_input_dir, plan.coda_filename)
                 if path.exists(coda_input_path):
                     f = open(coda_input_path, "r")
-                TracedDataCoda2IO.import_coda_2_to_traced_data_iterable(
+                TracedDataCodaV2IO.import_coda_2_to_traced_data_iterable(
                     user, data, plan.id_field, {plan.coded_field: plan.code_scheme}, f)
             finally:
                 if f is not None:

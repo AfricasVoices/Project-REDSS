@@ -138,9 +138,9 @@ class AnalysisFile(object):
 
         matrix_keys.sort()
 
-        ambivalent_keys = [plan.binary_analysis_file_key
-                           for plan in PipelineConfiguration.RQA_CODING_PLANS
-                           if plan.binary_analysis_file_key is not None]
+        binary_keys = [plan.binary_analysis_file_key
+                       for plan in PipelineConfiguration.RQA_CODING_PLANS
+                       if plan.binary_analysis_file_key is not None]
 
         equal_keys = ["uid", "operator"]
         equal_keys.extend(survey_keys)
@@ -162,7 +162,7 @@ class AnalysisFile(object):
         export_keys = ["uid", "operator"]
         export_keys.extend(bool_keys)
         export_keys.extend(matrix_keys)
-        export_keys.extend(ambivalent_keys)
+        export_keys.extend(binary_keys)
         export_keys.extend(concat_keys)
         export_keys.extend(survey_keys)
 
@@ -191,7 +191,7 @@ class AnalysisFile(object):
         folded_data = FoldTracedData.fold_iterable_of_traced_data(
             user, data, fold_id_fn=lambda td: td["uid"],
             equal_keys=equal_keys, concat_keys=concat_keys, matrix_keys=matrix_keys, bool_keys=bool_keys,
-            ambivalent_keys=ambivalent_keys
+            binary_keys=binary_keys
         )
 
         # Fix-up _NA and _NC keys, which are currently being set incorrectly by
