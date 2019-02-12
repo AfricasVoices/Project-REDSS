@@ -1,6 +1,7 @@
 from datetime import datetime
 from os import path
 
+import pytz
 from core_data_modules.traced_data import Metadata
 from core_data_modules.traced_data.io import TracedDataCodaV2IO
 from core_data_modules.util import TimeUtils
@@ -126,9 +127,9 @@ class TranslateRapidProKeys(object):
     def _remap_radio_show_by_time_range(cls, user, data, time_key, show_id_to_remap_to,
                                         range_start=None, range_end=None, time_to_adjust_to=None):
         if range_start is None:
-            range_start = datetime.min
+            range_start = pytz.utc.localize(datetime.min)
         if range_end is None:
-            range_end = datetime.max
+            range_end = pytz.utc.localize(datetime.max)
         
         for td in data:
             if time_key in td:
@@ -174,11 +175,11 @@ class TranslateRapidProKeys(object):
                     mapped_dict["show_id"] = 2
                     mapped_dict["sent_on"] = "2018-12-15T00:00:00+03:00"
 
-                # Redirect any week 4 messages which were in the week 3 flow due to a late flow change-over.
-                elif isoparse(td[cls.WEEK_3_TIME_KEY]) > isoparse(cls.WEEK_4_START):
-                    mapped_dict["show_id"] = 4
-
             td.append_data(mapped_dict, Metadata(user, Metadata.get_call_location(), TimeUtils.utc_now_as_iso_string()))
+
+        # Redirect any week 4 messages which were in the week 3 flow due to a late flow change-over.
+        cls._remap_radio_show_by_time_range(user, data, cls.WEEK_3_TIME_KEY, 4,
+                                            range_start=isoparse(cls.WEEK_4_START))
 
         # Redirect any week 2 messages which were in the week 4 flow, due to undelivered messages being delivered
         # in two bursts after the end of the radio shows.
