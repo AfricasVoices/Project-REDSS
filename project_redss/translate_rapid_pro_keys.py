@@ -1,8 +1,9 @@
+from datetime import datetime
 from os import path
 
 from core_data_modules.traced_data import Metadata
-from core_data_modules.util import TimeUtils
 from core_data_modules.traced_data.io import TracedDataCodaV2IO
+from core_data_modules.util import TimeUtils
 from dateutil.parser import isoparse
 
 from project_redss.lib.redss_schemes import CodeSchemes
@@ -122,6 +123,25 @@ class TranslateRapidProKeys(object):
             td.append_data(show_dict, Metadata(user, Metadata.get_call_location(), TimeUtils.utc_now_as_iso_string()))
 
     @classmethod
+    def _remap_radio_show_by_time_range(cls, user, data, time_key, show_id_to_remap_to,
+                                        range_start=None, range_end=None, time_to_adjust_to=None):
+        if range_start is None:
+            range_start = datetime.min
+        if range_end is None:
+            range_end = datetime.max
+        
+        for td in data:
+            if time_key in td:
+                if range_start <= isoparse(td[time_key]) < range_end:
+                    remapped = {
+                        "show_id": show_id_to_remap_to
+                    }
+                    if time_to_adjust_to is not None:
+                        remapped["sent_on"] = time_to_adjust_to
+
+                    td.append_data(remapped, Metadata(user, Metadata.get_call_location(), TimeUtils.utc_now_as_iso_string()))
+
+    @classmethod
     def remap_radio_shows(cls, user, data, coda_input_dir):
         """
         Remaps radio shows which were in the wrong flow, and therefore have the wrong key/values set, to have the
@@ -158,17 +178,19 @@ class TranslateRapidProKeys(object):
                 elif isoparse(td[cls.WEEK_3_TIME_KEY]) > isoparse(cls.WEEK_4_START):
                     mapped_dict["show_id"] = 4
 
-            # Redirect any week 2 messages which were in the week 4 flow, due to undelivered messages being delivered
-            # in two bursts after the end of the radio shows.
-            if cls.WEEK_4_TIME_KEY in td:
-                if isoparse(cls.THURSDAY_BURST_START) <= isoparse(td[cls.WEEK_4_TIME_KEY]) < isoparse(cls.THURSDAY_BURST_END):
-                    mapped_dict["show_id"] = 2
-                    mapped_dict["sent_on"] = cls.THURSDAY_CORRECTION_TIME
-                elif isoparse(cls.FRIDAY_BURST_START) <= isoparse(td[cls.WEEK_4_TIME_KEY]) < isoparse(cls.FRIDAY_BURST_END):
-                    mapped_dict["show_id"] = 2
-                    mapped_dict["sent_on"] = cls.FRIDAY_CORRECTION_TIME
-
             td.append_data(mapped_dict, Metadata(user, Metadata.get_call_location(), TimeUtils.utc_now_as_iso_string()))
+
+        # Redirect any week 2 messages which were in the week 4 flow, due to undelivered messages being delivered
+        # in two bursts after the end of the radio shows.
+        cls._remap_radio_show_by_time_range(user, data, cls.WEEK_4_TIME_KEY, 2,
+                                            range_start=isoparse(cls.THURSDAY_BURST_START),
+                                            range_end=isoparse(cls.THURSDAY_BURST_END),
+                                            time_to_adjust_to=cls.THURSDAY_CORRECTION_TIME)
+
+        cls._remap_radio_show_by_time_range(user, data, cls.WEEK_4_TIME_KEY, 2,
+                                            range_start=isoparse(cls.FRIDAY_BURST_START),
+                                            range_end=isoparse(cls.FRIDAY_BURST_END),
+                                            time_to_adjust_to=cls.FRIDAY_CORRECTION_TIME)
 
     @classmethod
     def remap_key_names(cls, user, data, key_map):
