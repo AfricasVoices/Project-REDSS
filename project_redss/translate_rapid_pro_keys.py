@@ -132,15 +132,14 @@ class TranslateRapidProKeys(object):
             range_end = pytz.utc.localize(datetime.max)
         
         for td in data:
-            if time_key in td:
-                if range_start <= isoparse(td[time_key]) < range_end:
-                    remapped = {
-                        "show_id": show_id_to_remap_to
-                    }
-                    if time_to_adjust_to is not None:
-                        remapped["sent_on"] = time_to_adjust_to
+            if time_key in td and range_start <= isoparse(td[time_key]) < range_end:
+                remapped = {
+                    "show_id": show_id_to_remap_to
+                }
+                if time_to_adjust_to is not None:
+                    remapped["sent_on"] = time_to_adjust_to
 
-                    td.append_data(remapped, Metadata(user, Metadata.get_call_location(), TimeUtils.utc_now_as_iso_string()))
+                td.append_data(remapped, Metadata(user, Metadata.get_call_location(), TimeUtils.utc_now_as_iso_string()))
 
     @classmethod
     def remap_radio_shows(cls, user, data, coda_input_dir):
