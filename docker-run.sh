@@ -6,6 +6,10 @@ IMAGE_NAME=redss-csap
 
 while [[ $# -gt 0 ]]; do
     case "$1" in
+        --profile-cpu)
+            PROFILE_CPU=true
+            CPU_PROFILE_OUTPUT_PATH="$2"
+            shift 2;;
         --drive-upload)
             DRIVE_UPLOAD=true
 
@@ -22,9 +26,11 @@ while [[ $# -gt 0 ]]; do
     esac
 done
 
+
 # Check that the correct number of arguments were provided.
 if [[ $# -ne 15 ]]; then
     echo "Usage: ./docker-run.sh
+    [--profile-cpu <profile-output-path>]
     [--drive-upload <drive-auth-file> <messages-drive-path> <individuals-drive-path> <production-drive-path>]
     <user> <phone-number-uuid-table-path>
     <s01e01-input-path> <s01e02-input-path> <s01e03-input-path> <s01e04-input-path>
@@ -51,7 +57,7 @@ OUTPUT_INDIVIDUALS_CSV=${14}
 OUTPUT_PRODUCTION_CSV=${15}
 
 # Build an image for this pipeline stage.
-docker build -t "$IMAGE_NAME" .
+docker build --build-arg INSTALL_CPU_PROFILER="$PROFILE_CPU" -t "$IMAGE_NAME" .
 
 # Create a container from the image that was just built.
 # When run, the container will:
@@ -59,6 +65,11 @@ docker build -t "$IMAGE_NAME" .
 #    if the --drive-upload flag has been set.
 #    The google cloud storage access is authorised via volume mounting (-v in the docker container create command).
 #  - Run the pipeline.
+# The gcloud bucket access is authorised via volume mounting (-v in the docker container create command)
+if [[ "$PROFILE_CPU" = true ]]; then
+    PROFILE_CPU_CMD="pyflame -o /data/cpu.prof -t"
+    SYS_PTRACE_CAPABILITY="--cap-add SYS_PTRACE"
+fi
 if [[ "$DRIVE_UPLOAD" = true ]]; then
     GSUTIL_CP_CMD="gsutil cp \"$DRIVE_SERVICE_ACCOUNT_CREDENTIALS_URL\" /root/.config/drive-service-account-credentials.json &&"
     DRIVE_UPLOAD_ARG="--drive-upload /root/.config/drive-service-account-credentials.json \"$MESSAGES_DRIVE_PATH\" \"$INDIVIDUALS_DRIVE_PATH\" \"$PRODUCTION_DRIVE_PATH\""
@@ -66,14 +77,14 @@ fi
 CMD="
     $GSUTIL_CP_CMD \
 
-    pipenv run python -u redss_pipeline.py $DRIVE_UPLOAD_ARG \
+    pipenv run $PROFILE_CPU_CMD python -u redss_pipeline.py $DRIVE_UPLOAD_ARG \
     \"$USER\" /data/phone-number-uuid-table-input.json \
     /data/s01e01-input.json /data/s01e02-input.json /data/s01e03-input.json /data/s01e04-input.json \
     /data/demog-input.json /data/evaluation-input.json /data/prev-coded \
     /data/output.json /data/output-icr /data/coded \
     /data/output-messages.csv /data/output-individuals.csv /data/output-production.csv \
 "
-container="$(docker container create -v=$HOME/.config/gcloud:/root/.config/gcloud -w /app "$IMAGE_NAME" /bin/bash -c "$CMD")"
+container="$(docker container create ${SYS_PTRACE_CAPABILITY} -v=$HOME/.config/gcloud:/root/.config/gcloud -w /app "$IMAGE_NAME" /bin/bash -c "$CMD")"
 
 function finish {
     # Tear down the container when done.
@@ -89,7 +100,7 @@ docker cp "$INPUT_S01E03" "$container:/data/s01e03-input.json"
 docker cp "$INPUT_S01E04" "$container:/data/s01e04-input.json"
 docker cp "$INPUT_DEMOG" "$container:/data/demog-input.json"
 docker cp "$INPUT_EVALUATION" "$container:/data/evaluation-input.json"
-if [ -d "$PREV_CODED_DIR" ]; then
+if [[ -d "$PREV_CODED_DIR" ]]; then
     docker cp "$PREV_CODED_DIR" "$container:/data/prev-coded"
 fi
 
@@ -114,3 +125,8 @@ docker cp "$container:/data/output-individuals.csv" "$OUTPUT_INDIVIDUALS_CSV"
 
 mkdir -p "$(dirname "$OUTPUT_PRODUCTION_CSV")"
 docker cp "$container:/data/output-production.csv" "$OUTPUT_PRODUCTION_CSV"
+
+if [[ "$PROFILE_CPU" = true ]]; then
+    mkdir -p "$(dirname "$CPU_PROFILE_OUTPUT_PATH")"
+    docker cp "$container:/data/cpu.prof" "$CPU_PROFILE_OUTPUT_PATH"
+fi

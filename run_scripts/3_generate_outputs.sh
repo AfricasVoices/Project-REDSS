@@ -4,6 +4,12 @@ set -e
 
 while [[ $# -gt 0 ]]; do
     case "$1" in
+        --profile-cpu)
+            PROFILE_CPU=true
+            CPU_PROFILE_OUTPUT_PATH="$2"
+
+            CPU_PROFILE_ARG="--profile-cpu $CPU_PROFILE_OUTPUT_PATH"
+            shift 2;;
         --drive-upload)
             DRIVE_SERVICE_ACCOUNT_CREDENTIALS_URL=$2
             DRIVE_UPLOAD_DIR=$3
@@ -31,7 +37,7 @@ mkdir -p "$DATA_ROOT/Coded Coda Files"
 mkdir -p "$DATA_ROOT/Outputs"
 
 cd ..
-./docker-run.sh ${DRIVE_UPLOAD_ARG} \
+./docker-run.sh ${CPU_PROFILE_ARG} ${DRIVE_UPLOAD_ARG} \
     "$USER" "$DATA_ROOT/UUIDs/phone_uuids.json" \
     "$DATA_ROOT/Raw Data/csap_s01e01_activation.json" "$DATA_ROOT/Raw Data/csap_s01e02_activation.json" \
     "$DATA_ROOT/Raw Data/csap_s01e03_activation.json" "$DATA_ROOT/Raw Data/csap_s01e04_activation.json" \
