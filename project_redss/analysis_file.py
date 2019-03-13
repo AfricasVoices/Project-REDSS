@@ -223,21 +223,14 @@ class AnalysisFile(object):
         with open(csv_by_individual_output_path, "w") as f:
             TracedDataCSVIO.export_traced_data_iterable_to_csv(folded_data, f, headers=export_keys)
 
-        production_keys = [
-            "uid",
-            "rqa_s01e01_raw",
-            "rqa_s01e02_raw",
-            "rqa_s01e03_raw",
-            "rqa_s01e04_raw",
-            "gender_raw",
-            "mogadishu_sub_district_raw",
-            "age_raw",
-            "idp_camp_raw",
-            "recently_displaced_raw",
-            "hh_language_raw",
-            "repeated_raw",
-            "involved_raw"
-        ]
+        production_keys = ["uid"]
+        for plan in PipelineConfiguration.RQA_CODING_PLANS:
+            if plan.raw_field not in production_keys:
+                production_keys.append(plan.raw_field)
+        for plan in PipelineConfiguration.SURVEY_CODING_PLANS:
+            if plan.raw_field not in production_keys:
+                production_keys.append(plan.raw_field)
+
         not_noise = MessageFilters.filter_noise(data, "noise", lambda x: x)
         with open(production_csv_output_path, "w") as f:
             TracedDataCSVIO.export_traced_data_iterable_to_csv(not_noise, f, headers=production_keys)
