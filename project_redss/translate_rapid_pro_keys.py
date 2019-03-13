@@ -1,8 +1,10 @@
+from datetime import datetime
 from os import path
 
+import pytz
 from core_data_modules.traced_data import Metadata
-from core_data_modules.util import TimeUtils
 from core_data_modules.traced_data.io import TracedDataCodaV2IO
+from core_data_modules.util import TimeUtils
 from dateutil.parser import isoparse
 
 from project_redss.lib.redss_schemes import CodeSchemes
@@ -122,6 +124,48 @@ class TranslateRapidProKeys(object):
             td.append_data(show_dict, Metadata(user, Metadata.get_call_location(), TimeUtils.utc_now_as_iso_string()))
 
     @classmethod
+    def _remap_radio_show_by_time_range(cls, user, data, time_key, show_id_to_remap_to,
+                                        range_start=None, range_end=None, time_to_adjust_to=None):
+        """
+        Remaps radio show messages received in the given time range to another radio show.
+        
+        Optionally adjusts the datetime of re-mapped messages to a constant.
+
+        :param user: Identifier of the user running this program, for TracedData Metadata.
+        :type user: str
+        :param data: TracedData objects to set the show ids of.
+        :type data: iterable of TracedData
+        :param time_key: Key in each TracedData of an ISO 8601-formatted datetime string to read the message sent on
+                         time from.
+        :type time_key: str
+        :param show_id_to_remap_to: Show id to assign to messages received within the given time range.
+        :type show_id_to_remap_to: int
+        :param range_start: Start datetime for the time range to remap radio show messages from, inclusive.
+                            If None, defaults to the beginning of time.
+        :type range_start: datetime | None
+        :param range_end: End datetime for the time range to remap radio show messages from, exclusive.
+                          If None, defaults to the end of time.
+        :type range_end: datetime | None
+        :param time_to_adjust_to: Datetime to assign to the 'sent_on' field of re-mapped shows.
+                                  If None, re-mapped shows will not have timestamps re-adjusted.
+        :type time_to_adjust_to: datetime | None
+        """
+        if range_start is None:
+            range_start = pytz.utc.localize(datetime.min)
+        if range_end is None:
+            range_end = pytz.utc.localize(datetime.max)
+        
+        for td in data:
+            if time_key in td and range_start <= isoparse(td[time_key]) < range_end:
+                remapped = {
+                    "show_id": show_id_to_remap_to
+                }
+                if time_to_adjust_to is not None:
+                    remapped[time_key] = time_to_adjust_to.isoformat()
+
+                td.append_data(remapped, Metadata(user, Metadata.get_call_location(), TimeUtils.utc_now_as_iso_string()))
+
+    @classmethod
     def remap_radio_shows(cls, user, data, coda_input_dir):
         """
         Remaps radio shows which were in the wrong flow, and therefore have the wrong key/values set, to have the
@@ -154,21 +198,23 @@ class TranslateRapidProKeys(object):
                     mapped_dict["show_id"] = 2
                     mapped_dict["sent_on"] = "2018-12-15T00:00:00+03:00"
 
-                # Redirect any week 4 messages which were in the week 3 flow due to a late flow change-over.
-                elif isoparse(td[cls.WEEK_3_TIME_KEY]) > isoparse(cls.WEEK_4_START):
-                    mapped_dict["show_id"] = 4
-
-            # Redirect any week 2 messages which were in the week 4 flow, due to undelivered messages being delivered
-            # in two bursts after the end of the radio shows.
-            if cls.WEEK_4_TIME_KEY in td:
-                if isoparse(cls.THURSDAY_BURST_START) <= isoparse(td[cls.WEEK_4_TIME_KEY]) < isoparse(cls.THURSDAY_BURST_END):
-                    mapped_dict["show_id"] = 2
-                    mapped_dict["sent_on"] = cls.THURSDAY_CORRECTION_TIME
-                elif isoparse(cls.FRIDAY_BURST_START) <= isoparse(td[cls.WEEK_4_TIME_KEY]) < isoparse(cls.FRIDAY_BURST_END):
-                    mapped_dict["show_id"] = 2
-                    mapped_dict["sent_on"] = cls.FRIDAY_CORRECTION_TIME
-
             td.append_data(mapped_dict, Metadata(user, Metadata.get_call_location(), TimeUtils.utc_now_as_iso_string()))
+
+        # Redirect any week 4 messages which were in the week 3 flow due to a late flow change-over.
+        cls._remap_radio_show_by_time_range(user, data, cls.WEEK_3_TIME_KEY, 4,
+                                            range_start=isoparse(cls.WEEK_4_START))
+
+        # Redirect any week 2 messages which were in the week 4 flow, due to undelivered messages being delivered
+        # in two bursts after the end of the radio shows.
+        cls._remap_radio_show_by_time_range(user, data, cls.WEEK_4_TIME_KEY, 2,
+                                            range_start=isoparse(cls.THURSDAY_BURST_START),
+                                            range_end=isoparse(cls.THURSDAY_BURST_END),
+                                            time_to_adjust_to=isoparse(cls.THURSDAY_CORRECTION_TIME))
+
+        cls._remap_radio_show_by_time_range(user, data, cls.WEEK_4_TIME_KEY, 2,
+                                            range_start=isoparse(cls.FRIDAY_BURST_START),
+                                            range_end=isoparse(cls.FRIDAY_BURST_END),
+                                            time_to_adjust_to=isoparse(cls.FRIDAY_CORRECTION_TIME))
 
     @classmethod
     def remap_key_names(cls, user, data, key_map):
